@@ -68,7 +68,7 @@ pub enum RecordInstruction<'a> {
 }
 
 impl<'a> RecordInstruction<'a> {
-    /// Unpacks a byte buffer into a [RecordInstruction].
+    /// Unpacks a byte buffer into a [`RecordInstruction`].
     pub fn unpack(input: &'a [u8]) -> Result<Self, ProgramError> {
         const U32_BYTES: usize = 4;
         const U64_BYTES: usize = 8;
@@ -111,7 +111,7 @@ impl<'a> RecordInstruction<'a> {
         })
     }
 
-    /// Packs a [RecordInstruction] into a byte buffer.
+    /// Packs a [`RecordInstruction`] into a byte buffer.
     pub fn pack(&self) -> Vec<u8> {
         let mut buf = Vec::with_capacity(size_of::<Self>());
         match self {

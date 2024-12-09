@@ -41,7 +41,7 @@ pub mod tests {
     pub const TEST_PUBKEY: Pubkey = Pubkey::new_from_array([100; 32]);
     /// Bytes for tests
     pub const TEST_BYTES: [u8; 8] = [42; 8];
-    /// RecordData for tests
+    /// `RecordData` for tests
     pub const TEST_RECORD_DATA: RecordData = RecordData {
         version: TEST_VERSION,
         authority: TEST_PUBKEY,
