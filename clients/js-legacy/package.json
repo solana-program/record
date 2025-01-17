@@ -1,0 +1,37 @@
+{
+    "name": "@solana/record",
+    "description": "Record Program JS API",
+    "version": "0.1.0",
+    "repository": "https://github.com/solana-program/record",
+    "license": "Apache-2.0",
+    "type": "module",
+    "sideEffects": false,
+    "engines": {
+        "node": ">=16"
+    },
+    "files": [
+        "src"
+    ],
+    "scripts": {
+        "build": "tsc --build --verbose",
+        "lint": "eslint --max-warnings 0 .",
+        "lint:fix": "eslint --fix .",
+        "format": "prettier --check src test",
+        "format:fix": "prettier --write src test",
+        "test": "start-server-and-test 'solana-test-validator --bpf-program recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5 ../../target/deploy/spl_record.so --reset --quiet' http://127.0.0.1:8899/health 'mocha test'"
+    },
+    "devDependencies": {
+        "@types/chai": "^5.0.1",
+        "@types/node": "^22.10.1",
+        "@types/mocha": "^10.0.10",
+        "@solana/web3.js": "^1.95.5",
+        "bigint-buffer": "^1.1.5",
+        "chai": "^5.1.2",
+        "mocha": "^11.0.1",
+        "prettier": "^3.4.2",
+        "typescript": "^5.7.2",
+        "start-server-and-test": "^2.0.8",
+        "ts-node": "^10.9.2"
+    },
+    "prettier": "@solana/prettier-config-solana"
+}
