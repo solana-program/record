@@ -27,7 +27,7 @@ describe('long record data', () => {
             payer,
             recordAccount,
             recordAuthority,
-            0,
+            BigInt(0),
             recordData,
         );
 

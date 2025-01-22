@@ -31,11 +31,11 @@ export async function createRecord(
     payer: Signer,
     record: Signer,
     authority: PublicKey,
-    recordSize: number,
+    recordSize: bigint,
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
 ) {
-    const recordAccountSize = RECORD_META_DATA_SIZE + recordSize;
+    const recordAccountSize = BigInt(RECORD_META_DATA_SIZE) + recordSize;
     const lamports = await connection.getMinimumBalanceForRentExemption(Number(recordAccountSize));
     const transaction = new Transaction().add(
         SystemProgram.createAccount({
@@ -72,7 +72,7 @@ export async function writeRecord(
     payer: Signer,
     record: PublicKey,
     authority: Signer,
-    offset: number,
+    offset: bigint,
     buffer: Uint8Array,
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
@@ -88,7 +88,7 @@ export async function writeRecord(
             createWriteInstruction(
                 record,
                 authority.publicKey,
-                offset + bufferOffset,
+                offset + BigInt(bufferOffset),
                 currentChunkBuffer,
                 programId,
             )
@@ -117,7 +117,7 @@ export async function createInitializeWriteRecord(
     payer: Signer,
     record: Signer,
     authority: Signer,
-    offset: number,
+    offset: bigint,
     buffer: Uint8Array,
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
@@ -155,7 +155,7 @@ export async function createInitializeWriteRecord(
     );
 
     if (buffer.length > RECORD_CHUNK_SIZE_PRE_INITIALIZE) {
-        const newOffset = offset + RECORD_CHUNK_SIZE_PRE_INITIALIZE;
+        const newOffset = offset + BigInt(RECORD_CHUNK_SIZE_PRE_INITIALIZE);
         const remainingChunkBuffer = buffer.subarray(RECORD_CHUNK_SIZE_PRE_INITIALIZE);
         return await writeRecord(
             connection,
@@ -254,7 +254,7 @@ export async function reallocateRecord(
     payer: Signer,
     record: PublicKey,
     authority: Signer,
-    dataLength: number,
+    dataLength: bigint,
     fundAccount: boolean,
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
@@ -262,8 +262,8 @@ export async function reallocateRecord(
     let transaction = new Transaction();
     if (fundAccount) {
         const currentLamports = await connection.getBalance(record);
-        const newAccountSize = RECORD_META_DATA_SIZE + dataLength;
-        const newAccountLamports = await connection.getMinimumBalanceForRentExemption(newAccountSize);
+        const newAccountSize = dataLength + BigInt(RECORD_META_DATA_SIZE);
+        const newAccountLamports = await connection.getMinimumBalanceForRentExemption(Number(newAccountSize));
 
         if (currentLamports < newAccountLamports) {
             const neededLamports = newAccountLamports - currentLamports;

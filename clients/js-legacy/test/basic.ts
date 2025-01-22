@@ -18,8 +18,8 @@ describe('basic instructions', () => {
     let recordAccount: Keypair;
     let recordAuthority: Keypair;
     let newRecordAuthority: Keypair;
-    let initialRecordSize: number;
-    let newRecordSize: number;
+    let initialRecordSize: bigint;
+    let newRecordSize: bigint;
     let recordData: Buffer;
     before(async () => {
         connection = await getConnection();
@@ -27,8 +27,8 @@ describe('basic instructions', () => {
         recordAccount = Keypair.generate();
         recordAuthority = Keypair.generate();
         newRecordAuthority = Keypair.generate();
-        initialRecordSize = 0;
-        newRecordSize = 5;
+        initialRecordSize = BigInt(0);
+        newRecordSize = BigInt(5);
         recordData = Buffer.from([0, 1, 2, 3, 4]);
     });
 
@@ -73,7 +73,7 @@ describe('basic instructions', () => {
             payer,
             recordAccount.publicKey,
             recordAuthority,
-            0,
+            BigInt(0),
             recordData
         );
 

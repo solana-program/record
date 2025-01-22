@@ -1,5 +1,5 @@
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { toBufferLE } from 'bigint-buffer';
+import { getU32Codec, getU64Codec } from '@solana/codecs-numbers';
 import { RECORD_PROGRAM_ID } from './constants';
 
 export enum RecordInstruction {
@@ -45,7 +45,7 @@ export function createInitializeInstruction(
 export function createWriteInstruction(
     record: PublicKey,
     authority: PublicKey,
-    offset: number,
+    offset: bigint,
     buffer: Uint8Array,
     programId = RECORD_PROGRAM_ID,
 ) {
@@ -53,11 +53,10 @@ export function createWriteInstruction(
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
     ]
-    const bufferLength = BigInt(buffer.length);
     const data = Buffer.from([
         RecordInstruction.Write,
-        ...toBufferLE(BigInt(offset), 8),
-        ...toBufferLE(bufferLength, 4),
+        ...getU64Codec().encode(offset),
+        ...getU32Codec().encode(buffer.length),
         ...buffer
     ]);
 
@@ -126,14 +125,14 @@ export function createCloseAccountInstruction(
 export function createReallocateInstruction(
     record: PublicKey,
     authority: PublicKey,
-    dataLength: number,
+    dataLength: bigint,
     programId = RECORD_PROGRAM_ID,
 ) {
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
     ]
-    const data = Buffer.from([RecordInstruction.Reallocate, ...toBufferLE(BigInt(dataLength), 8)]);
+    const data = Buffer.from([RecordInstruction.Reallocate, ...getU64Codec().encode(dataLength)]);
 
     return new TransactionInstruction({ keys, programId, data });
 }
