@@ -9,6 +9,7 @@ import {
     setAuthority,
     reallocateRecord,
     writeRecord,
+    RECORD_META_DATA_SIZE,
 } from '../src';
 
 describe('basic instructions', () => {
@@ -98,13 +99,25 @@ describe('basic instructions', () => {
     })
 
     it('close', async () => {
-        const receiver = Keypair.generate();
+        const destination = Keypair.generate();
+        const recordAccountSize = RECORD_META_DATA_SIZE + 5;
+        const recordAccountLamports = await connection.getMinimumBalanceForRentExemption(Number(recordAccountSize));
+
         await closeRecord(
             connection,
             payer,
             recordAccount.publicKey,
             newRecordAuthority,
-            receiver.publicKey,
+            destination.publicKey,
         )
+
+        const closedRecordInfo = await connection.getAccountInfo(recordAccount.publicKey);
+        expect(closedRecordInfo).to.equal(null);
+
+        const destinationInfo = await connection.getAccountInfo(destination.publicKey);
+        expect(destinationInfo).to.not.equal(null);
+        if (destinationInfo !== null) {
+            expect(destinationInfo.lamports).to.eql(recordAccountLamports);
+        }
     });
 })
