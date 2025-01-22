@@ -79,9 +79,8 @@ export async function writeRecord(
 ) {
     let transactionResults = [];
     let bufferOffset = 0;
-    let remainingBuffer = buffer;
-    while (bufferOffset < remainingBuffer.length) {
-        const currentChunkBuffer = remainingBuffer.subarray(
+    while (bufferOffset < buffer.length) {
+        const currentChunkBuffer = buffer.subarray(
             bufferOffset,
             bufferOffset + RECORD_CHUNK_SIZE_POST_INITIALIZE
         );
