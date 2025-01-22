@@ -147,7 +147,12 @@ export async function createInitializeWriteRecord(
             programId,
         )
     );
-    await sendAndConfirmTransaction(connection, transaction, [payer, authority, record], confirmOptions);
+    const signature = await sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer, authority, record],
+        confirmOptions
+    );
 
     if (buffer.length > RECORD_CHUNK_SIZE_PRE_INITIALIZE) {
         const newOffset = offset + RECORD_CHUNK_SIZE_PRE_INITIALIZE;
@@ -162,6 +167,8 @@ export async function createInitializeWriteRecord(
             confirmOptions,
             programId,
         );
+    } else {
+        return [signature];
     }
 }
 
