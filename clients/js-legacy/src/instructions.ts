@@ -21,12 +21,12 @@ export enum RecordInstruction {
 export function createInitializeInstruction(
     record: PublicKey,
     authority: PublicKey,
+    programId = RECORD_PROGRAM_ID,
 ) {
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: false, isWritable: false },
     ];
-    const programId = RECORD_PROGRAM_ID;
     const data = Buffer.from([RecordInstruction.Initialize]);
 
     return new TransactionInstruction({ keys, programId, data });
@@ -47,12 +47,12 @@ export function createWriteInstruction(
     authority: PublicKey,
     offset: number,
     buffer: Uint8Array,
+    programId = RECORD_PROGRAM_ID,
 ) {
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
     ]
-    const programId = RECORD_PROGRAM_ID;
     const bufferLength = BigInt(buffer.length);
     const data = Buffer.from([
         RecordInstruction.Write,
@@ -77,13 +77,13 @@ export function createSetAuthorityInstruction(
     record: PublicKey,
     currentAuthority: PublicKey,
     newAuthority: PublicKey,
+    programId = RECORD_PROGRAM_ID,
 ) {
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: currentAuthority, isSigner: true, isWritable: false },
         { pubkey: newAuthority, isSigner: false, isWritable: false },
     ]
-    const programId = RECORD_PROGRAM_ID;
     const data = Buffer.from([RecordInstruction.SetAuthority]);
 
     return new TransactionInstruction({ keys, programId, data });
@@ -102,13 +102,13 @@ export function createCloseAccountInstruction(
     record: PublicKey,
     authority: PublicKey,
     receiver: PublicKey,
+    programId = RECORD_PROGRAM_ID,
 ) {
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
         { pubkey: receiver, isSigner: false, isWritable: true },
     ]
-    const programId = RECORD_PROGRAM_ID;
     const data = Buffer.from([RecordInstruction.CloseAccount]);
 
     return new TransactionInstruction({ keys, programId, data });
@@ -127,12 +127,12 @@ export function createReallocateInstruction(
     record: PublicKey,
     authority: PublicKey,
     dataLength: number,
+    programId = RECORD_PROGRAM_ID,
 ) {
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
     ]
-    const programId = RECORD_PROGRAM_ID;
     const data = Buffer.from([RecordInstruction.Reallocate, ...toBufferLE(BigInt(dataLength), 8)]);
 
     return new TransactionInstruction({ keys, programId, data });

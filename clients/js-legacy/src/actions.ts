@@ -33,8 +33,8 @@ export async function createRecord(
     authority: PublicKey,
     recordSize: number,
     confirmOptions?: ConfirmOptions,
+    programId = RECORD_PROGRAM_ID,
 ) {
-    const programId = RECORD_PROGRAM_ID;
     const recordAccountSize = RECORD_META_DATA_SIZE + recordSize;
     const lamports = await connection.getMinimumBalanceForRentExemption(Number(recordAccountSize));
     const transaction = new Transaction().add(
@@ -48,6 +48,7 @@ export async function createRecord(
         createInitializeInstruction(
             record.publicKey,
             authority,
+            programId,
         )
     );
     return await sendAndConfirmTransaction(connection, transaction, [payer, record], confirmOptions);
@@ -74,6 +75,7 @@ export async function writeRecord(
     offset: number,
     buffer: Uint8Array,
     confirmOptions?: ConfirmOptions,
+    programId = RECORD_PROGRAM_ID,
 ) {
     let transactionResults = [];
     let bufferOffset = 0;
@@ -89,6 +91,7 @@ export async function writeRecord(
                 authority.publicKey,
                 offset + bufferOffset,
                 currentChunkBuffer,
+                programId,
             )
         );
         transactionResults.push(sendAndConfirmTransaction(connection, transaction, [payer, authority], confirmOptions));
@@ -118,8 +121,8 @@ export async function createInitializeWriteRecord(
     offset: number,
     buffer: Uint8Array,
     confirmOptions?: ConfirmOptions,
+    programId = RECORD_PROGRAM_ID,
 ) {
-    const programId = RECORD_PROGRAM_ID;
     const recordSize = buffer.length;
     const recordAccountSize = RECORD_META_DATA_SIZE + recordSize;
     const lamports = await connection.getMinimumBalanceForRentExemption(recordAccountSize);
@@ -135,12 +138,14 @@ export async function createInitializeWriteRecord(
         createInitializeInstruction(
             record.publicKey,
             authority.publicKey,
+            programId,
         ),
         createWriteInstruction(
             record.publicKey,
             authority.publicKey,
             offset,
             firstChunkBuffer,
+            programId,
         )
     );
     await sendAndConfirmTransaction(connection, transaction, [payer, authority, record], confirmOptions);
@@ -156,6 +161,7 @@ export async function createInitializeWriteRecord(
             newOffset,
             remainingChunkBuffer,
             confirmOptions,
+            programId,
         );
     }
 }
@@ -179,12 +185,14 @@ export async function setAuthority(
     currentAuthority: Signer,
     newAuthority: PublicKey,
     confirmOptions?: ConfirmOptions,
+    programId = RECORD_PROGRAM_ID,
 ) {
     const transaction = new Transaction().add(
         createSetAuthorityInstruction(
             record,
             currentAuthority.publicKey,
             newAuthority,
+            programId,
         )
     );
     return await sendAndConfirmTransaction(connection, transaction, [payer, currentAuthority], confirmOptions);
@@ -209,12 +217,14 @@ export async function closeRecord(
     authority: Signer,
     receiver: PublicKey,
     confirmOptions?: ConfirmOptions,
+    programId = RECORD_PROGRAM_ID,
 ) {
     const transaction = new Transaction().add(
         createCloseAccountInstruction(
             record,
             authority.publicKey,
             receiver,
+            programId,
         )
     );
     return await sendAndConfirmTransaction(connection, transaction, [payer, authority], confirmOptions);
@@ -241,6 +251,7 @@ export async function reallocateRecord(
     dataLength: number,
     fundAccount: boolean,
     confirmOptions?: ConfirmOptions,
+    programId = RECORD_PROGRAM_ID,
 ) {
     let transaction = new Transaction();
     if (fundAccount) {
@@ -266,6 +277,7 @@ export async function reallocateRecord(
             record,
             authority.publicKey,
             dataLength,
+            programId,
         )
     );
     return await sendAndConfirmTransaction(connection, transaction, [payer, authority], confirmOptions);
