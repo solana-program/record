@@ -65,7 +65,7 @@ export async function createRecord(
  * @param buffer          Record bytes
  * @param confirmOptions  Options for confirming the transaction
  *
- * @return Signature of the confirmed transaction
+ * @return Signatures of the confirmed transaction
  */
 export async function writeRecord(
     connection: Connection,
@@ -110,7 +110,7 @@ export async function writeRecord(
  * @param buffer          Record bytes
  * @param confirmOptions  Options for confirming the transaction
  *
- * @return Signature of the confirmed transaction
+ * @return Signatures of the confirmed transaction
  */
 export async function createInitializeWriteRecord(
     connection: Connection,
