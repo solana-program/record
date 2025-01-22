@@ -3,7 +3,7 @@ import type { Connection, Signer } from '@solana/web3.js';
 import { Keypair } from '@solana/web3.js';
 import { newAccountWithLamports, getConnection } from './common';
 import {
-    initializeWriteRecord,
+    createInitializeWriteRecord,
     getRecordAccount,
 } from '../src';
 
@@ -22,7 +22,7 @@ describe('long record data', () => {
     });
 
     it('initialize and write', async () => {
-        await initializeWriteRecord(
+        await createInitializeWriteRecord(
             connection,
             payer,
             recordAccount,

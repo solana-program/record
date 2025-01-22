@@ -26,7 +26,7 @@ import {
  *
  * @return Signature of the confirmed transaction
  */
-export async function initializeRecord(
+export async function createRecord(
     connection: Connection,
     payer: Signer,
     record: Signer,
@@ -110,7 +110,7 @@ export async function writeRecord(
  *
  * @return Signature of the confirmed transaction
  */
-export async function initializeWriteRecord(
+export async function createInitializeWriteRecord(
     connection: Connection,
     payer: Signer,
     record: Signer,

@@ -4,7 +4,7 @@ import { Keypair } from '@solana/web3.js';
 import { newAccountWithLamports, getConnection } from './common';
 import {
     closeRecord,
-    initializeRecord,
+    createRecord,
     getRecordAccount,
     setAuthority,
     reallocateRecord,
@@ -32,7 +32,7 @@ describe('basic instructions', () => {
     });
 
     it('initialize', async () => {
-        await initializeRecord(
+        await createRecord(
             connection,
             payer,
             recordAccount,
