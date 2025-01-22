@@ -1,5 +1,5 @@
 {
-    "name": "@solana/record",
+    "name": "@solana/spl-record",
     "description": "Record Program JS API",
     "version": "0.1.0",
     "repository": "https://github.com/solana-program/record",
