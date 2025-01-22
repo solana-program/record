@@ -20,11 +20,13 @@
         "format:fix": "prettier --write src test",
         "test": "start-server-and-test 'solana-test-validator --bpf-program recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5 ../../target/deploy/spl_record.so --reset --quiet' http://127.0.0.1:8899/health 'mocha test'"
     },
+    "peerDependencies": {
+        "@solana/web3.js": "^1.95.5"
+    },
     "devDependencies": {
         "@types/chai": "^5.0.1",
         "@types/node": "^22.10.1",
         "@types/mocha": "^10.0.10",
-        "@solana/web3.js": "^1.95.5",
         "bigint-buffer": "^1.1.5",
         "chai": "^5.1.2",
         "mocha": "^11.0.1",
