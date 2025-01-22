@@ -19,7 +19,7 @@ import {
  *
  * @param connection      Connection to use
  * @param payer           Payer of the transaction fees
- * @param record          Record account address
+ * @param record          Record account signer
  * @param authority       Record account authority
  * @param recordSize      Size of the record to be stored
  * @param confirmOptions  Options for confirming the transaction
@@ -104,7 +104,7 @@ export async function writeRecord(
  *
  * @param connection      Connection to use
  * @param payer           Payer of the transaction fees
- * @param record          Record account address
+ * @param record          Record account signer
  * @param authority       Record account authority keypair
  * @param recordSize      Offset to store the record bytes
  * @param buffer          Record bytes
