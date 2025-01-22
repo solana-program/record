@@ -100,7 +100,7 @@ describe('basic instructions', () => {
 
     it('close', async () => {
         const destination = Keypair.generate();
-        const recordAccountSize = RECORD_META_DATA_SIZE + 5;
+        const recordAccountSize = BigInt(RECORD_META_DATA_SIZE) + newRecordSize;
         const recordAccountLamports = await connection.getMinimumBalanceForRentExemption(Number(recordAccountSize));
 
         await closeRecord(
