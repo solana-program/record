@@ -129,7 +129,7 @@ jobs:
       - name: Save Program Builds For Client Jobs
         uses: actions/cache/save@v4
         with:
-          path: ./**/*.so
+          path: ./target/deploy/*.so
           key: ${{ runner.os }}-builds-${{ github.sha }}
 
   test_programs:
