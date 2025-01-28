@@ -18,7 +18,7 @@
         "lint:fix": "eslint --fix .",
         "format": "prettier --check src test",
         "format:fix": "prettier --write src test",
-        "test": "start-server-and-test 'solana-test-validator --bpf-program recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5 ../../target/deploy/spl_record.so --reset --quiet' http://127.0.0.1:8899/health 'mocha test'"
+        "test": "mocha test/*"
     },
     "peerDependencies": {
         "@solana/web3.js": "^1.95.5"
@@ -27,15 +27,22 @@
         "@solana/codecs-numbers": "^2.0.0"
     },
     "devDependencies": {
+        "@solana/prettier-config-solana": "0.0.5",
+        "@eslint/js": "^9.19.0",
         "@types/chai": "^5.0.1",
         "@types/node": "^22.10.1",
         "@types/mocha": "^10.0.10",
         "chai": "^5.1.2",
+        "eslint": "^8.57.1",
+        "eslint-config-prettier": "^10.0.1",
+        "eslint-plugin-prettier": "^5.2.3",
+        "eslint-plugin-require-extensions": "^0.1.1",
         "mocha": "^11.0.1",
         "prettier": "^3.4.2",
         "typescript": "^5.7.2",
         "start-server-and-test": "^2.0.8",
-        "ts-node": "^10.9.2"
+        "ts-node": "^10.9.2",
+        "typescript-eslint": "^8.22.0"
     },
     "prettier": "@solana/prettier-config-solana"
 }

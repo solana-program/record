@@ -1,18 +1,18 @@
-import type { ConfirmOptions, Connection, Signer } from '@solana/web3.js';
-import { PublicKey, sendAndConfirmTransaction, SystemProgram, Transaction } from '@solana/web3.js';
+import type { ConfirmOptions, Connection, Signer, PublicKey } from '@solana/web3.js';
+import { sendAndConfirmTransaction, SystemProgram, Transaction } from '@solana/web3.js';
 import {
     RECORD_PROGRAM_ID,
     RECORD_META_DATA_SIZE,
     RECORD_CHUNK_SIZE_PRE_INITIALIZE,
     RECORD_CHUNK_SIZE_POST_INITIALIZE,
-} from './constants';
+} from './constants.js';
 import {
     createInitializeInstruction,
     createWriteInstruction,
     createSetAuthorityInstruction,
     createCloseAccountInstruction,
     createReallocateInstruction,
-} from './instructions';
+} from './instructions.js';
 
 /**
  * Initialize a record account
@@ -45,11 +45,7 @@ export async function createRecord(
             lamports,
             programId,
         }),
-        createInitializeInstruction(
-            record.publicKey,
-            authority,
-            programId,
-        )
+        createInitializeInstruction(record.publicKey, authority, programId),
     );
     return await sendAndConfirmTransaction(connection, transaction, [payer, record], confirmOptions);
 }
@@ -77,13 +73,10 @@ export async function writeRecord(
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
 ) {
-    let transactionResults = [];
+    const transactionResults = [];
     let bufferOffset = 0;
     while (bufferOffset < buffer.length) {
-        const currentChunkBuffer = buffer.subarray(
-            bufferOffset,
-            bufferOffset + RECORD_CHUNK_SIZE_POST_INITIALIZE
-        );
+        const currentChunkBuffer = buffer.subarray(bufferOffset, bufferOffset + RECORD_CHUNK_SIZE_POST_INITIALIZE);
         const transaction = new Transaction().add(
             createWriteInstruction(
                 record,
@@ -91,7 +84,7 @@ export async function writeRecord(
                 offset + BigInt(bufferOffset),
                 currentChunkBuffer,
                 programId,
-            )
+            ),
         );
         transactionResults.push(sendAndConfirmTransaction(connection, transaction, [payer, authority], confirmOptions));
         bufferOffset = bufferOffset + RECORD_CHUNK_SIZE_POST_INITIALIZE;
@@ -134,24 +127,14 @@ export async function createInitializeWriteRecord(
             lamports,
             programId,
         }),
-        createInitializeInstruction(
-            record.publicKey,
-            authority.publicKey,
-            programId,
-        ),
-        createWriteInstruction(
-            record.publicKey,
-            authority.publicKey,
-            offset,
-            firstChunkBuffer,
-            programId,
-        )
+        createInitializeInstruction(record.publicKey, authority.publicKey, programId),
+        createWriteInstruction(record.publicKey, authority.publicKey, offset, firstChunkBuffer, programId),
     );
     const signature = await sendAndConfirmTransaction(
         connection,
         transaction,
         [payer, authority, record],
-        confirmOptions
+        confirmOptions,
     );
 
     if (buffer.length > RECORD_CHUNK_SIZE_PRE_INITIALIZE) {
@@ -194,12 +177,7 @@ export async function setAuthority(
     programId = RECORD_PROGRAM_ID,
 ) {
     const transaction = new Transaction().add(
-        createSetAuthorityInstruction(
-            record,
-            currentAuthority.publicKey,
-            newAuthority,
-            programId,
-        )
+        createSetAuthorityInstruction(record, currentAuthority.publicKey, newAuthority, programId),
     );
     return await sendAndConfirmTransaction(connection, transaction, [payer, currentAuthority], confirmOptions);
 }
@@ -226,12 +204,7 @@ export async function closeRecord(
     programId = RECORD_PROGRAM_ID,
 ) {
     const transaction = new Transaction().add(
-        createCloseAccountInstruction(
-            record,
-            authority.publicKey,
-            receiver,
-            programId,
-        )
+        createCloseAccountInstruction(record, authority.publicKey, receiver, programId),
     );
     return await sendAndConfirmTransaction(connection, transaction, [payer, authority], confirmOptions);
 }
@@ -259,7 +232,7 @@ export async function reallocateRecord(
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
 ) {
-    let transaction = new Transaction();
+    const transaction = new Transaction();
     if (fundAccount) {
         const currentLamports = await connection.getBalance(record);
         const newAccountSize = dataLength + BigInt(RECORD_META_DATA_SIZE);
@@ -272,19 +245,12 @@ export async function reallocateRecord(
                     fromPubkey: payer.publicKey,
                     toPubkey: record,
                     lamports: neededLamports,
-                })
+                }),
             );
         } else {
-            console.log("no additional funds needed for space")
+            console.log('no additional funds needed for space');
         }
     }
-    transaction.add(
-        createReallocateInstruction(
-            record,
-            authority.publicKey,
-            dataLength,
-            programId,
-        )
-    );
+    transaction.add(createReallocateInstruction(record, authority.publicKey, dataLength, programId));
     return await sendAndConfirmTransaction(connection, transaction, [payer, authority], confirmOptions);
 }
