@@ -1,6 +1,7 @@
-import { PublicKey, TransactionInstruction } from '@solana/web3.js';
+import type { PublicKey } from '@solana/web3.js';
+import { TransactionInstruction } from '@solana/web3.js';
 import { getU32Codec, getU64Codec } from '@solana/codecs-numbers';
-import { RECORD_PROGRAM_ID } from './constants';
+import { RECORD_PROGRAM_ID } from './constants.js';
 
 export enum RecordInstruction {
     Initialize = 0,
@@ -18,11 +19,7 @@ export enum RecordInstruction {
  *
  * @return Instruction to add to a transaction
  */
-export function createInitializeInstruction(
-    record: PublicKey,
-    authority: PublicKey,
-    programId = RECORD_PROGRAM_ID,
-) {
+export function createInitializeInstruction(record: PublicKey, authority: PublicKey, programId = RECORD_PROGRAM_ID) {
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: false, isWritable: false },
@@ -52,12 +49,12 @@ export function createWriteInstruction(
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
-    ]
+    ];
     const data = Buffer.from([
         RecordInstruction.Write,
         ...getU64Codec().encode(offset),
         ...getU32Codec().encode(buffer.length),
-        ...buffer
+        ...buffer,
     ]);
 
     return new TransactionInstruction({ keys, programId, data });
@@ -82,7 +79,7 @@ export function createSetAuthorityInstruction(
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: currentAuthority, isSigner: true, isWritable: false },
         { pubkey: newAuthority, isSigner: false, isWritable: false },
-    ]
+    ];
     const data = Buffer.from([RecordInstruction.SetAuthority]);
 
     return new TransactionInstruction({ keys, programId, data });
@@ -107,7 +104,7 @@ export function createCloseAccountInstruction(
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
         { pubkey: receiver, isSigner: false, isWritable: true },
-    ]
+    ];
     const data = Buffer.from([RecordInstruction.CloseAccount]);
 
     return new TransactionInstruction({ keys, programId, data });
@@ -131,7 +128,7 @@ export function createReallocateInstruction(
     const keys = [
         { pubkey: record, isSigner: false, isWritable: true },
         { pubkey: authority, isSigner: true, isWritable: false },
-    ]
+    ];
     const data = Buffer.from([RecordInstruction.Reallocate, ...getU64Codec().encode(dataLength)]);
 
     return new TransactionInstruction({ keys, programId, data });

@@ -33,13 +33,7 @@ describe('basic instructions', () => {
     });
 
     it('initialize', async () => {
-        await createRecord(
-            connection,
-            payer,
-            recordAccount,
-            recordAuthority.publicKey,
-            initialRecordSize,
-        );
+        await createRecord(connection, payer, recordAccount, recordAuthority.publicKey, initialRecordSize);
 
         const recordAccountData = await getRecordAccount(connection, recordAccount.publicKey);
         expect(recordAccountData).to.not.equal(null);
@@ -51,65 +45,39 @@ describe('basic instructions', () => {
     });
 
     it('reallocate', async () => {
-        await reallocateRecord(
-            connection,
-            payer,
-            recordAccount.publicKey,
-            recordAuthority,
-            newRecordSize,
-            true,
-        );
+        await reallocateRecord(connection, payer, recordAccount.publicKey, recordAuthority, newRecordSize, true);
 
         const recordAccountData = await getRecordAccount(connection, recordAccount.publicKey);
         expect(recordAccountData).to.not.equal(null);
         if (recordAccountData !== null) {
             expect(recordAccountData.recordData).to.eql(Buffer.from([0, 0, 0, 0, 0]));
         }
-    })
+    });
 
     it('write', async () => {
-        await writeRecord(
-            connection,
-            payer,
-            recordAccount.publicKey,
-            recordAuthority,
-            BigInt(0),
-            recordData
-        );
+        await writeRecord(connection, payer, recordAccount.publicKey, recordAuthority, BigInt(0), recordData);
 
         const recordAccountData = await getRecordAccount(connection, recordAccount.publicKey);
         if (recordAccountData !== null) {
             expect(recordAccountData.recordData).to.eql(Buffer.from([0, 1, 2, 3, 4]));
         }
-    })
+    });
 
     it('set authority', async () => {
-        await setAuthority(
-            connection,
-            payer,
-            recordAccount.publicKey,
-            recordAuthority,
-            newRecordAuthority.publicKey,
-        );
+        await setAuthority(connection, payer, recordAccount.publicKey, recordAuthority, newRecordAuthority.publicKey);
 
         const recordAccountData = await getRecordAccount(connection, recordAccount.publicKey);
         if (recordAccountData !== null) {
             expect(recordAccountData.authority).to.eql(newRecordAuthority.publicKey);
         }
-    })
+    });
 
     it('close', async () => {
         const destination = Keypair.generate();
         const recordAccountSize = BigInt(RECORD_META_DATA_SIZE) + newRecordSize;
         const recordAccountLamports = await connection.getMinimumBalanceForRentExemption(Number(recordAccountSize));
 
-        await closeRecord(
-            connection,
-            payer,
-            recordAccount.publicKey,
-            newRecordAuthority,
-            destination.publicKey,
-        )
+        await closeRecord(connection, payer, recordAccount.publicKey, newRecordAuthority, destination.publicKey);
 
         const closedRecordInfo = await connection.getAccountInfo(recordAccount.publicKey);
         expect(closedRecordInfo).to.equal(null);
@@ -120,4 +88,4 @@ describe('basic instructions', () => {
             expect(destinationInfo.lamports).to.eql(recordAccountLamports);
         }
     });
-})
+});

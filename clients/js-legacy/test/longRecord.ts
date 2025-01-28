@@ -2,10 +2,7 @@ import { expect } from 'chai';
 import type { Connection, Signer } from '@solana/web3.js';
 import { Keypair } from '@solana/web3.js';
 import { newAccountWithLamports, getConnection } from './common';
-import {
-    createInitializeWriteRecord,
-    getRecordAccount,
-} from '../src';
+import { createInitializeWriteRecord, getRecordAccount } from '../src';
 
 describe('long record data', () => {
     let connection: Connection;
@@ -22,14 +19,7 @@ describe('long record data', () => {
     });
 
     it('initialize and write', async () => {
-        await createInitializeWriteRecord(
-            connection,
-            payer,
-            recordAccount,
-            recordAuthority,
-            BigInt(0),
-            recordData,
-        );
+        await createInitializeWriteRecord(connection, payer, recordAccount, recordAuthority, BigInt(0), recordData);
 
         const recordAccountData = await getRecordAccount(connection, recordAccount.publicKey);
         expect(recordAccountData).to.not.equal(null);
@@ -39,4 +29,4 @@ describe('long record data', () => {
             expect(recordAccountData.recordData).to.eql(recordData);
         }
     });
-})
+});
