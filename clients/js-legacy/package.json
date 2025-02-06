@@ -33,7 +33,7 @@
         "lint:fix": "eslint --fix .",
         "format": "prettier --check src test",
         "format:fix": "prettier --write src test",
-        "test": "mocha test/*",
+        "test": "mocha test/* && pnpm test:exports",
         "test:exports": "node ./test/exports/module.mjs && node ./test/exports/commonjs.cjs"
     },
     "peerDependencies": {
