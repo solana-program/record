@@ -10,11 +10,25 @@
         "node": ">=16"
     },
     "files": [
-        "src"
+        "lib",
+        "src",
+        "LICENSE",
+        "README.md"
     ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "main": "./lib/cjs/index.js",
+    "module": "./lib/esm/index.js",
+    "types": "./lib/types/index.d.ts",
+    "exports": {
+        "types": "./lib/types/index.d.ts",
+        "require": "./lib/cjs/index.js",
+        "import": "./lib/esm/index.js"
+    },
     "scripts": {
         "prepublishOnly": "pnpm build",
-        "build": "tsc --build --verbose",
+        "build": "tsc --build --verbose tsconfig.all.json",
         "lint": "eslint --max-warnings 0 .",
         "lint:fix": "eslint --fix .",
         "format": "prettier --check src test",
