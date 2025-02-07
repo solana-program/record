@@ -29,6 +29,7 @@
     "scripts": {
         "prepublishOnly": "pnpm build",
         "build": "tsc --build --verbose tsconfig.all.json",
+        "postbuild": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
         "lint": "eslint --max-warnings 0 .",
         "lint:fix": "eslint --fix .",
         "format": "prettier --check src test",
@@ -55,6 +56,7 @@
         "eslint-plugin-require-extensions": "^0.1.1",
         "mocha": "^11.0.1",
         "prettier": "^3.4.2",
+        "shx": "^0.3.4",
         "typescript": "^5.7.2",
         "start-server-and-test": "^2.0.8",
         "ts-node": "^10.9.2",
