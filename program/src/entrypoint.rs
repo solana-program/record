@@ -14,3 +14,15 @@ fn process_instruction(
 ) -> ProgramResult {
     crate::processor::process_instruction(program_id, accounts, instruction_data)
 }
+
+security_txt! {
+    // Required fields
+    name: "SPL Record",
+    project_url: "https://solana-program.com/record",
+    contacts: "link:https://github.com/solana-program/record/security/advisories/new,mailto:security@anza.xyz,discord:https://solana.com/discord",
+    policy: "https://github.com/solana-program/record/blob/master/SECURITY.md",
+
+    // Optional Fields
+    preferred_languages: "en",
+    source_code: "https://github.com/solana-program/record/tree/master/program",
+}
