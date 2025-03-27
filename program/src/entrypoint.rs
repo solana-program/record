@@ -25,5 +25,5 @@ security_txt! {
 
     // Optional Fields
     preferred_languages: "en",
-    source_code: "https://github.com/solana-program/record/tree/master/program",
+    source_code: "https://github.com/solana-program/record/tree/master/program"
 }
