@@ -4,6 +4,7 @@
 
 use {
     solana_account_info::AccountInfo, solana_program_error::ProgramResult, solana_pubkey::Pubkey,
+    solana_security_txt::security_txt,
 };
 
 solana_program_entrypoint::entrypoint!(process_instruction);
