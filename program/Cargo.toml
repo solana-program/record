@@ -28,7 +28,7 @@ solana-security-txt = "1.1.1"
 thiserror = "2.0.12"
 
 [dev-dependencies]
-solana-program-test = "2.2.19"
+solana-program-test = "2.2.20"
 solana-sdk = "2.2.1"
 
 [lib]
