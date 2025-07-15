@@ -7,9 +7,9 @@ use {
     solana_rent::Rent,
     solana_sdk::{
         signature::{Keypair, Signer},
-        system_instruction,
         transaction::{Transaction, TransactionError},
     },
+    solana_system_interface::instruction as system_instruction,
     spl_record::{
         error::RecordError, id, instruction, processor::process_instruction, state::RecordData,
     },
