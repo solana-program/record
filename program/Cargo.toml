@@ -30,7 +30,7 @@ thiserror = "2.0.12"
 [dev-dependencies]
 solana-program-test = "2.3.6"
 solana-sdk = "2.2.1"
-solana-system-interface = "1"
+solana-system-interface = "2"
 
 [lib]
 crate-type = ["cdylib", "lib"]
