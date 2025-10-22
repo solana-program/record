@@ -83,7 +83,15 @@ lint-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm lint $(ARGS)
 
 test-js-%:
+	make restart-test-validator
 	cd $(call make-path,$*) && pnpm install && pnpm build && pnpm test $(ARGS)
+	make stop-test-validator
+
+restart-test-validator:
+	./scripts/restart-test-validator.sh
+
+stop-test-validator:
+	pkill -f solana-test-validator
 
 generate-clients:
 	@echo "No clients to generate"
