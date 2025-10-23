@@ -1,15 +1,12 @@
-#![cfg(feature = "test-sbf")]
-
 use {
     solana_instruction::{error::InstructionError, AccountMeta, Instruction},
+    solana_keypair::{Keypair, Signer},
     solana_program_test::*,
     solana_pubkey::Pubkey,
     solana_rent::Rent,
-    solana_sdk::{
-        signature::{Keypair, Signer},
-        transaction::{Transaction, TransactionError},
-    },
     solana_system_interface::instruction as system_instruction,
+    solana_transaction::Transaction,
+    solana_transaction_error::TransactionError,
     spl_record::{
         error::RecordError, id, instruction, processor::process_instruction, state::RecordData,
     },
