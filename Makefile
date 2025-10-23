@@ -87,6 +87,9 @@ test-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm build && pnpm test $(ARGS)
 	make stop-test-validator
 
+build-js-%:
+	cd $(call make-path,$*) && pnpm install && pnpm build
+
 restart-test-validator:
 	./scripts/restart-test-validator.sh
 

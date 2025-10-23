@@ -29,9 +29,7 @@ make test-program
 1. **Build Package:**
 
 ```bash
-cd clients/js-legacy
-pnpm i
-pnpm build
+make build-js-clients-js-legacy
 ```
 
 2. **Run Tests:**
