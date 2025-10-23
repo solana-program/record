@@ -10,20 +10,32 @@ Mainnet Beta with the program ID `recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5`.
 
 ## Building and Testing
 
-1. Install dependencies:
-
-   ```bash
-   pnpm install
-   ```
+### Program
 
 1. **Build the Program:**
 
-   ```bash
-   pnpm programs:build
-   ```
+```bash
+make build-sbf-program
+```
 
-1. **Run Tests:**
+2. **Run Tests:**
 
-   ```bash
-   pnpm programs:test
-   ```
+```bash
+make test-program
+```
+
+### JS Client
+
+1. **Build Package:**
+
+```bash
+cd clients/js-legacy
+pnpm i
+pnpm build
+```
+
+2. **Run Tests:**
+
+```bash
+make test-js-clients-js-legacy
+```
