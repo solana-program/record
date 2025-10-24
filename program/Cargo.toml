@@ -1,6 +1,6 @@
 [package]
 name = "spl-record"
-version = "0.3.0"
+version = "0.4.0"
 description = "Solana Program Library Record Program"
 authors = ["Anza Maintainers <maintainers@anza.xyz>"]
 repository = "https://github.com/solana-program/record"
