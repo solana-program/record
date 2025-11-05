@@ -27,7 +27,7 @@ thiserror = "2.0.12"
 
 [dev-dependencies]
 solana-keypair = "3.0.0"
-solana-program-test = "3.0.8"
+solana-program-test = "3.0.10"
 solana-system-interface = "2"
 solana-transaction = "3.0.0"
 solana-transaction-error = "3.0.0"
