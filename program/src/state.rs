@@ -1,15 +1,18 @@
 //! Program state
 use {
     bytemuck::{Pod, Zeroable},
+    codama::{codama, CodamaAccount},
     solana_program_pack::IsInitialized,
     solana_pubkey::Pubkey,
 };
 
 /// Header type for recorded account data
 #[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
+#[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable, CodamaAccount)]
+#[codama(discriminator(field = "version"))]
 pub struct RecordData {
     /// Struct version, allows for upgrades to the program
+    #[codama(default_value = 1)]
     pub version: u8,
 
     /// The account allowed to update the data
