@@ -12,7 +12,7 @@ no-entrypoint = []
 
 [dependencies]
 bytemuck = { version = "1.23.1", features = ["derive"] }
-codama = "0.6.2"
+codama = "0.6.3"
 num-derive = "0.4"
 num-traits = "0.2"
 solana-account-info = "3.0.0"

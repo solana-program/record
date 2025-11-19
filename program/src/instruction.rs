@@ -34,7 +34,7 @@ pub enum RecordInstruction<'a> {
         /// Offset to start writing record, expressed as `u64`.
         offset: u64,
         /// Data to replace the existing record data
-        #[codama(type = string(utf8))]
+        #[codama(type = bytes)]
         data: &'a [u8],
     },
 
