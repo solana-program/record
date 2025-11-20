@@ -35,6 +35,7 @@ pub enum RecordInstruction<'a> {
         offset: u64,
         /// Data to replace the existing record data
         #[codama(type = bytes)]
+        #[codama(size_prefix = number(u32))]
         data: &'a [u8],
     },
 

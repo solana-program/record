@@ -5,4 +5,4 @@ export const RECORD_META_DATA_SIZE = 33n;
 export const RECORD_CHUNK_SIZE_PRE_INITIALIZE = 696;
 
 /** Maximum record chunk that can fit inside a transaction when record account already initialized */
-export const RECORD_CHUNK_SIZE_POST_INITIALIZE = 919;
+export const RECORD_CHUNK_SIZE_POST_INITIALIZE = 917;

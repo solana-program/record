@@ -132,8 +132,15 @@
             "kind": "instructionArgumentNode",
             "name": "data",
             "type": {
-              "kind": "stringTypeNode",
-              "encoding": "utf8"
+              "kind": "sizePrefixTypeNode",
+              "type": {
+                "kind": "bytesTypeNode"
+              },
+              "prefix": {
+                "kind": "numberTypeNode",
+                "format": "u32",
+                "endian": "le"
+              }
             }
           }
         ],

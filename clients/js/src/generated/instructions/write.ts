@@ -7,11 +7,15 @@
  */
 
 import {
+  addDecoderSizePrefix,
+  addEncoderSizePrefix,
   combineCodec,
   getBytesDecoder,
   getBytesEncoder,
   getStructDecoder,
   getStructEncoder,
+  getU32Decoder,
+  getU32Encoder,
   getU64Decoder,
   getU64Encoder,
   getU8Decoder,
@@ -76,7 +80,7 @@ export function getWriteInstructionDataEncoder(): Encoder<WriteInstructionDataAr
     getStructEncoder([
       ['discriminator', getU8Encoder()],
       ['offset', getU64Encoder()],
-      ['data', getBytesEncoder()],
+      ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
     ]),
     (value) => ({ ...value, discriminator: WRITE_DISCRIMINATOR })
   );
@@ -86,7 +90,7 @@ export function getWriteInstructionDataDecoder(): Decoder<WriteInstructionData> 
   return getStructDecoder([
     ['discriminator', getU8Decoder()],
     ['offset', getU64Decoder()],
-    ['data', getBytesDecoder()],
+    ['data', addDecoderSizePrefix(getBytesDecoder(), getU32Decoder())],
   ]);
 }
 
