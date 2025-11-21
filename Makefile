@@ -40,6 +40,9 @@ clippy-%:
 		--deny=clippy::manual_let_else \
 		--deny=clippy::used_underscore_binding $(ARGS)
 
+format-check-js-%:
+	cd $(call make-path,$*) && pnpm install && pnpm format $(ARGS)
+
 format-check-%:
 	cargo $(nightly) fmt --check --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
 
@@ -80,9 +83,6 @@ test-js-%:
 
 test-%:
 	SBF_OUT_DIR=$(PWD)/target/deploy cargo $(nightly) test --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
-
-format-check-js-%:
-	cd $(call make-path,$*) && pnpm install && pnpm format $(ARGS)
 
 lint-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm lint $(ARGS)

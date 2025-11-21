@@ -1,5 +1,5 @@
-import test from "ava";
-import { generateKeyPairSigner } from "@solana/kit";
+import test from 'ava';
+import { generateKeyPairSigner } from '@solana/kit';
 import {
   fetchRecordData,
   createRecord,
@@ -8,14 +8,14 @@ import {
   createSetAuthorityInstruction,
   createCloseRecordInstruction,
   RECORD_META_DATA_SIZE,
-} from "../src";
+} from '../src';
 import {
   createDefaultSolanaClient,
   generateKeyPairSignerWithSol,
   sendAndConfirmInstructions,
-} from "./_setup";
+} from './_setup';
 
-test("basic instructions flow", async (t) => {
+test('basic instructions flow', async (t) => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
 
@@ -54,13 +54,13 @@ test("basic instructions flow", async (t) => {
 
   // Verify Reallocate
   let rawAccount = await client.rpc
-    .getAccountInfo(recordAccount.address, { encoding: "base64" })
+    .getAccountInfo(recordAccount.address, { encoding: 'base64' })
     .send();
   // Ensure RECORD_META_DATA_SIZE is defined (it is 33n), convert to Number for subarray
   const offset = Number(RECORD_META_DATA_SIZE);
 
   let actualData = rawAccount.value?.data?.[0]
-    ? Buffer.from(rawAccount.value.data[0], "base64").subarray(offset)
+    ? Buffer.from(rawAccount.value.data[0], 'base64').subarray(offset)
     : new Uint8Array([]);
 
   t.deepEqual(actualData, Buffer.from([0, 0, 0, 0, 0]));
@@ -77,10 +77,10 @@ test("basic instructions flow", async (t) => {
 
   // Verify Write
   rawAccount = await client.rpc
-    .getAccountInfo(recordAccount.address, { encoding: "base64" })
+    .getAccountInfo(recordAccount.address, { encoding: 'base64' })
     .send();
   actualData = rawAccount.value?.data?.[0]
-    ? Buffer.from(rawAccount.value.data[0], "base64").subarray(offset)
+    ? Buffer.from(rawAccount.value.data[0], 'base64').subarray(offset)
     : new Uint8Array([]);
   t.deepEqual(actualData, Buffer.from([0, 1, 2, 3, 4]));
 

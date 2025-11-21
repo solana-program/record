@@ -1,19 +1,19 @@
-import test from "ava";
-import { generateKeyPairSigner } from "@solana/kit";
+import test from 'ava';
+import { generateKeyPairSigner } from '@solana/kit';
 import {
   createRecord,
   createWriteInstruction,
   RECORD_META_DATA_SIZE,
   RECORD_CHUNK_SIZE_PRE_INITIALIZE,
   RECORD_CHUNK_SIZE_POST_INITIALIZE,
-} from "../src";
+} from '../src';
 import {
   createDefaultSolanaClient,
   generateKeyPairSignerWithSol,
   sendAndConfirmInstructions,
-} from "./_setup";
+} from './_setup';
 
-test("long record data flow", async (t) => {
+test('long record data flow', async (t) => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
   const recordAuthority = await generateKeyPairSigner();
@@ -67,12 +67,12 @@ test("long record data flow", async (t) => {
 
   // 3. Verify Data
   const rawAccount = await client.rpc
-    .getAccountInfo(recordAccount.address, { encoding: "base64" })
+    .getAccountInfo(recordAccount.address, { encoding: 'base64' })
     .send();
 
   const headerSize = Number(RECORD_META_DATA_SIZE);
   const actualData = rawAccount.value?.data?.[0]
-    ? Buffer.from(rawAccount.value.data[0], "base64").subarray(headerSize)
+    ? Buffer.from(rawAccount.value.data[0], 'base64').subarray(headerSize)
     : new Uint8Array([]);
 
   t.deepEqual(actualData, Buffer.from(recordData));
