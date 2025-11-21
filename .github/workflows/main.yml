@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  JS_PACKAGES: "['clients-js-legacy']"
+  JS_PACKAGES: "['clients-js', 'clients-js-legacy']"
   SBPF_PROGRAM_PACKAGES: "['program']"
   RUST_PACKAGES: "['program']"
   WASM_PACKAGES: "['program']"

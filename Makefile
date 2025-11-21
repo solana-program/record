@@ -73,6 +73,11 @@ build-doc-%:
 test-doc-%:
 	cargo $(nightly) test --doc --all-features --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
 
+test-js-%:
+	make restart-test-validator
+	cd $(call make-path,$*) && pnpm install && pnpm build && pnpm test $(ARGS)
+	make stop-test-validator
+
 test-%:
 	SBF_OUT_DIR=$(PWD)/target/deploy cargo $(nightly) test --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
 
@@ -81,11 +86,6 @@ format-check-js-%:
 
 lint-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm lint $(ARGS)
-
-test-js-%:
-	make restart-test-validator
-	cd $(call make-path,$*) && pnpm install && pnpm build && pnpm test $(ARGS)
-	make stop-test-validator
 
 build-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm build
