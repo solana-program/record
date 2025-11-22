@@ -7,11 +7,11 @@ import {
   KeyPairSigner,
   Rpc,
   TransactionSigner,
-} from "@solana/kit";
+} from '@solana/kit';
 import {
   getCreateAccountInstruction,
   getTransferSolInstruction,
-} from "@solana-program/system";
+} from '@solana-program/system';
 import {
   getCloseAccountInstruction,
   getInitializeInstruction,
@@ -19,8 +19,8 @@ import {
   getSetAuthorityInstruction,
   getWriteInstruction,
   SPL_RECORD_PROGRAM_ADDRESS,
-} from "./generated";
-import { RECORD_META_DATA_SIZE } from "./constants";
+} from './generated';
+import { RECORD_META_DATA_SIZE } from './constants';
 
 export interface CreateRecordArgs {
   rpc: Rpc<GetMinimumBalanceForRentExemptionApi>;
@@ -66,7 +66,7 @@ export async function createRecord({
       recordAccount: recordSigner.address,
       authority,
     },
-    { programAddress: programId },
+    { programAddress: programId }
   );
 
   return {
@@ -95,7 +95,7 @@ export function createWriteInstruction(args: WriteRecordArgs): Instruction {
       offset: BigInt(args.offset),
       data: args.data,
     },
-    { programAddress: args.programId },
+    { programAddress: args.programId }
   );
 }
 
@@ -134,7 +134,7 @@ export async function reallocateRecord({
         source: payer,
         destination: recordAccount,
         amount: lamportsNeeded,
-      }),
+      })
     );
   }
 
@@ -145,8 +145,8 @@ export async function reallocateRecord({
         authority,
         dataLength: BigInt(newDataLength),
       },
-      { programAddress: programId },
-    ),
+      { programAddress: programId }
+    )
   );
 
   return ixs;
@@ -160,7 +160,7 @@ export interface SetAuthorityArgs {
 }
 
 export function createSetAuthorityInstruction(
-  args: SetAuthorityArgs,
+  args: SetAuthorityArgs
 ): Instruction {
   return getSetAuthorityInstruction(
     {
@@ -168,7 +168,7 @@ export function createSetAuthorityInstruction(
       authority: args.authority,
       newAuthority: args.newAuthority,
     },
-    { programAddress: args.programId },
+    { programAddress: args.programId }
   );
 }
 
@@ -180,7 +180,7 @@ export interface CloseRecordArgs {
 }
 
 export function createCloseRecordInstruction(
-  args: CloseRecordArgs,
+  args: CloseRecordArgs
 ): Instruction {
   return getCloseAccountInstruction(
     {
@@ -188,6 +188,6 @@ export function createCloseRecordInstruction(
       authority: args.authority,
       receiver: args.receiver,
     },
-    { programAddress: args.programId },
+    { programAddress: args.programId }
   );
 }

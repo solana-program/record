@@ -6,9 +6,10 @@ on:
       package-path:
         description: Path to directory with package to release
         required: true
-        default: 'clients/js-legacy'
+        default: "clients/js"
         type: choice
         options:
+          - clients/js
           - clients/js-legacy
       level:
         description: Version level
