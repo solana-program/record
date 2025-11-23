@@ -34,6 +34,11 @@ solana-system-interface = "2"
 solana-transaction = "3.0.0"
 solana-transaction-error = "3.0.0"
 
+[build-dependencies]
+codama = "0.6.4"
+codama-korok-plugins = "0.6.4"
+serde_json = "1.0"
+
 [lib]
 crate-type = ["cdylib", "lib"]
 
