@@ -1,30 +1,22 @@
 {
+  "additionalPrograms": [],
   "kind": "rootNode",
-  "standard": "codama",
-  "version": "1.0.0",
   "program": {
-    "kind": "programNode",
-    "name": "splRecord",
-    "publicKey": "recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5",
-    "version": "0.4.0",
     "accounts": [
       {
-        "kind": "accountNode",
-        "name": "recordData",
         "data": {
-          "kind": "structTypeNode",
           "fields": [
             {
-              "kind": "structFieldTypeNode",
-              "name": "version",
-              "type": {
-                "kind": "numberTypeNode",
-                "format": "u8",
-                "endian": "le"
-              },
               "defaultValue": {
                 "kind": "numberValueNode",
                 "number": 1
+              },
+              "kind": "structFieldTypeNode",
+              "name": "version",
+              "type": {
+                "endian": "le",
+                "format": "u8",
+                "kind": "numberTypeNode"
               }
             },
             {
@@ -34,7 +26,8 @@
                 "kind": "publicKeyTypeNode"
               }
             }
-          ]
+          ],
+          "kind": "structTypeNode"
         },
         "discriminators": [
           {
@@ -42,40 +35,55 @@
             "name": "version",
             "offset": 0
           }
-        ]
+        ],
+        "kind": "accountNode",
+        "name": "recordData"
+      }
+    ],
+    "definedTypes": [],
+    "errors": [
+      {
+        "code": 0,
+        "kind": "errorNode",
+        "message": "Incorrect authority provided on update or delete",
+        "name": "incorrectAuthority"
+      },
+      {
+        "code": 1,
+        "kind": "errorNode",
+        "message": "Calculation overflow",
+        "name": "overflow"
       }
     ],
     "instructions": [
       {
-        "kind": "instructionNode",
-        "name": "initialize",
         "accounts": [
           {
-            "kind": "instructionAccountNode",
-            "name": "recordAccount",
+            "isSigner": false,
             "isWritable": true,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "recordAccount"
           },
           {
-            "kind": "instructionAccountNode",
-            "name": "authority",
+            "isSigner": false,
             "isWritable": false,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "authority"
           }
         ],
         "arguments": [
           {
-            "kind": "instructionArgumentNode",
-            "name": "discriminator",
-            "defaultValueStrategy": "omitted",
-            "type": {
-              "kind": "numberTypeNode",
-              "format": "u8",
-              "endian": "le"
-            },
             "defaultValue": {
               "kind": "numberValueNode",
               "number": 0
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
             }
           }
         ],
@@ -85,47 +93,47 @@
             "name": "discriminator",
             "offset": 0
           }
-        ]
+        ],
+        "kind": "instructionNode",
+        "name": "initialize"
       },
       {
-        "kind": "instructionNode",
-        "name": "write",
         "accounts": [
           {
-            "kind": "instructionAccountNode",
-            "name": "recordAccount",
+            "isSigner": false,
             "isWritable": true,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "recordAccount"
           },
           {
-            "kind": "instructionAccountNode",
-            "name": "authority",
+            "isSigner": true,
             "isWritable": false,
-            "isSigner": true
+            "kind": "instructionAccountNode",
+            "name": "authority"
           }
         ],
         "arguments": [
           {
-            "kind": "instructionArgumentNode",
-            "name": "discriminator",
-            "defaultValueStrategy": "omitted",
-            "type": {
-              "kind": "numberTypeNode",
-              "format": "u8",
-              "endian": "le"
-            },
             "defaultValue": {
               "kind": "numberValueNode",
               "number": 1
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
             }
           },
           {
             "kind": "instructionArgumentNode",
             "name": "offset",
             "type": {
-              "kind": "numberTypeNode",
+              "endian": "le",
               "format": "u64",
-              "endian": "le"
+              "kind": "numberTypeNode"
             }
           },
           {
@@ -133,13 +141,13 @@
             "name": "data",
             "type": {
               "kind": "sizePrefixTypeNode",
+              "prefix": {
+                "endian": "le",
+                "format": "u32",
+                "kind": "numberTypeNode"
+              },
               "type": {
                 "kind": "bytesTypeNode"
-              },
-              "prefix": {
-                "kind": "numberTypeNode",
-                "format": "u32",
-                "endian": "le"
               }
             }
           }
@@ -150,44 +158,44 @@
             "name": "discriminator",
             "offset": 0
           }
-        ]
+        ],
+        "kind": "instructionNode",
+        "name": "write"
       },
       {
-        "kind": "instructionNode",
-        "name": "setAuthority",
         "accounts": [
           {
-            "kind": "instructionAccountNode",
-            "name": "recordAccount",
+            "isSigner": false,
             "isWritable": true,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "recordAccount"
           },
           {
-            "kind": "instructionAccountNode",
-            "name": "authority",
+            "isSigner": true,
             "isWritable": false,
-            "isSigner": true
+            "kind": "instructionAccountNode",
+            "name": "authority"
           },
           {
-            "kind": "instructionAccountNode",
-            "name": "newAuthority",
+            "isSigner": false,
             "isWritable": false,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "newAuthority"
           }
         ],
         "arguments": [
           {
-            "kind": "instructionArgumentNode",
-            "name": "discriminator",
-            "defaultValueStrategy": "omitted",
-            "type": {
-              "kind": "numberTypeNode",
-              "format": "u8",
-              "endian": "le"
-            },
             "defaultValue": {
               "kind": "numberValueNode",
               "number": 2
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
             }
           }
         ],
@@ -197,44 +205,44 @@
             "name": "discriminator",
             "offset": 0
           }
-        ]
+        ],
+        "kind": "instructionNode",
+        "name": "setAuthority"
       },
       {
-        "kind": "instructionNode",
-        "name": "closeAccount",
         "accounts": [
           {
-            "kind": "instructionAccountNode",
-            "name": "recordAccount",
+            "isSigner": false,
             "isWritable": true,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "recordAccount"
           },
           {
-            "kind": "instructionAccountNode",
-            "name": "authority",
+            "isSigner": true,
             "isWritable": false,
-            "isSigner": true
+            "kind": "instructionAccountNode",
+            "name": "authority"
           },
           {
-            "kind": "instructionAccountNode",
-            "name": "receiver",
+            "isSigner": false,
             "isWritable": true,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "receiver"
           }
         ],
         "arguments": [
           {
-            "kind": "instructionArgumentNode",
-            "name": "discriminator",
-            "defaultValueStrategy": "omitted",
-            "type": {
-              "kind": "numberTypeNode",
-              "format": "u8",
-              "endian": "le"
-            },
             "defaultValue": {
               "kind": "numberValueNode",
               "number": 3
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
             }
           }
         ],
@@ -244,47 +252,47 @@
             "name": "discriminator",
             "offset": 0
           }
-        ]
+        ],
+        "kind": "instructionNode",
+        "name": "closeAccount"
       },
       {
-        "kind": "instructionNode",
-        "name": "reallocate",
         "accounts": [
           {
-            "kind": "instructionAccountNode",
-            "name": "recordAccount",
+            "isSigner": false,
             "isWritable": true,
-            "isSigner": false
+            "kind": "instructionAccountNode",
+            "name": "recordAccount"
           },
           {
-            "kind": "instructionAccountNode",
-            "name": "authority",
+            "isSigner": true,
             "isWritable": false,
-            "isSigner": true
+            "kind": "instructionAccountNode",
+            "name": "authority"
           }
         ],
         "arguments": [
           {
-            "kind": "instructionArgumentNode",
-            "name": "discriminator",
-            "defaultValueStrategy": "omitted",
-            "type": {
-              "kind": "numberTypeNode",
-              "format": "u8",
-              "endian": "le"
-            },
             "defaultValue": {
               "kind": "numberValueNode",
               "number": 4
+            },
+            "defaultValueStrategy": "omitted",
+            "kind": "instructionArgumentNode",
+            "name": "discriminator",
+            "type": {
+              "endian": "le",
+              "format": "u8",
+              "kind": "numberTypeNode"
             }
           },
           {
             "kind": "instructionArgumentNode",
             "name": "dataLength",
             "type": {
-              "kind": "numberTypeNode",
+              "endian": "le",
               "format": "u64",
-              "endian": "le"
+              "kind": "numberTypeNode"
             }
           }
         ],
@@ -294,25 +302,17 @@
             "name": "discriminator",
             "offset": 0
           }
-        ]
+        ],
+        "kind": "instructionNode",
+        "name": "reallocate"
       }
     ],
-    "definedTypes": [],
+    "kind": "programNode",
+    "name": "splRecord",
     "pdas": [],
-    "errors": [
-      {
-        "kind": "errorNode",
-        "name": "incorrectAuthority",
-        "code": 0,
-        "message": "Incorrect authority provided on update or delete"
-      },
-      {
-        "kind": "errorNode",
-        "name": "overflow",
-        "code": 1,
-        "message": "Calculation overflow"
-      }
-    ]
+    "publicKey": "recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5",
+    "version": "0.4.0"
   },
-  "additionalPrograms": []
+  "standard": "codama",
+  "version": "1.0.0"
 }

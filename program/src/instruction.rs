@@ -1,5 +1,7 @@
 //! Program instructions
 
+#[cfg(feature = "codama")]
+use codama::{codama, CodamaInstructions};
 use {
     crate::id,
     solana_instruction::{AccountMeta, Instruction},
@@ -10,6 +12,7 @@ use {
 
 /// Instructions supported by the program
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "codama", derive(CodamaInstructions))]
 pub enum RecordInstruction<'a> {
     /// Create a new record
     ///
@@ -17,6 +20,8 @@ pub enum RecordInstruction<'a> {
     ///
     /// 0. `[writable]` Record account, must be uninitialized
     /// 1. `[]` Record authority
+    #[cfg_attr(feature = "codama", codama(account(name = "record_account", writable)))]
+    #[cfg_attr(feature = "codama", codama(account(name = "authority")))]
     Initialize,
 
     /// Write to the provided record account
@@ -25,10 +30,14 @@ pub enum RecordInstruction<'a> {
     ///
     /// 0. `[writable]` Record account, must be previously initialized
     /// 1. `[signer]` Current record authority
+    #[cfg_attr(feature = "codama", codama(account(name = "record_account", writable)))]
+    #[cfg_attr(feature = "codama", codama(account(name = "authority", signer)))]
     Write {
         /// Offset to start writing record, expressed as `u64`.
         offset: u64,
         /// Data to replace the existing record data
+        #[cfg_attr(feature = "codama", codama(type = bytes))]
+        #[cfg_attr(feature = "codama", codama(size_prefix = number(u32)))]
         data: &'a [u8],
     },
 
@@ -39,6 +48,9 @@ pub enum RecordInstruction<'a> {
     /// 0. `[writable]` Record account, must be previously initialized
     /// 1. `[signer]` Current record authority
     /// 2. `[]` New record authority
+    #[cfg_attr(feature = "codama", codama(account(name = "record_account", writable)))]
+    #[cfg_attr(feature = "codama", codama(account(name = "authority", signer)))]
+    #[cfg_attr(feature = "codama", codama(account(name = "new_authority")))]
     SetAuthority,
 
     /// Close the provided record account, draining lamports to recipient
@@ -49,6 +61,9 @@ pub enum RecordInstruction<'a> {
     /// 0. `[writable]` Record account, must be previously initialized
     /// 1. `[signer]` Record authority
     /// 2. `[]` Receiver of account lamports
+    #[cfg_attr(feature = "codama", codama(account(name = "record_account", writable)))]
+    #[cfg_attr(feature = "codama", codama(account(name = "authority", signer)))]
+    #[cfg_attr(feature = "codama", codama(account(name = "receiver", writable)))]
     CloseAccount,
 
     /// Reallocate additional space in a record account
@@ -60,6 +75,8 @@ pub enum RecordInstruction<'a> {
     ///
     /// 0. `[writable]` The record account to reallocate
     /// 1. `[signer]` The account's owner
+    #[cfg_attr(feature = "codama", codama(account(name = "record_account", writable)))]
+    #[cfg_attr(feature = "codama", codama(account(name = "authority", signer)))]
     Reallocate {
         /// The length of the data to hold in the record account excluding meta
         /// data

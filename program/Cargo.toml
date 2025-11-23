@@ -9,9 +9,11 @@ edition = "2021"
 
 [features]
 no-entrypoint = []
+codama = ["dep:codama"]
 
 [dependencies]
 bytemuck = { version = "1.23.1", features = ["derive"] }
+codama = { version = "0.6.4", optional = true }
 num-derive = "0.4"
 num-traits = "0.2"
 solana-account-info = "3.0.0"
@@ -31,6 +33,11 @@ solana-program-test = "3.0.10"
 solana-system-interface = "2"
 solana-transaction = "3.0.0"
 solana-transaction-error = "3.0.0"
+
+[build-dependencies]
+codama = "0.6.4"
+codama-korok-plugins = "0.6.4"
+serde_json = "1.0"
 
 [lib]
 crate-type = ["cdylib", "lib"]
