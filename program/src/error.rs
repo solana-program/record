@@ -1,9 +1,12 @@
 //! Error types
 
+#[cfg(feature = "codama")]
+use codama::CodamaErrors;
 use {num_derive::FromPrimitive, solana_program_error::ProgramError, thiserror::Error};
 
 /// Errors that may be returned by the program.
 #[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
+#[cfg_attr(feature = "codama", derive(CodamaErrors))]
 pub enum RecordError {
     /// Incorrect authority provided on update or delete
     #[error("Incorrect authority provided on update or delete")]

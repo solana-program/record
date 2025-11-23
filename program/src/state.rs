@@ -1,4 +1,6 @@
 //! Program state
+#[cfg(feature = "codama")]
+use codama::{codama, CodamaAccount};
 use {
     bytemuck::{Pod, Zeroable},
     solana_program_pack::IsInitialized,
@@ -8,8 +10,11 @@ use {
 /// Header type for recorded account data
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
+#[cfg_attr(feature = "codama", derive(CodamaAccount))]
+#[cfg_attr(feature = "codama", codama(discriminator(field = "version")))]
 pub struct RecordData {
     /// Struct version, allows for upgrades to the program
+    #[cfg_attr(feature = "codama", codama(default_value = 1))]
     pub version: u8,
 
     /// The account allowed to update the data

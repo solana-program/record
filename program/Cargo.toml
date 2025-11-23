@@ -9,9 +9,11 @@ edition = "2021"
 
 [features]
 no-entrypoint = []
+codama = ["dep:codama"]
 
 [dependencies]
 bytemuck = { version = "1.23.1", features = ["derive"] }
+codama = { version = "0.6.4", optional = true }
 num-derive = "0.4"
 num-traits = "0.2"
 solana-account-info = "3.0.0"
