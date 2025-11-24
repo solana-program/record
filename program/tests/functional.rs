@@ -1,695 +1,732 @@
 use {
-    solana_instruction::{error::InstructionError, AccountMeta, Instruction},
-    solana_keypair::{Keypair, Signer},
-    solana_program_test::*,
+    mollusk_svm::{result::Check, Mollusk},
+    solana_account::Account,
+    solana_instruction::{AccountMeta, Instruction},
+    solana_program_error::ProgramError,
     solana_pubkey::Pubkey,
     solana_rent::Rent,
     solana_system_interface::instruction as system_instruction,
-    solana_transaction::Transaction,
-    solana_transaction_error::TransactionError,
-    spl_record::{
-        error::RecordError, id, instruction, processor::process_instruction, state::RecordData,
-    },
+    spl_record::{error::RecordError, id, instruction, state::RecordData},
 };
 
-fn program_test() -> ProgramTest {
-    ProgramTest::new("spl_record", id(), processor!(process_instruction))
-}
-
-async fn initialize_storage_account(
-    context: &mut ProgramTestContext,
-    authority: &Keypair,
-    account: &Keypair,
+fn initialize_instructions(
+    payer: &Pubkey,
+    authority: &Pubkey,
+    account: &Pubkey,
     data: &[u8],
-) {
+) -> [Instruction; 3] {
     let account_length = std::mem::size_of::<RecordData>()
         .checked_add(data.len())
         .unwrap();
-    let transaction = Transaction::new_signed_with_payer(
-        &[
-            system_instruction::create_account(
-                &context.payer.pubkey(),
-                &account.pubkey(),
-                1.max(Rent::default().minimum_balance(account_length)),
-                account_length as u64,
-                &id(),
-            ),
-            instruction::initialize(&account.pubkey(), &authority.pubkey()),
-            instruction::write(&account.pubkey(), &authority.pubkey(), 0, data),
-        ],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, account, authority],
-        context.last_blockhash,
-    );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
-        .unwrap();
+    [
+        system_instruction::create_account(
+            payer,
+            account,
+            1.max(Rent::default().minimum_balance(account_length)),
+            account_length as u64,
+            &id(),
+        ),
+        instruction::initialize(account, authority),
+        instruction::write(account, authority, 0, data),
+    ]
 }
 
-#[tokio::test]
-async fn initialize_success() {
-    let mut context = program_test().start_with_context().await;
+#[test]
+fn initialize_success() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let authority = Keypair::new();
-    let account = Keypair::new();
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
     let data = &[111u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
-    let account = context
-        .banks_client
-        .get_account(account.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    let account_data =
-        bytemuck::try_from_bytes::<RecordData>(&account.data[..RecordData::WRITABLE_START_INDEX])
-            .unwrap();
-    assert_eq!(account_data.authority, authority.pubkey());
-    assert_eq!(account_data.version, RecordData::CURRENT_VERSION);
-    assert_eq!(&account.data[RecordData::WRITABLE_START_INDEX..], data);
+    let ixs = initialize_instructions(&payer, &authority, &account, data);
+    let expected_data = [RecordData::CURRENT_VERSION]
+        .into_iter()
+        .chain(authority.to_bytes())
+        .chain(*data)
+        .collect::<Vec<_>>();
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::account(&account).data(&expected_data).build()],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
+    );
 }
 
-#[tokio::test]
-async fn initialize_with_seed_success() {
-    let context = program_test().start_with_context().await;
+#[test]
+fn initialize_with_seed_success() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let authority = Keypair::new();
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
     let seed = "storage";
-    let account = Pubkey::create_with_seed(&authority.pubkey(), seed, &id()).unwrap();
+    let account = Pubkey::create_with_seed(&authority, seed, &id()).unwrap();
     let data = &[111u8; 8];
     let account_length = std::mem::size_of::<RecordData>()
         .checked_add(data.len())
         .unwrap();
-    let transaction = Transaction::new_signed_with_payer(
+    let ixs = [
+        system_instruction::create_account_with_seed(
+            &payer,
+            &account,
+            &authority,
+            seed,
+            1.max(Rent::default().minimum_balance(account_length)),
+            account_length as u64,
+            &id(),
+        ),
+        instruction::initialize(&account, &authority),
+        instruction::write(&account, &authority, 0, data),
+    ];
+    let expected_data = [RecordData::CURRENT_VERSION]
+        .into_iter()
+        .chain(authority.to_bytes())
+        .chain(*data)
+        .collect::<Vec<_>>();
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::account(&account).data(&expected_data).build()],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
         &[
-            system_instruction::create_account_with_seed(
-                &context.payer.pubkey(),
-                &account,
-                &authority.pubkey(),
-                seed,
-                1.max(Rent::default().minimum_balance(account_length)),
-                account_length as u64,
-                &id(),
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
             ),
-            instruction::initialize(&account, &authority.pubkey()),
-            instruction::write(&account, &authority.pubkey(), 0, data),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
         ],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &authority],
-        context.last_blockhash,
     );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
-        .unwrap();
-    let account = context
-        .banks_client
-        .get_account(account)
-        .await
-        .unwrap()
-        .unwrap();
-    let account_data =
-        bytemuck::try_from_bytes::<RecordData>(&account.data[..RecordData::WRITABLE_START_INDEX])
-            .unwrap();
-    assert_eq!(account_data.authority, authority.pubkey());
-    assert_eq!(account_data.version, RecordData::CURRENT_VERSION);
-    assert_eq!(&account.data[RecordData::WRITABLE_START_INDEX..], data);
 }
 
-#[tokio::test]
-async fn initialize_twice_fail() {
-    let mut context = program_test().start_with_context().await;
+#[test]
+fn initialize_twice_fail() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let authority = Keypair::new();
-    let account = Keypair::new();
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
     let data = &[111u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-    let transaction = Transaction::new_signed_with_payer(
-        &[instruction::initialize(
-            &account.pubkey(),
-            &authority.pubkey(),
-        )],
-        Some(&context.payer.pubkey()),
-        &[&context.payer],
-        context.last_blockhash,
-    );
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(0, InstructionError::AccountAlreadyInitialized)
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::initialize(&account, &authority));
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::AccountAlreadyInitialized)],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn write_success() {
-    let mut context = program_test().start_with_context().await;
+#[test]
+fn write_success() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
     let new_data = &[200u8; 8];
-    let transaction = Transaction::new_signed_with_payer(
-        &[instruction::write(
-            &account.pubkey(),
-            &authority.pubkey(),
-            0,
-            new_data,
-        )],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &authority],
-        context.last_blockhash,
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::write(&account, &authority, 0, new_data));
+    let expected_data = [RecordData::CURRENT_VERSION]
+        .into_iter()
+        .chain(authority.to_bytes())
+        .chain(*new_data)
+        .collect::<Vec<_>>();
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::account(&account).data(&expected_data).build()],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
-        .unwrap();
-
-    let account = context
-        .banks_client
-        .get_account(account.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    let account_data =
-        bytemuck::try_from_bytes::<RecordData>(&account.data[..RecordData::WRITABLE_START_INDEX])
-            .unwrap();
-    assert_eq!(account_data.authority, authority.pubkey());
-    assert_eq!(account_data.version, RecordData::CURRENT_VERSION);
-    assert_eq!(&account.data[RecordData::WRITABLE_START_INDEX..], new_data);
 }
 
-#[tokio::test]
-async fn write_fail_wrong_authority() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
+#[test]
+fn write_fail_wrong_authority() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let wrong_authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
     let new_data = &[200u8; 8];
-    let wrong_authority = Keypair::new();
-    let transaction = Transaction::new_signed_with_payer(
-        &[instruction::write(
-            &account.pubkey(),
-            &wrong_authority.pubkey(),
-            0,
-            new_data,
-        )],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &wrong_authority],
-        context.last_blockhash,
-    );
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(
-            0,
-            InstructionError::Custom(RecordError::IncorrectAuthority as u32)
-        )
-    );
-}
-
-#[tokio::test]
-async fn write_fail_unsigned() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
-    let data = &[200u8; 8];
-
-    let transaction = Transaction::new_signed_with_payer(
-        &[Instruction {
-            program_id: id(),
-            accounts: vec![
-                AccountMeta::new(account.pubkey(), false),
-                AccountMeta::new_readonly(authority.pubkey(), false),
-            ],
-            data: instruction::RecordInstruction::Write { offset: 0, data }.pack(),
-        }],
-        Some(&context.payer.pubkey()),
-        &[&context.payer],
-        context.last_blockhash,
-    );
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::write(&account, &wrong_authority, 0, new_data));
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::Custom(
+            RecordError::IncorrectAuthority as u32,
+        ))],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (wrong_authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn close_account_success() {
-    let mut context = program_test().start_with_context().await;
+#[test]
+fn write_fail_unsigned() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(Instruction {
+        program_id: id(),
+        accounts: vec![
+            AccountMeta::new(account, false),
+            AccountMeta::new_readonly(authority, false),
+        ],
+        data: instruction::RecordInstruction::Write { offset: 0, data }.pack(),
+    });
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::MissingRequiredSignature)],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
+    );
+}
 
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    let account_length = std::mem::size_of::<RecordData>()
-        .checked_add(data.len())
-        .unwrap();
-    initialize_storage_account(&mut context, &authority, &account, data).await;
+#[test]
+fn close_account_success() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
     let recipient = Pubkey::new_unique();
-
-    let transaction = Transaction::new_signed_with_payer(
-        &[instruction::close_account(
-            &account.pubkey(),
-            &authority.pubkey(),
-            &recipient,
-        )],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &authority],
-        context.last_blockhash,
-    );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
+    let account_length = std::mem::size_of::<RecordData>()
+        .checked_add(data.len())
         .unwrap();
-
-    let account = context
-        .banks_client
-        .get_account(recipient)
-        .await
-        .unwrap()
-        .unwrap();
-    assert_eq!(
-        account.lamports,
-        1.max(Rent::default().minimum_balance(account_length))
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::close_account(&account, &authority, &recipient));
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::account(&recipient)
+            .lamports(Rent::default().minimum_balance(account_length))
+            .build()],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (recipient, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn close_account_fail_wrong_authority() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
-    let wrong_authority = Keypair::new();
-    let transaction = Transaction::new_signed_with_payer(
-        &[Instruction {
-            program_id: id(),
-            accounts: vec![
-                AccountMeta::new(account.pubkey(), false),
-                AccountMeta::new_readonly(wrong_authority.pubkey(), true),
-                AccountMeta::new(Pubkey::new_unique(), false),
-            ],
-            data: instruction::RecordInstruction::CloseAccount.pack(),
-        }],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &wrong_authority],
-        context.last_blockhash,
-    );
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(
-            0,
-            InstructionError::Custom(RecordError::IncorrectAuthority as u32)
-        )
-    );
-}
-
-#[tokio::test]
-async fn close_account_fail_unsigned() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8, 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
-    let transaction = Transaction::new_signed_with_payer(
-        &[Instruction {
-            program_id: id(),
-            accounts: vec![
-                AccountMeta::new(account.pubkey(), false),
-                AccountMeta::new_readonly(authority.pubkey(), false),
-                AccountMeta::new(Pubkey::new_unique(), false),
-            ],
-            data: instruction::RecordInstruction::CloseAccount.pack(),
-        }],
-        Some(&context.payer.pubkey()),
-        &[&context.payer],
-        context.last_blockhash,
-    );
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+#[test]
+fn close_account_fail_wrong_authority() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let wrong_authority = Pubkey::new_unique();
+    let recipient = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::close_account(
+        &account,
+        &wrong_authority,
+        &recipient,
+    ));
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::Custom(
+            RecordError::IncorrectAuthority as u32,
+        ))],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (wrong_authority, Account::default()),
+            (recipient, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn set_authority_success() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-    let new_authority = Keypair::new();
-
-    let transaction = Transaction::new_signed_with_payer(
-        &[instruction::set_authority(
-            &account.pubkey(),
-            &authority.pubkey(),
-            &new_authority.pubkey(),
-        )],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &authority],
-        context.last_blockhash,
-    );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
-        .unwrap();
-
-    let account_handle = context
-        .banks_client
-        .get_account(account.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    let account_data = bytemuck::try_from_bytes::<RecordData>(
-        &account_handle.data[..RecordData::WRITABLE_START_INDEX],
-    )
-    .unwrap();
-    assert_eq!(account_data.authority, new_authority.pubkey());
-
-    let new_data = &[200u8; 8];
-    let transaction = Transaction::new_signed_with_payer(
-        &[instruction::write(
-            &account.pubkey(),
-            &new_authority.pubkey(),
-            0,
-            new_data,
-        )],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &new_authority],
-        context.last_blockhash,
-    );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
-        .unwrap();
-
-    let account_handle = context
-        .banks_client
-        .get_account(account.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-    let account_data = bytemuck::try_from_bytes::<RecordData>(
-        &account_handle.data[..RecordData::WRITABLE_START_INDEX],
-    )
-    .unwrap();
-    assert_eq!(account_data.authority, new_authority.pubkey());
-    assert_eq!(account_data.version, RecordData::CURRENT_VERSION);
-    assert_eq!(
-        &account_handle.data[RecordData::WRITABLE_START_INDEX..],
-        new_data,
+#[test]
+fn close_account_fail_unsigned() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let recipient = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(Instruction {
+        program_id: id(),
+        accounts: vec![
+            AccountMeta::new(account, false),
+            AccountMeta::new_readonly(authority, false),
+            AccountMeta::new(recipient, false),
+        ],
+        data: instruction::RecordInstruction::CloseAccount.pack(),
+    });
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::MissingRequiredSignature)],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (recipient, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn set_authority_fail_wrong_authority() {
-    let mut context = program_test().start_with_context().await;
+#[test]
+fn set_authority_success() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
-    let wrong_authority = Keypair::new();
-    let transaction = Transaction::new_signed_with_payer(
-        &[Instruction {
-            program_id: id(),
-            accounts: vec![
-                AccountMeta::new(account.pubkey(), false),
-                AccountMeta::new_readonly(wrong_authority.pubkey(), true),
-                AccountMeta::new(Pubkey::new_unique(), false),
-            ],
-            data: instruction::RecordInstruction::SetAuthority.pack(),
-        }],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &wrong_authority],
-        context.last_blockhash,
-    );
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(
-            0,
-            InstructionError::Custom(RecordError::IncorrectAuthority as u32)
-        )
-    );
-}
-
-#[tokio::test]
-async fn set_authority_fail_unsigned() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
-    let transaction = Transaction::new_signed_with_payer(
-        &[Instruction {
-            program_id: id(),
-            accounts: vec![
-                AccountMeta::new(account.pubkey(), false),
-                AccountMeta::new_readonly(authority.pubkey(), false),
-                AccountMeta::new(Pubkey::new_unique(), false),
-            ],
-            data: instruction::RecordInstruction::SetAuthority.pack(),
-        }],
-        Some(&context.payer.pubkey()),
-        &[&context.payer],
-        context.last_blockhash,
-    );
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let new_authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::set_authority(
+        &account,
+        &authority,
+        &new_authority,
+    ));
+    let expected_data = [RecordData::CURRENT_VERSION]
+        .into_iter()
+        .chain(new_authority.to_bytes())
+        .chain(*data)
+        .collect::<Vec<_>>();
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::account(&account).data(&expected_data).build()],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (new_authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
 }
 
-#[tokio::test]
-async fn reallocate_success() {
-    let mut context = program_test().start_with_context().await;
+#[test]
+fn set_authority_fail_wrong_authority() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let wrong_authority = Pubkey::new_unique();
+    let new_authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::set_authority(
+        &account,
+        &wrong_authority,
+        &new_authority,
+    ));
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::Custom(
+            RecordError::IncorrectAuthority as u32,
+        ))],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (wrong_authority, Account::default()),
+            (new_authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
+    );
+}
 
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
+#[test]
+fn set_authority_fail_unsigned() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let new_authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(Instruction {
+        program_id: id(),
+        accounts: vec![
+            AccountMeta::new(account, false),
+            AccountMeta::new_readonly(authority, false),
+            AccountMeta::new(new_authority, false),
+        ],
+        data: instruction::RecordInstruction::SetAuthority.pack(),
+    });
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::MissingRequiredSignature)],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (new_authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
+    );
+}
 
+#[test]
+fn reallocate_success() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
     let new_data_length = 16u64;
-    let expected_account_data_length = RecordData::WRITABLE_START_INDEX
-        .checked_add(new_data_length as usize)
-        .unwrap();
 
     let delta_account_data_length = new_data_length.saturating_sub(data.len() as u64);
     let additional_lamports_needed =
         Rent::default().minimum_balance(delta_account_data_length as usize);
-
-    let transaction = Transaction::new_signed_with_payer(
-        &[
-            instruction::reallocate(&account.pubkey(), &authority.pubkey(), new_data_length),
-            system_instruction::transfer(
-                &context.payer.pubkey(),
-                &account.pubkey(),
-                additional_lamports_needed,
-            ),
-        ],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &authority],
-        context.last_blockhash,
-    );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
-        .unwrap();
-
-    let account_handle = context
-        .banks_client
-        .get_account(account.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-
-    assert_eq!(account_handle.data.len(), expected_account_data_length);
-
-    // reallocate to a smaller length
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::reallocate(
+        &account,
+        &authority,
+        new_data_length,
+    ));
+    ixs.push(system_instruction::transfer(
+        &payer,
+        &account,
+        additional_lamports_needed,
+    ));
     let old_data_length = 8u64;
-    let transaction = Transaction::new_signed_with_payer(
-        &[instruction::reallocate(
-            &account.pubkey(),
-            &authority.pubkey(),
-            old_data_length,
-        )],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &authority],
-        context.last_blockhash,
+    ixs.push(instruction::reallocate(
+        &account,
+        &authority,
+        old_data_length,
+    ));
+    let expanded_data = [RecordData::CURRENT_VERSION]
+        .into_iter()
+        .chain(authority.to_bytes())
+        .chain(*data)
+        .chain(vec![0u8; delta_account_data_length as usize])
+        .collect::<Vec<_>>();
+    let shrunk_data = [RecordData::CURRENT_VERSION]
+        .into_iter()
+        .chain(authority.to_bytes())
+        .chain(*data)
+        .chain(vec![0u8; delta_account_data_length as usize])
+        .collect::<Vec<_>>();
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::account(&account).data(&expanded_data).build()],
+        [Check::success()],
+        [Check::account(&account).data(&shrunk_data).build()],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
-    context
-        .banks_client
-        .process_transaction(transaction)
-        .await
-        .unwrap();
-
-    let account = context
-        .banks_client
-        .get_account(account.pubkey())
-        .await
-        .unwrap()
-        .unwrap();
-
-    assert_eq!(account.data.len(), expected_account_data_length);
 }
 
-#[tokio::test]
-async fn reallocate_fail_wrong_authority() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
+#[test]
+fn reallocate_fail_wrong_authority() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let wrong_authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
     let new_data_length = 16u64;
     let delta_account_data_length = new_data_length.saturating_sub(data.len() as u64);
     let additional_lamports_needed =
         Rent::default().minimum_balance(delta_account_data_length as usize);
-
-    let wrong_authority = Keypair::new();
-    let transaction = Transaction::new_signed_with_payer(
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(system_instruction::transfer(
+        &payer,
+        &account,
+        additional_lamports_needed,
+    ));
+    ixs.push(instruction::reallocate(
+        &account,
+        &wrong_authority,
+        new_data_length,
+    ));
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::Custom(
+            RecordError::IncorrectAuthority as u32,
+        ))],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
         &[
-            Instruction {
-                program_id: id(),
-                accounts: vec![
-                    AccountMeta::new(account.pubkey(), false),
-                    AccountMeta::new(wrong_authority.pubkey(), true),
-                ],
-                data: instruction::RecordInstruction::Reallocate {
-                    data_length: new_data_length,
-                }
-                .pack(),
-            },
-            system_instruction::transfer(
-                &context.payer.pubkey(),
-                &account.pubkey(),
-                additional_lamports_needed,
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
             ),
+            (authority, Account::default()),
+            (wrong_authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
         ],
-        Some(&context.payer.pubkey()),
-        &[&context.payer, &wrong_authority],
-        context.last_blockhash,
-    );
-
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(
-            0,
-            InstructionError::Custom(RecordError::IncorrectAuthority as u32)
-        )
     );
 }
 
-#[tokio::test]
-async fn reallocate_fail_unsigned() {
-    let mut context = program_test().start_with_context().await;
-
-    let authority = Keypair::new();
-    let account = Keypair::new();
-    let data = &[222u8; 8];
-    initialize_storage_account(&mut context, &authority, &account, data).await;
-
+#[test]
+fn reallocate_fail_unsigned() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Pubkey::new_unique();
+    let authority = Pubkey::new_unique();
+    let account = Pubkey::new_unique();
+    let data = &[111u8; 8];
     let new_data_length = 16u64;
     let delta_account_data_length = new_data_length.saturating_sub(data.len() as u64);
     let additional_lamports_needed =
         Rent::default().minimum_balance(delta_account_data_length as usize);
-
-    let transaction = Transaction::new_signed_with_payer(
-        &[
-            Instruction {
-                program_id: id(),
-                accounts: vec![
-                    AccountMeta::new(account.pubkey(), false),
-                    AccountMeta::new(authority.pubkey(), false),
-                ],
-                data: instruction::RecordInstruction::Reallocate {
-                    data_length: new_data_length,
-                }
-                .pack(),
-            },
-            system_instruction::transfer(
-                &context.payer.pubkey(),
-                &account.pubkey(),
-                additional_lamports_needed,
-            ),
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(system_instruction::transfer(
+        &payer,
+        &account,
+        additional_lamports_needed,
+    ));
+    ixs.push(Instruction {
+        program_id: id(),
+        accounts: vec![
+            AccountMeta::new(account, false),
+            AccountMeta::new(authority, false),
         ],
-        Some(&context.payer.pubkey()),
-        &[&context.payer],
-        context.last_blockhash,
-    );
-
-    assert_eq!(
-        context
-            .banks_client
-            .process_transaction(transaction)
-            .await
-            .unwrap_err()
-            .unwrap(),
-        TransactionError::InstructionError(0, InstructionError::MissingRequiredSignature)
+        data: instruction::RecordInstruction::Reallocate {
+            data_length: new_data_length,
+        }
+        .pack(),
+    });
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::MissingRequiredSignature)],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
     );
 }
