@@ -28,7 +28,7 @@ thiserror = "2.0.12"
 [dev-dependencies]
 mollusk-svm = "0.7.0"
 solana-account = "3.0.0"
-solana-system-interface = "2"
+solana-system-interface = "3"
 
 [lib]
 crate-type = ["cdylib", "lib"]
