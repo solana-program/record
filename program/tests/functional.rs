@@ -1,18 +1,18 @@
 use {
     mollusk_svm::{result::Check, Mollusk},
     solana_account::Account,
+    solana_address::Address,
     solana_instruction::{AccountMeta, Instruction},
     solana_program_error::ProgramError,
-    solana_pubkey::Pubkey,
     solana_rent::Rent,
     solana_system_interface::instruction as system_instruction,
     spl_record::{error::RecordError, id, instruction, state::RecordData},
 };
 
 fn initialize_instructions(
-    payer: &Pubkey,
-    authority: &Pubkey,
-    account: &Pubkey,
+    payer: &Address,
+    authority: &Address,
+    account: &Address,
     data: &[u8],
 ) -> [Instruction; 3] {
     let account_length = std::mem::size_of::<RecordData>()
@@ -35,9 +35,9 @@ fn initialize_instructions(
 fn initialize_success() {
     let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let ixs = initialize_instructions(&payer, &authority, &account, data);
     let expected_data = [RecordData::CURRENT_VERSION]
@@ -74,10 +74,10 @@ fn initialize_success() {
 fn initialize_with_seed_success() {
     let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
     let seed = "storage";
-    let account = Pubkey::create_with_seed(&authority, seed, &id()).unwrap();
+    let account = Address::create_with_seed(&authority, seed, &id()).unwrap();
     let data = &[111u8; 8];
     let account_length = std::mem::size_of::<RecordData>()
         .checked_add(data.len())
@@ -129,9 +129,9 @@ fn initialize_with_seed_success() {
 fn initialize_twice_fail() {
     let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
     ixs.push(instruction::initialize(&account, &authority));
@@ -165,9 +165,9 @@ fn initialize_twice_fail() {
 fn write_success() {
     let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let new_data = &[200u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
@@ -206,10 +206,10 @@ fn write_success() {
 #[test]
 fn write_fail_wrong_authority() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let wrong_authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let wrong_authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let new_data = &[200u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
@@ -246,9 +246,9 @@ fn write_fail_wrong_authority() {
 #[test]
 fn write_fail_unsigned() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
     ixs.push(Instruction {
@@ -288,10 +288,10 @@ fn write_fail_unsigned() {
 #[test]
 fn close_account_success() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let recipient = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let recipient = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let account_length = std::mem::size_of::<RecordData>()
         .checked_add(data.len())
@@ -330,11 +330,11 @@ fn close_account_success() {
 #[test]
 fn close_account_fail_wrong_authority() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let wrong_authority = Pubkey::new_unique();
-    let recipient = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let wrong_authority = Address::new_unique();
+    let recipient = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
     ixs.push(instruction::close_account(
@@ -375,10 +375,10 @@ fn close_account_fail_wrong_authority() {
 #[test]
 fn close_account_fail_unsigned() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let recipient = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let recipient = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
     ixs.push(Instruction {
@@ -421,10 +421,10 @@ fn close_account_fail_unsigned() {
 fn set_authority_success() {
     let mollusk = Mollusk::new(&id(), "spl_record");
 
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let new_authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let new_authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
     ixs.push(instruction::set_authority(
@@ -467,11 +467,11 @@ fn set_authority_success() {
 #[test]
 fn set_authority_fail_wrong_authority() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let wrong_authority = Pubkey::new_unique();
-    let new_authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let wrong_authority = Address::new_unique();
+    let new_authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
     ixs.push(instruction::set_authority(
@@ -512,10 +512,10 @@ fn set_authority_fail_wrong_authority() {
 #[test]
 fn set_authority_fail_unsigned() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let new_authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let new_authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
     ixs.push(Instruction {
@@ -557,9 +557,9 @@ fn set_authority_fail_unsigned() {
 #[test]
 fn reallocate_success() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let new_data_length = 16u64;
 
@@ -626,10 +626,10 @@ fn reallocate_success() {
 #[test]
 fn reallocate_fail_wrong_authority() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let wrong_authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let wrong_authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let new_data_length = 16u64;
     let delta_account_data_length = new_data_length.saturating_sub(data.len() as u64);
@@ -679,9 +679,9 @@ fn reallocate_fail_wrong_authority() {
 #[test]
 fn reallocate_fail_unsigned() {
     let mollusk = Mollusk::new(&id(), "spl_record");
-    let payer = Pubkey::new_unique();
-    let authority = Pubkey::new_unique();
-    let account = Pubkey::new_unique();
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let account = Address::new_unique();
     let data = &[111u8; 8];
     let new_data_length = 16u64;
     let delta_account_data_length = new_data_length.saturating_sub(data.len() as u64);

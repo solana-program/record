@@ -3,13 +3,13 @@
 use {
     crate::{error::RecordError, instruction::RecordInstruction, state::RecordData},
     solana_account_info::{next_account_info, AccountInfo},
+    solana_address::Address,
     solana_msg::msg,
     solana_program_error::{ProgramError, ProgramResult},
     solana_program_pack::IsInitialized,
-    solana_pubkey::Pubkey,
 };
 
-fn check_authority(authority_info: &AccountInfo, expected_authority: &Pubkey) -> ProgramResult {
+fn check_authority(authority_info: &AccountInfo, expected_authority: &Address) -> ProgramResult {
     if expected_authority != authority_info.key {
         msg!("Incorrect record authority provided");
         return Err(RecordError::IncorrectAuthority.into());
@@ -23,7 +23,7 @@ fn check_authority(authority_info: &AccountInfo, expected_authority: &Pubkey) ->
 
 /// Instruction processor
 pub fn process_instruction(
-    _program_id: &Pubkey,
+    _program_id: &Address,
     accounts: &[AccountInfo],
     input: &[u8],
 ) -> ProgramResult {
