@@ -35,12 +35,12 @@
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/solana-program/token-2022.git"
+        "url": "git+https://github.com/solana-program/record.git"
     },
     "bugs": {
-        "url": "https://github.com/solana-program/token-2022/issues"
+        "url": "https://github.com/solana-program/record/issues"
     },
-    "homepage": "https://github.com/solana-program/token-2022#readme",
+    "homepage": "https://github.com/solana-program/record#readme",
     "peerDependencies": {
         "@solana/kit": "^4.0",
         "@solana/sysvars": "^4.0"
