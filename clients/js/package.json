@@ -42,8 +42,7 @@
     },
     "homepage": "https://github.com/solana-program/token-2022#readme",
     "peerDependencies": {
-        "@solana/kit": "^5.0",
-        "@solana/sysvars": "^4.0"
+        "@solana/kit": "^5.0"
     },
     "devDependencies": {
         "@ava/typescript": "^6.0.0",
