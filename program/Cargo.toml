@@ -14,21 +14,22 @@ no-entrypoint = []
 bytemuck = { version = "1.23.1", features = ["derive"] }
 num-derive = "0.4"
 num-traits = "0.2"
-solana-account-info = "3.0.0"
-solana-instruction = { version = "3.0.0", features = ["std"] }
+solana-account-info = "3.1.0"
+solana-address = { version = "2.0.0", features = ["bytemuck", "decode"] }
+solana-instruction = { version = "3.1.0", features = ["std"] }
 solana-msg = "3.0.0"
-solana-program-entrypoint = "3.0.0"
+solana-program-entrypoint = "3.1.0"
 solana-program-error = "3.0.0"
 solana-program-pack = "3.0.0"
-solana-pubkey = { version = "3.0.0", features = ["bytemuck"] }
 solana-rent = "3.0.0"
 solana-security-txt = "1.1.2"
 thiserror = "2.0.12"
 
 [dev-dependencies]
 mollusk-svm = "0.7.0"
-solana-account = "3.0.0"
-solana-system-interface = "2"
+solana-account = "3.1.0"
+solana-address = { version = "2.0.0", features = ["atomic"] }
+solana-system-interface = { version = "3", features = ["bincode"] }
 
 [lib]
 crate-type = ["cdylib", "lib"]

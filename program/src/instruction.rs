@@ -2,9 +2,9 @@
 
 use {
     crate::id,
+    solana_address::Address,
     solana_instruction::{AccountMeta, Instruction},
     solana_program_error::ProgramError,
-    solana_pubkey::Pubkey,
     std::mem::size_of,
 };
 
@@ -134,7 +134,7 @@ impl<'a> RecordInstruction<'a> {
 }
 
 /// Create a `RecordInstruction::Initialize` instruction
-pub fn initialize(record_account: &Pubkey, authority: &Pubkey) -> Instruction {
+pub fn initialize(record_account: &Address, authority: &Address) -> Instruction {
     Instruction {
         program_id: id(),
         accounts: vec![
@@ -146,7 +146,7 @@ pub fn initialize(record_account: &Pubkey, authority: &Pubkey) -> Instruction {
 }
 
 /// Create a `RecordInstruction::Write` instruction
-pub fn write(record_account: &Pubkey, signer: &Pubkey, offset: u64, data: &[u8]) -> Instruction {
+pub fn write(record_account: &Address, signer: &Address, offset: u64, data: &[u8]) -> Instruction {
     Instruction {
         program_id: id(),
         accounts: vec![
@@ -159,9 +159,9 @@ pub fn write(record_account: &Pubkey, signer: &Pubkey, offset: u64, data: &[u8])
 
 /// Create a `RecordInstruction::SetAuthority` instruction
 pub fn set_authority(
-    record_account: &Pubkey,
-    signer: &Pubkey,
-    new_authority: &Pubkey,
+    record_account: &Address,
+    signer: &Address,
+    new_authority: &Address,
 ) -> Instruction {
     Instruction {
         program_id: id(),
@@ -175,7 +175,11 @@ pub fn set_authority(
 }
 
 /// Create a `RecordInstruction::CloseAccount` instruction
-pub fn close_account(record_account: &Pubkey, signer: &Pubkey, receiver: &Pubkey) -> Instruction {
+pub fn close_account(
+    record_account: &Address,
+    signer: &Address,
+    receiver: &Address,
+) -> Instruction {
     Instruction {
         program_id: id(),
         accounts: vec![
@@ -188,7 +192,7 @@ pub fn close_account(record_account: &Pubkey, signer: &Pubkey, receiver: &Pubkey
 }
 
 /// Create a `RecordInstruction::Reallocate` instruction
-pub fn reallocate(record_account: &Pubkey, signer: &Pubkey, data_length: u64) -> Instruction {
+pub fn reallocate(record_account: &Address, signer: &Address, data_length: u64) -> Instruction {
     Instruction {
         program_id: id(),
         accounts: vec![
