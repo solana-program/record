@@ -18,7 +18,7 @@ solana-account-info = "3.1.0"
 solana-address = { version = "2.0.0", features = ["bytemuck", "decode"] }
 solana-instruction = { version = "3.1.0", features = ["std"] }
 solana-msg = "3.0.0"
-solana-program-entrypoint = "3.1.0"
+solana-program-entrypoint = "3.1.1"
 solana-program-error = "3.0.0"
 solana-program-pack = "3.0.0"
 solana-rent = "3.0.0"
