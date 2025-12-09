@@ -5,8 +5,6 @@ import {
   createRecord,
   createWriteInstruction,
   reallocateRecord,
-  createSetAuthorityInstruction,
-  createCloseRecordInstruction,
   RECORD_META_DATA_SIZE,
 } from '../src';
 import {
@@ -20,7 +18,6 @@ test('basic instructions flow', async t => {
   const payer = await generateKeyPairSignerWithSol(client);
 
   const recordAuthority = await generateKeyPairSigner();
-  const newRecordAuthority = await generateKeyPairSigner();
 
   const initialRecordSize = 0n;
   const newRecordSize = 5n;
