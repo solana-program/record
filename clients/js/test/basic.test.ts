@@ -15,7 +15,7 @@ import {
   sendAndConfirmInstructions,
 } from './_setup';
 
-test('basic instructions flow', async (t) => {
+test('basic instructions flow', async t => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
 

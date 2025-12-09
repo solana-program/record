@@ -34,12 +34,7 @@ export function expectSome<T>(value: T | null | undefined): T {
  * @internal
  */
 export function expectAddress<T extends string = string>(
-  value:
-    | Address<T>
-    | ProgramDerivedAddress<T>
-    | TransactionSigner<T>
-    | null
-    | undefined
+  value: Address<T> | ProgramDerivedAddress<T> | TransactionSigner<T> | null | undefined,
 ): Address<T> {
   if (!value) {
     throw new Error('Expected a Address.');
@@ -58,12 +53,7 @@ export function expectAddress<T extends string = string>(
  * @internal
  */
 export function expectProgramDerivedAddress<T extends string = string>(
-  value:
-    | Address<T>
-    | ProgramDerivedAddress<T>
-    | TransactionSigner<T>
-    | null
-    | undefined
+  value: Address<T> | ProgramDerivedAddress<T> | TransactionSigner<T> | null | undefined,
 ): ProgramDerivedAddress<T> {
   if (!value || !Array.isArray(value) || !isProgramDerivedAddress(value)) {
     throw new Error('Expected a ProgramDerivedAddress.');
@@ -76,12 +66,7 @@ export function expectProgramDerivedAddress<T extends string = string>(
  * @internal
  */
 export function expectTransactionSigner<T extends string = string>(
-  value:
-    | Address<T>
-    | ProgramDerivedAddress<T>
-    | TransactionSigner<T>
-    | null
-    | undefined
+  value: Address<T> | ProgramDerivedAddress<T> | TransactionSigner<T> | null | undefined,
 ): TransactionSigner<T> {
   if (!value || !isTransactionSigner(value)) {
     throw new Error('Expected a TransactionSigner.');
@@ -95,11 +80,7 @@ export function expectTransactionSigner<T extends string = string>(
  */
 export type ResolvedAccount<
   T extends string = string,
-  U extends
-    | Address<T>
-    | ProgramDerivedAddress<T>
-    | TransactionSigner<T>
-    | null =
+  U extends Address<T> | ProgramDerivedAddress<T> | TransactionSigner<T> | null =
     | Address<T>
     | ProgramDerivedAddress<T>
     | TransactionSigner<T>
@@ -123,11 +104,9 @@ export type InstructionWithByteDelta = {
  */
 export function getAccountMetaFactory(
   programAddress: Address,
-  optionalAccountStrategy: 'omitted' | 'programId'
+  optionalAccountStrategy: 'omitted' | 'programId',
 ) {
-  return (
-    account: ResolvedAccount
-  ): AccountMeta | AccountSignerMeta | undefined => {
+  return (account: ResolvedAccount): AccountMeta | AccountSignerMeta | undefined => {
     if (!account.value) {
       if (optionalAccountStrategy === 'omitted') return;
       return Object.freeze({
@@ -136,29 +115,19 @@ export function getAccountMetaFactory(
       });
     }
 
-    const writableRole = account.isWritable
-      ? AccountRole.WRITABLE
-      : AccountRole.READONLY;
+    const writableRole = account.isWritable ? AccountRole.WRITABLE : AccountRole.READONLY;
     return Object.freeze({
       address: expectAddress(account.value),
-      role: isTransactionSigner(account.value)
-        ? upgradeRoleToSigner(writableRole)
-        : writableRole,
+      role: isTransactionSigner(account.value) ? upgradeRoleToSigner(writableRole) : writableRole,
       ...(isTransactionSigner(account.value) ? { signer: account.value } : {}),
     });
   };
 }
 
 export function isTransactionSigner<TAddress extends string = string>(
-  value:
-    | Address<TAddress>
-    | ProgramDerivedAddress<TAddress>
-    | TransactionSigner<TAddress>
+  value: Address<TAddress> | ProgramDerivedAddress<TAddress> | TransactionSigner<TAddress>,
 ): value is TransactionSigner<TAddress> {
   return (
-    !!value &&
-    typeof value === 'object' &&
-    'address' in value &&
-    kitIsTransactionSigner(value)
+    !!value && typeof value === 'object' && 'address' in value && kitIsTransactionSigner(value)
   );
 }

@@ -51,8 +51,7 @@ export type SetAuthorityInstruction<
         ? WritableAccount<TAccountRecordAccount>
         : TAccountRecordAccount,
       TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
+        ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
       TAccountNewAuthority extends string
         ? ReadonlyAccount<TAccountNewAuthority>
@@ -66,10 +65,10 @@ export type SetAuthorityInstructionData = { discriminator: number };
 export type SetAuthorityInstructionDataArgs = {};
 
 export function getSetAuthorityInstructionDataEncoder(): FixedSizeEncoder<SetAuthorityInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([['discriminator', getU8Encoder()]]),
-    (value) => ({ ...value, discriminator: SET_AUTHORITY_DISCRIMINATOR })
-  );
+  return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
+    ...value,
+    discriminator: SET_AUTHORITY_DISCRIMINATOR,
+  }));
 }
 
 export function getSetAuthorityInstructionDataDecoder(): FixedSizeDecoder<SetAuthorityInstructionData> {
@@ -82,7 +81,7 @@ export function getSetAuthorityInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getSetAuthorityInstructionDataEncoder(),
-    getSetAuthorityInstructionDataDecoder()
+    getSetAuthorityInstructionDataDecoder(),
   );
 }
 
@@ -102,12 +101,8 @@ export function getSetAuthorityInstruction<
   TAccountNewAuthority extends string,
   TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
-  input: SetAuthorityInput<
-    TAccountRecordAccount,
-    TAccountAuthority,
-    TAccountNewAuthority
-  >,
-  config?: { programAddress?: TProgramAddress }
+  input: SetAuthorityInput<TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority>,
+  config?: { programAddress?: TProgramAddress },
 ): SetAuthorityInstruction<
   TProgramAddress,
   TAccountRecordAccount,
@@ -123,10 +118,7 @@ export function getSetAuthorityInstruction<
     authority: { value: input.authority ?? null, isWritable: false },
     newAuthority: { value: input.newAuthority ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
@@ -164,7 +156,7 @@ export function parseSetAuthorityInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSetAuthorityInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.
