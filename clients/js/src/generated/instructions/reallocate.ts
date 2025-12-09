@@ -51,8 +51,7 @@ export type ReallocateInstruction<
         ? WritableAccount<TAccountRecordAccount>
         : TAccountRecordAccount,
       TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
+        ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
       ...TRemainingAccounts,
     ]
@@ -71,7 +70,7 @@ export function getReallocateInstructionDataEncoder(): FixedSizeEncoder<Realloca
       ['discriminator', getU8Encoder()],
       ['dataLength', getU64Encoder()],
     ]),
-    (value) => ({ ...value, discriminator: REALLOCATE_DISCRIMINATOR })
+    value => ({ ...value, discriminator: REALLOCATE_DISCRIMINATOR }),
   );
 }
 
@@ -86,10 +85,7 @@ export function getReallocateInstructionDataCodec(): FixedSizeCodec<
   ReallocateInstructionDataArgs,
   ReallocateInstructionData
 > {
-  return combineCodec(
-    getReallocateInstructionDataEncoder(),
-    getReallocateInstructionDataDecoder()
-  );
+  return combineCodec(getReallocateInstructionDataEncoder(), getReallocateInstructionDataDecoder());
 }
 
 export type ReallocateInput<
@@ -107,12 +103,8 @@ export function getReallocateInstruction<
   TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
   input: ReallocateInput<TAccountRecordAccount, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress }
-): ReallocateInstruction<
-  TProgramAddress,
-  TAccountRecordAccount,
-  TAccountAuthority
-> {
+  config?: { programAddress?: TProgramAddress },
+): ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority> {
   // Program address.
   const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
 
@@ -121,29 +113,17 @@ export function getReallocateInstruction<
     recordAccount: { value: input.recordAccount ?? null, isWritable: true },
     authority: { value: input.authority ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   // Original args.
   const args = { ...input };
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.recordAccount),
-      getAccountMeta(accounts.authority),
-    ],
-    data: getReallocateInstructionDataEncoder().encode(
-      args as ReallocateInstructionDataArgs
-    ),
+    accounts: [getAccountMeta(accounts.recordAccount), getAccountMeta(accounts.authority)],
+    data: getReallocateInstructionDataEncoder().encode(args as ReallocateInstructionDataArgs),
     programAddress,
-  } as ReallocateInstruction<
-    TProgramAddress,
-    TAccountRecordAccount,
-    TAccountAuthority
-  >);
+  } as ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority>);
 }
 
 export type ParsedReallocateInstruction<
@@ -164,7 +144,7 @@ export function parseReallocateInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedReallocateInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.

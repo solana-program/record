@@ -6,12 +6,7 @@
  * @see https://github.com/codama-idl/codama
  */
 
-import {
-  containsBytes,
-  getU8Encoder,
-  type Address,
-  type ReadonlyUint8Array,
-} from '@solana/kit';
+import { containsBytes, getU8Encoder, type Address, type ReadonlyUint8Array } from '@solana/kit';
 import {
   type ParsedCloseAccountInstruction,
   type ParsedInitializeInstruction,
@@ -28,15 +23,13 @@ export enum SplRecordAccount {
 }
 
 export function identifySplRecordAccount(
-  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array
+  account: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
 ): SplRecordAccount {
   const data = 'data' in account ? account.data : account;
   if (containsBytes(data, getU8Encoder().encode(1), 0)) {
     return SplRecordAccount.RecordData;
   }
-  throw new Error(
-    'The provided account could not be identified as a splRecord account.'
-  );
+  throw new Error('The provided account could not be identified as a splRecord account.');
 }
 
 export enum SplRecordInstruction {
@@ -48,7 +41,7 @@ export enum SplRecordInstruction {
 }
 
 export function identifySplRecordInstruction(
-  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array
+  instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
 ): SplRecordInstruction {
   const data = 'data' in instruction ? instruction.data : instruction;
   if (containsBytes(data, getU8Encoder().encode(0), 0)) {
@@ -66,9 +59,7 @@ export function identifySplRecordInstruction(
   if (containsBytes(data, getU8Encoder().encode(4), 0)) {
     return SplRecordInstruction.Reallocate;
   }
-  throw new Error(
-    'The provided instruction could not be identified as a splRecord instruction.'
-  );
+  throw new Error('The provided instruction could not be identified as a splRecord instruction.');
 }
 
 export type ParsedSplRecordInstruction<

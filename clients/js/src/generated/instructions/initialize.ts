@@ -46,9 +46,7 @@ export type InitializeInstruction<
       TAccountRecordAccount extends string
         ? WritableAccount<TAccountRecordAccount>
         : TAccountRecordAccount,
-      TAccountAuthority extends string
-        ? ReadonlyAccount<TAccountAuthority>
-        : TAccountAuthority,
+      TAccountAuthority extends string ? ReadonlyAccount<TAccountAuthority> : TAccountAuthority,
       ...TRemainingAccounts,
     ]
   >;
@@ -58,10 +56,10 @@ export type InitializeInstructionData = { discriminator: number };
 export type InitializeInstructionDataArgs = {};
 
 export function getInitializeInstructionDataEncoder(): FixedSizeEncoder<InitializeInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([['discriminator', getU8Encoder()]]),
-    (value) => ({ ...value, discriminator: INITIALIZE_DISCRIMINATOR })
-  );
+  return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
+    ...value,
+    discriminator: INITIALIZE_DISCRIMINATOR,
+  }));
 }
 
 export function getInitializeInstructionDataDecoder(): FixedSizeDecoder<InitializeInstructionData> {
@@ -72,10 +70,7 @@ export function getInitializeInstructionDataCodec(): FixedSizeCodec<
   InitializeInstructionDataArgs,
   InitializeInstructionData
 > {
-  return combineCodec(
-    getInitializeInstructionDataEncoder(),
-    getInitializeInstructionDataDecoder()
-  );
+  return combineCodec(getInitializeInstructionDataEncoder(), getInitializeInstructionDataDecoder());
 }
 
 export type InitializeInput<
@@ -92,12 +87,8 @@ export function getInitializeInstruction<
   TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
   input: InitializeInput<TAccountRecordAccount, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress }
-): InitializeInstruction<
-  TProgramAddress,
-  TAccountRecordAccount,
-  TAccountAuthority
-> {
+  config?: { programAddress?: TProgramAddress },
+): InitializeInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority> {
   // Program address.
   const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
 
@@ -106,24 +97,14 @@ export function getInitializeInstruction<
     recordAccount: { value: input.recordAccount ?? null, isWritable: true },
     authority: { value: input.authority ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.recordAccount),
-      getAccountMeta(accounts.authority),
-    ],
+    accounts: [getAccountMeta(accounts.recordAccount), getAccountMeta(accounts.authority)],
     data: getInitializeInstructionDataEncoder().encode({}),
     programAddress,
-  } as InitializeInstruction<
-    TProgramAddress,
-    TAccountRecordAccount,
-    TAccountAuthority
-  >);
+  } as InitializeInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority>);
 }
 
 export type ParsedInitializeInstruction<
@@ -144,7 +125,7 @@ export function parseInitializeInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedInitializeInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.

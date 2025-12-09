@@ -13,7 +13,7 @@ import {
   sendAndConfirmInstructions,
 } from './_setup';
 
-test('long record data flow', async (t) => {
+test('long record data flow', async t => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
   const recordAuthority = await generateKeyPairSigner();

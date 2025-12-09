@@ -50,12 +50,9 @@ export type CloseAccountInstruction<
         ? WritableAccount<TAccountRecordAccount>
         : TAccountRecordAccount,
       TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
+        ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
-      TAccountReceiver extends string
-        ? WritableAccount<TAccountReceiver>
-        : TAccountReceiver,
+      TAccountReceiver extends string ? WritableAccount<TAccountReceiver> : TAccountReceiver,
       ...TRemainingAccounts,
     ]
   >;
@@ -65,10 +62,10 @@ export type CloseAccountInstructionData = { discriminator: number };
 export type CloseAccountInstructionDataArgs = {};
 
 export function getCloseAccountInstructionDataEncoder(): FixedSizeEncoder<CloseAccountInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([['discriminator', getU8Encoder()]]),
-    (value) => ({ ...value, discriminator: CLOSE_ACCOUNT_DISCRIMINATOR })
-  );
+  return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
+    ...value,
+    discriminator: CLOSE_ACCOUNT_DISCRIMINATOR,
+  }));
 }
 
 export function getCloseAccountInstructionDataDecoder(): FixedSizeDecoder<CloseAccountInstructionData> {
@@ -81,7 +78,7 @@ export function getCloseAccountInstructionDataCodec(): FixedSizeCodec<
 > {
   return combineCodec(
     getCloseAccountInstructionDataEncoder(),
-    getCloseAccountInstructionDataDecoder()
+    getCloseAccountInstructionDataDecoder(),
   );
 }
 
@@ -101,12 +98,8 @@ export function getCloseAccountInstruction<
   TAccountReceiver extends string,
   TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
-  input: CloseAccountInput<
-    TAccountRecordAccount,
-    TAccountAuthority,
-    TAccountReceiver
-  >,
-  config?: { programAddress?: TProgramAddress }
+  input: CloseAccountInput<TAccountRecordAccount, TAccountAuthority, TAccountReceiver>,
+  config?: { programAddress?: TProgramAddress },
 ): CloseAccountInstruction<
   TProgramAddress,
   TAccountRecordAccount,
@@ -122,10 +115,7 @@ export function getCloseAccountInstruction<
     authority: { value: input.authority ?? null, isWritable: false },
     receiver: { value: input.receiver ?? null, isWritable: true },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
@@ -163,7 +153,7 @@ export function parseCloseAccountInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseAccountInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 3) {
     // TODO: Coded error.

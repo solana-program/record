@@ -8,10 +8,7 @@ import {
   Rpc,
   TransactionSigner,
 } from '@solana/kit';
-import {
-  getCreateAccountInstruction,
-  getTransferSolInstruction,
-} from '@solana-program/system';
+import { getCreateAccountInstruction, getTransferSolInstruction } from '@solana-program/system';
 import {
   getCloseAccountInstruction,
   getInitializeInstruction,
@@ -66,7 +63,7 @@ export async function createRecord({
       recordAccount: recordSigner.address,
       authority,
     },
-    { programAddress: programId }
+    { programAddress: programId },
   );
 
   return {
@@ -95,7 +92,7 @@ export function createWriteInstruction(args: WriteRecordArgs): Instruction {
       offset: BigInt(args.offset),
       data: args.data,
     },
-    { programAddress: args.programId }
+    { programAddress: args.programId },
   );
 }
 
@@ -122,9 +119,7 @@ export async function reallocateRecord({
 }: ReallocateRecordArgs): Promise<Instruction[]> {
   const ixs: Instruction[] = [];
   const newSpace = RECORD_META_DATA_SIZE + BigInt(newDataLength);
-  const requiredRent = await rpc
-    .getMinimumBalanceForRentExemption(newSpace)
-    .send();
+  const requiredRent = await rpc.getMinimumBalanceForRentExemption(newSpace).send();
   const currentBalance = await rpc.getBalance(recordAccount).send();
 
   if (requiredRent > currentBalance.value) {
@@ -134,7 +129,7 @@ export async function reallocateRecord({
         source: payer,
         destination: recordAccount,
         amount: lamportsNeeded,
-      })
+      }),
     );
   }
 
@@ -145,8 +140,8 @@ export async function reallocateRecord({
         authority,
         dataLength: BigInt(newDataLength),
       },
-      { programAddress: programId }
-    )
+      { programAddress: programId },
+    ),
   );
 
   return ixs;
@@ -159,16 +154,14 @@ export interface SetAuthorityArgs {
   programId?: Address;
 }
 
-export function createSetAuthorityInstruction(
-  args: SetAuthorityArgs
-): Instruction {
+export function createSetAuthorityInstruction(args: SetAuthorityArgs): Instruction {
   return getSetAuthorityInstruction(
     {
       recordAccount: args.recordAccount,
       authority: args.authority,
       newAuthority: args.newAuthority,
     },
-    { programAddress: args.programId }
+    { programAddress: args.programId },
   );
 }
 
@@ -179,15 +172,13 @@ export interface CloseRecordArgs {
   programId?: Address;
 }
 
-export function createCloseRecordInstruction(
-  args: CloseRecordArgs
-): Instruction {
+export function createCloseRecordInstruction(args: CloseRecordArgs): Instruction {
   return getCloseAccountInstruction(
     {
       recordAccount: args.recordAccount,
       authority: args.authority,
       receiver: args.receiver,
     },
-    { programAddress: args.programId }
+    { programAddress: args.programId },
   );
 }

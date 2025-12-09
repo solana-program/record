@@ -57,8 +57,7 @@ export type WriteInstruction<
         ? WritableAccount<TAccountRecordAccount>
         : TAccountRecordAccount,
       TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> &
-            AccountSignerMeta<TAccountAuthority>
+        ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
         : TAccountAuthority,
       ...TRemainingAccounts,
     ]
@@ -82,7 +81,7 @@ export function getWriteInstructionDataEncoder(): Encoder<WriteInstructionDataAr
       ['offset', getU64Encoder()],
       ['data', addEncoderSizePrefix(getBytesEncoder(), getU32Encoder())],
     ]),
-    (value) => ({ ...value, discriminator: WRITE_DISCRIMINATOR })
+    value => ({ ...value, discriminator: WRITE_DISCRIMINATOR }),
   );
 }
 
@@ -98,10 +97,7 @@ export function getWriteInstructionDataCodec(): Codec<
   WriteInstructionDataArgs,
   WriteInstructionData
 > {
-  return combineCodec(
-    getWriteInstructionDataEncoder(),
-    getWriteInstructionDataDecoder()
-  );
+  return combineCodec(getWriteInstructionDataEncoder(), getWriteInstructionDataDecoder());
 }
 
 export type WriteInput<
@@ -120,7 +116,7 @@ export function getWriteInstruction<
   TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
   input: WriteInput<TAccountRecordAccount, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress }
+  config?: { programAddress?: TProgramAddress },
 ): WriteInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority> {
   // Program address.
   const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
@@ -130,29 +126,17 @@ export function getWriteInstruction<
     recordAccount: { value: input.recordAccount ?? null, isWritable: true },
     authority: { value: input.authority ?? null, isWritable: false },
   };
-  const accounts = originalAccounts as Record<
-    keyof typeof originalAccounts,
-    ResolvedAccount
-  >;
+  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
 
   // Original args.
   const args = { ...input };
 
   const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
   return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.recordAccount),
-      getAccountMeta(accounts.authority),
-    ],
-    data: getWriteInstructionDataEncoder().encode(
-      args as WriteInstructionDataArgs
-    ),
+    accounts: [getAccountMeta(accounts.recordAccount), getAccountMeta(accounts.authority)],
+    data: getWriteInstructionDataEncoder().encode(args as WriteInstructionDataArgs),
     programAddress,
-  } as WriteInstruction<
-    TProgramAddress,
-    TAccountRecordAccount,
-    TAccountAuthority
-  >);
+  } as WriteInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority>);
 }
 
 export type ParsedWriteInstruction<
@@ -173,7 +157,7 @@ export function parseWriteInstruction<
 >(
   instruction: Instruction<TProgram> &
     InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>
+    InstructionWithData<ReadonlyUint8Array>,
 ): ParsedWriteInstruction<TProgram, TAccountMetas> {
   if (instruction.accounts.length < 2) {
     // TODO: Coded error.
