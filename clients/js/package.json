@@ -1,5 +1,5 @@
 {
-    "name": "@solana-program/spl-record",
+    "name": "@solana-program/record",
     "version": "0.1.0",
     "description": "JavaScript client for the SPL Record program",
     "sideEffects": false,
