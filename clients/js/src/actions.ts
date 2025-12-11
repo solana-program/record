@@ -1,14 +1,16 @@
 import {
   Address,
+  createAddressWithSeed,
   generateKeyPairSigner,
   GetBalanceApi,
   GetMinimumBalanceForRentExemptionApi,
   Instruction,
   KeyPairSigner,
+  ReadonlyUint8Array,
   Rpc,
   TransactionSigner,
 } from '@solana/kit';
-import { getCreateAccountInstruction, getTransferSolInstruction } from '@solana-program/system';
+import { getCreateAccountInstruction, getCreateAccountWithSeedInstruction, getTransferSolInstruction } from '@solana-program/system';
 import {
   getCloseAccountInstruction,
   getInitializeInstruction,
@@ -68,6 +70,68 @@ export async function createRecord({
 
   return {
     recordKeypair: recordSigner,
+    ixs: [createAccountIx, initializeIx],
+  };
+}
+
+export interface CreateRecordWithSeedArgs {
+  rpc: Rpc<GetMinimumBalanceForRentExemptionApi>;
+  payer: KeyPairSigner;
+  authority: Address;
+  dataLength: number | bigint;
+  programId?: Address;
+  seed: ReadonlyUint8Array | string;
+  /** Optional: Provide your own keypair for the base account. If not provided, the payer is used as base. */
+  baseAccount?: KeyPairSigner;
+}
+
+export interface CreateRecordWithSeedResult {
+  recordAccount: Address;
+  ixs: Instruction[];
+}
+
+/**
+ * High-level function to create and initialize a Record Account with seed.
+ * Handles rent calculation and system account creation with seed.
+ */
+export async function createRecordWithSeed({
+  rpc,
+  payer,
+  authority,
+  dataLength,
+  programId = SPL_RECORD_PROGRAM_ADDRESS,
+  baseAccount = payer,
+  seed
+}: CreateRecordWithSeedArgs): Promise<CreateRecordWithSeedResult> {
+  const space = RECORD_META_DATA_SIZE + BigInt(dataLength);
+  const amount = await rpc.getMinimumBalanceForRentExemption(space).send();
+  const recordAccount = await createAddressWithSeed({
+    baseAddress: baseAccount.address,
+    seed,
+    programAddress: programId,
+  })
+
+  const createAccountIx = getCreateAccountWithSeedInstruction({
+    payer: payer,
+    newAccount: recordAccount,
+    baseAccount: baseAccount,
+    base: baseAccount.address,
+    seed: typeof seed === 'string' ? seed : new TextDecoder().decode(seed),
+    amount,
+    space,
+    programAddress: programId,
+  });
+
+  const initializeIx = getInitializeInstruction(
+    {
+      recordAccount,
+      authority,
+    },
+    { programAddress: programId },
+  );
+
+  return {
+    recordAccount,
     ixs: [createAccountIx, initializeIx],
   };
 }
