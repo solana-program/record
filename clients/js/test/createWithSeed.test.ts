@@ -1,10 +1,6 @@
 import { createAddressWithSeed, generateKeyPairSigner } from '@solana/kit';
 import test from 'ava';
-import {
-  createRecordWithSeed,
-  fetchRecordData,
-  SPL_RECORD_PROGRAM_ADDRESS
-} from '../src';
+import { createRecordWithSeed, fetchRecordData, SPL_RECORD_PROGRAM_ADDRESS } from '../src';
 import {
   createDefaultSolanaClient,
   generateKeyPairSignerWithSol,
@@ -21,8 +17,8 @@ test('create record with string seed', async t => {
   const expectedRecordAccount = await createAddressWithSeed({
     baseAddress: payer.address,
     seed,
-    programAddress: SPL_RECORD_PROGRAM_ADDRESS
-  })
+    programAddress: SPL_RECORD_PROGRAM_ADDRESS,
+  });
 
   // Initialize
   const { recordAccount, ixs: createIxs } = await createRecordWithSeed({
@@ -30,7 +26,7 @@ test('create record with string seed', async t => {
     payer,
     authority: payer.address,
     dataLength: initialRecordSize,
-    seed
+    seed,
   });
 
   t.deepEqual(recordAccount, expectedRecordAccount);
@@ -53,8 +49,8 @@ test('create record with uint8array seed', async t => {
   const expectedRecordAccount = await createAddressWithSeed({
     baseAddress: payer.address,
     seed,
-    programAddress: SPL_RECORD_PROGRAM_ADDRESS
-  })
+    programAddress: SPL_RECORD_PROGRAM_ADDRESS,
+  });
 
   // Initialize
   const { recordAccount, ixs: createIxs } = await createRecordWithSeed({
@@ -62,7 +58,7 @@ test('create record with uint8array seed', async t => {
     payer,
     authority: payer.address,
     dataLength: initialRecordSize,
-    seed
+    seed,
   });
 
   t.deepEqual(recordAccount, expectedRecordAccount);
@@ -86,8 +82,8 @@ test('create record with external base account', async t => {
   const expectedRecordAccount = await createAddressWithSeed({
     baseAddress: baseAccount.address,
     seed,
-    programAddress: SPL_RECORD_PROGRAM_ADDRESS
-  })
+    programAddress: SPL_RECORD_PROGRAM_ADDRESS,
+  });
 
   // Initialize
   const { recordAccount, ixs: createIxs } = await createRecordWithSeed({
@@ -96,7 +92,7 @@ test('create record with external base account', async t => {
     authority: payer.address,
     dataLength: initialRecordSize,
     seed,
-    baseAccount: baseAccount
+    baseAccount: baseAccount,
   });
 
   t.deepEqual(recordAccount, expectedRecordAccount);

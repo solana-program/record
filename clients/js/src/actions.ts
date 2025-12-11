@@ -10,7 +10,11 @@ import {
   Rpc,
   TransactionSigner,
 } from '@solana/kit';
-import { getCreateAccountInstruction, getCreateAccountWithSeedInstruction, getTransferSolInstruction } from '@solana-program/system';
+import {
+  getCreateAccountInstruction,
+  getCreateAccountWithSeedInstruction,
+  getTransferSolInstruction,
+} from '@solana-program/system';
 import {
   getCloseAccountInstruction,
   getInitializeInstruction,
@@ -101,7 +105,7 @@ export async function createRecordWithSeed({
   dataLength,
   programId = SPL_RECORD_PROGRAM_ADDRESS,
   baseAccount = payer,
-  seed
+  seed,
 }: CreateRecordWithSeedArgs): Promise<CreateRecordWithSeedResult> {
   const space = RECORD_META_DATA_SIZE + BigInt(dataLength);
   const amount = await rpc.getMinimumBalanceForRentExemption(space).send();
@@ -109,7 +113,7 @@ export async function createRecordWithSeed({
     baseAddress: baseAccount.address,
     seed,
     programAddress: programId,
-  })
+  });
 
   const createAccountIx = getCreateAccountWithSeedInstruction({
     payer: payer,
