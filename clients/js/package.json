@@ -47,7 +47,7 @@
     "devDependencies": {
         "@eslint/js": "^9.39.2",
         "@solana-program/system": "^0.10.0",
-        "@solana/kit": "^5.0.0",
+        "@solana/kit": "^5.1.0",
         "@solana/sysvars": "^5.1.0",
         "@types/node": "^25.0.2",
         "ava": "^6.4.1",
