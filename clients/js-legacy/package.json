@@ -44,7 +44,7 @@
         "@solana/codecs-numbers": "^5.1.0"
     },
     "devDependencies": {
-        "@solana/prettier-config-solana": "0.0.5",
+        "@solana/prettier-config-solana": "0.0.6",
         "@eslint/js": "^9.39.2",
         "@types/chai": "^5.0.1",
         "@types/node": "^25.0.2",

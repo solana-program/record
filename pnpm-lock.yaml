@@ -66,8 +66,8 @@ importers:
         specifier: ^9.39.2
         version: 9.39.2
       '@solana/prettier-config-solana':
-        specifier: 0.0.5
-        version: 0.0.5(prettier@3.7.4)
+        specifier: 0.0.6
+        version: 0.0.6(prettier@3.7.4)
       '@types/chai':
         specifier: ^5.0.1
         version: 5.2.3
@@ -733,10 +733,10 @@ packages:
     peerDependencies:
       typescript: '>=5.3.3'
 
-  '@solana/prettier-config-solana@0.0.5':
-    resolution: {integrity: sha512-igtLH1QaX5xzSLlqteexRIg9X1QKA03xKYQc2qY1TrMDDhxKXoRZOStQPWdita2FVJzxTGz/tdMGC1vS0biRcg==}
+  '@solana/prettier-config-solana@0.0.6':
+    resolution: {integrity: sha512-/s55hDoAyh5QyltQh/jjNK3AgACEq885+DnC6lYhrmYZiV6I0iHITWYnKd8d23KRKs/RBjlaQH54MiafeoI9hw==}
     peerDependencies:
-      prettier: ^3.2.0
+      prettier: ^3.7.4
 
   '@solana/programs@5.1.0':
     resolution: {integrity: sha512-zAghXyRGixWNcarShlrnpjMD2115BZTF9JMLIcgkCYDOwjDPFIB/Y0hwDCH87N5uSjzlgkDpxKEL4ILewoZTRQ==}
@@ -3262,7 +3262,7 @@ snapshots:
     transitivePeerDependencies:
       - fastestsmallesttextencoderdecoder
 
-  '@solana/prettier-config-solana@0.0.5(prettier@3.7.4)':
+  '@solana/prettier-config-solana@0.0.6(prettier@3.7.4)':
     dependencies:
       prettier: 3.7.4
 
