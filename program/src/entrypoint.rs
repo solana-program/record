@@ -21,9 +21,9 @@ security_txt! {
     name: "SPL Record",
     project_url: "https://solana-program.com/record",
     contacts: "link:https://github.com/solana-program/record/security/advisories/new,mailto:security@anza.xyz,discord:https://solana.com/discord",
-    policy: "https://github.com/solana-program/record/blob/master/SECURITY.md",
+    policy: "https://github.com/solana-program/record/blob/main/SECURITY.md",
 
     // Optional Fields
     preferred_languages: "en",
-    source_code: "https://github.com/solana-program/record/tree/master/program"
+    source_code: "https://github.com/solana-program/record/tree/main/program"
 }
