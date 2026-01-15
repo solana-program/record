@@ -87,8 +87,8 @@ importers:
         specifier: ^10.0.1
         version: 10.1.8(eslint@8.57.1)
       eslint-plugin-prettier:
-        specifier: ^5.2.3
-        version: 5.5.4(eslint-config-prettier@10.1.8(eslint@8.57.1))(eslint@8.57.1)(prettier@3.7.4)
+        specifier: ^5.5.5
+        version: 5.5.5(eslint-config-prettier@10.1.8(eslint@8.57.1))(eslint@8.57.1)(prettier@3.7.4)
       eslint-plugin-require-extensions:
         specifier: ^0.1.1
         version: 0.1.3(eslint@8.57.1)
@@ -640,12 +640,6 @@ packages:
     peerDependencies:
       typescript: '>=5.3.3'
 
-  '@solana/codecs-core@5.3.0':
-    resolution: {integrity: sha512-wqpiKtej8GePdraHk3YnoJY1N/Hutn4w0CD/45hNKiXPG5F3mlasaBWq8m86K7WUdjQVAsGTgiSgoZo64Aw17w==}
-    engines: {node: '>=20.18.0'}
-    peerDependencies:
-      typescript: '>=5.9.3'
-
   '@solana/codecs-core@5.4.0':
     resolution: {integrity: sha512-rQ5jXgiDe2vIU+mYCHDjgwMd9WdzZfh4sc5H6JgYleAUjeTUX6mx8hTV2+pcXvvn27LPrgrt9jfxswbDb8O8ww==}
     engines: {node: '>=20.18.0'}
@@ -669,12 +663,6 @@ packages:
     engines: {node: '>=20.18.0'}
     peerDependencies:
       typescript: '>=5.3.3'
-
-  '@solana/codecs-numbers@5.3.0':
-    resolution: {integrity: sha512-NLsRSKpRzGT5h5UL4jEShE5C49S2E/oM3YAltdbsFyxuTKo0u4JA+GzBLD1UxEG5177WMY/wtVVTe5qWCDdyzA==}
-    engines: {node: '>=20.18.0'}
-    peerDependencies:
-      typescript: '>=5.9.3'
 
   '@solana/codecs-numbers@5.4.0':
     resolution: {integrity: sha512-z6LMkY+kXWx1alrvIDSAxexY5QLhsso638CjM7XI1u6dB7drTLWKhifyjnm1vOQc1VPVFmbYxTgKKpds8TY8tg==}
@@ -712,13 +700,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.3.3'
-
-  '@solana/errors@5.3.0':
-    resolution: {integrity: sha512-oeTwCQG4JBNI6dd1XxA04sX18HPiiWts10FokXrdjaMH2sCJRxecpUTzCvCsPlb8FAVswRu1bi4HuN9uVHTBNQ==}
-    engines: {node: '>=20.18.0'}
-    hasBin: true
-    peerDependencies:
-      typescript: '>=5.9.3'
 
   '@solana/errors@5.4.0':
     resolution: {integrity: sha512-hNoAOmlZAszaVBrAy1Jf7amHJ8wnUnTU0BqhNQXknbSvirvsYr81yEud2iq18YiCqhyJ9SuQ5kWrSAT0x7S0oA==}
@@ -1536,8 +1517,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-plugin-prettier@5.5.4:
-    resolution: {integrity: sha512-swNtI95SToIz05YINMA6Ox5R057IMAmWZ26GqPxusAp1TZzj+IdY9tXNWWD3vkF/wEqydCONcwjTFpxybBqZsg==}
+  eslint-plugin-prettier@5.5.5:
+    resolution: {integrity: sha512-hscXkbqUZ2sPithAuLm5MXL+Wph+U7wHngPBv9OMWwlP8iaflyxpjTYZkmdgB4/vPIhemRlBEoLrH7UC1n7aUw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       '@types/eslint': '>=8.0.0'
@@ -2329,8 +2310,8 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
-  prettier-linter-helpers@1.0.0:
-    resolution: {integrity: sha512-GbK2cP9nraSSUF9N2XwUwqfzlAFlMNYYl+ShE/V+H8a9uNl/oUqB1w2EL54Jh0OlyRSd8RfWYJ3coVS4TROP2w==}
+  prettier-linter-helpers@1.0.1:
+    resolution: {integrity: sha512-SxToR7P8Y2lWmv/kTzVLC1t/GDI2WGjMwNhLLE9qtH8Q13C+aEmuRlzDst4Up4s0Wc8sF2M+J57iB3cMLqftfg==}
     engines: {node: '>=6.0.0'}
 
   prettier@3.7.4:
@@ -2573,8 +2554,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  synckit@0.11.11:
-    resolution: {integrity: sha512-MeQTA1r0litLUf0Rp/iisCaL8761lKAZHaimlbGK4j0HysC4PLfqygQj9srcs0m2RdtDYnF8UuYyKpbjHYp7Jw==}
+  synckit@0.11.12:
+    resolution: {integrity: sha512-Bh7QjT8/SuKUIfObSXNHNSK6WHo6J1tHCqJsuaFDP7gP0fkzSfTxI8y85JrppZ0h8l0maIgc2tfuZQ6/t3GtnQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
   tar@7.5.2:
@@ -3284,11 +3265,6 @@ snapshots:
       '@solana/errors': 2.3.0(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@solana/codecs-core@5.3.0(typescript@5.9.3)':
-    dependencies:
-      '@solana/errors': 5.3.0(typescript@5.9.3)
-      typescript: 5.9.3
-
   '@solana/codecs-core@5.4.0(typescript@5.9.3)':
     dependencies:
       '@solana/errors': 5.4.0(typescript@5.9.3)
@@ -3307,12 +3283,6 @@ snapshots:
     dependencies:
       '@solana/codecs-core': 2.3.0(typescript@5.9.3)
       '@solana/errors': 2.3.0(typescript@5.9.3)
-      typescript: 5.9.3
-
-  '@solana/codecs-numbers@5.3.0(typescript@5.9.3)':
-    dependencies:
-      '@solana/codecs-core': 5.3.0(typescript@5.9.3)
-      '@solana/errors': 5.3.0(typescript@5.9.3)
       typescript: 5.9.3
 
   '@solana/codecs-numbers@5.4.0(typescript@5.9.3)':
@@ -3344,12 +3314,6 @@ snapshots:
       - fastestsmallesttextencoderdecoder
 
   '@solana/errors@2.3.0(typescript@5.9.3)':
-    dependencies:
-      chalk: 5.6.2
-      commander: 14.0.2
-      typescript: 5.9.3
-
-  '@solana/errors@5.3.0(typescript@5.9.3)':
     dependencies:
       chalk: 5.6.2
       commander: 14.0.2
@@ -4358,12 +4322,12 @@ snapshots:
     dependencies:
       eslint: 9.39.1
 
-  eslint-plugin-prettier@5.5.4(eslint-config-prettier@10.1.8(eslint@8.57.1))(eslint@8.57.1)(prettier@3.7.4):
+  eslint-plugin-prettier@5.5.5(eslint-config-prettier@10.1.8(eslint@8.57.1))(eslint@8.57.1)(prettier@3.7.4):
     dependencies:
       eslint: 8.57.1
       prettier: 3.7.4
-      prettier-linter-helpers: 1.0.0
-      synckit: 0.11.11
+      prettier-linter-helpers: 1.0.1
+      synckit: 0.11.12
     optionalDependencies:
       eslint-config-prettier: 10.1.8(eslint@8.57.1)
 
@@ -5176,7 +5140,7 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-linter-helpers@1.0.0:
+  prettier-linter-helpers@1.0.1:
     dependencies:
       fast-diff: 1.3.0
 
@@ -5437,7 +5401,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  synckit@0.11.11:
+  synckit@0.11.12:
     dependencies:
       '@pkgr/core': 0.2.9
 
