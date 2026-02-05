@@ -56,8 +56,8 @@ importers:
   clients/js-legacy:
     dependencies:
       '@solana/codecs-numbers':
-        specifier: ^5.5.1
-        version: 5.5.1(typescript@5.9.3)
+        specifier: ^6.0.0
+        version: 6.0.0(typescript@5.9.3)
       '@solana/web3.js':
         specifier: ^1.95.5
         version: 1.98.4(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)
@@ -649,6 +649,15 @@ packages:
       typescript:
         optional: true
 
+  '@solana/codecs-core@6.0.0':
+    resolution: {integrity: sha512-QAXMupK1nPaIeZgeLTwvC15zeMSbjgupHpcSRoAtcjEs1po4UVPSk7H+IAReRoK2ah2HXHARP3ktzY9x5LY2qQ==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@solana/codecs-data-structures@5.5.1':
     resolution: {integrity: sha512-97bJWGyUY9WvBz3mX1UV3YPWGDTez6btCfD0ip3UVEXJbItVuUiOkzcO5iFDUtQT5riKT6xC+Mzl+0nO76gd0w==}
     engines: {node: '>=20.18.0'}
@@ -666,6 +675,15 @@ packages:
 
   '@solana/codecs-numbers@5.5.1':
     resolution: {integrity: sha512-rllMIZAHqmtvC0HO/dc/21wDuWaD0B8Ryv8o+YtsICQBuiL/0U4AGwH7Pi5GNFySYk0/crSuwfIqQFtmxNSPFw==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@solana/codecs-numbers@6.0.0':
+    resolution: {integrity: sha512-OpnK2c9NGLQG3P8hec+rwHzOwe/H74NKxsWSpc87qJE0HpTZ9sPNtsjyjy9Lwt8Jl2zSR/WpEw77eikbCuNMzA==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       typescript: ^5.0.0
@@ -703,6 +721,16 @@ packages:
 
   '@solana/errors@5.5.1':
     resolution: {integrity: sha512-vFO3p+S7HoyyrcAectnXbdsMfwUzY2zYFUc2DEe5BwpiE9J1IAxPBGjOWO6hL1bbYdBrlmjNx8DXCslqS+Kcmg==}
+    engines: {node: '>=20.18.0'}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@solana/errors@6.0.0':
+    resolution: {integrity: sha512-U/9vwUpUKnRsHGgoNwcoh8d/B4Y9LKBBfraUQcCG97duK7SfAlP2QTZQbNqVS/tcuIRXBuKCS81WPmMQL5r4Nw==}
     engines: {node: '>=20.18.0'}
     hasBin: true
     peerDependencies:
@@ -1351,6 +1379,10 @@ packages:
     resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
     engines: {node: '>=20'}
 
+  commander@14.0.3:
+    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
+    engines: {node: '>=20'}
+
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
 
@@ -1771,6 +1803,7 @@ packages:
 
   glob@10.5.0:
     resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@13.0.0:
@@ -1779,7 +1812,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   globals@13.24.0:
     resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==}
@@ -2561,7 +2594,7 @@ packages:
   tar@7.5.2:
     resolution: {integrity: sha512-7NyxrTE4Anh8km8iEy7o0QYPs+0JKBTj5ZaqHg6B39erLg0qYXN3BijtShwbsNSvQ+LN75+KV+C4QR/f6Gwnpg==}
     engines: {node: '>=18'}
-    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   temp-dir@3.0.0:
     resolution: {integrity: sha512-nHc6S/bwIilKHNRgK/3jlhDoIHcp45YgyiwcAk46Tr0LfEqGBVpmiAyuiuxeVE44m3mXnEeVhaipLOEWmH+Njw==}
@@ -3272,6 +3305,12 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
+  '@solana/codecs-core@6.0.0(typescript@5.9.3)':
+    dependencies:
+      '@solana/errors': 6.0.0(typescript@5.9.3)
+    optionalDependencies:
+      typescript: 5.9.3
+
   '@solana/codecs-data-structures@5.5.1(typescript@5.9.3)':
     dependencies:
       '@solana/codecs-core': 5.5.1(typescript@5.9.3)
@@ -3290,6 +3329,13 @@ snapshots:
     dependencies:
       '@solana/codecs-core': 5.5.1(typescript@5.9.3)
       '@solana/errors': 5.5.1(typescript@5.9.3)
+    optionalDependencies:
+      typescript: 5.9.3
+
+  '@solana/codecs-numbers@6.0.0(typescript@5.9.3)':
+    dependencies:
+      '@solana/codecs-core': 6.0.0(typescript@5.9.3)
+      '@solana/errors': 6.0.0(typescript@5.9.3)
     optionalDependencies:
       typescript: 5.9.3
 
@@ -3324,6 +3370,13 @@ snapshots:
     dependencies:
       chalk: 5.6.2
       commander: 14.0.2
+    optionalDependencies:
+      typescript: 5.9.3
+
+  '@solana/errors@6.0.0(typescript@5.9.3)':
+    dependencies:
+      chalk: 5.6.2
+      commander: 14.0.3
     optionalDependencies:
       typescript: 5.9.3
 
@@ -4159,6 +4212,8 @@ snapshots:
       delayed-stream: 1.0.0
 
   commander@14.0.2: {}
+
+  commander@14.0.3: {}
 
   commander@2.20.3: {}
 
