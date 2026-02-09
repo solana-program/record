@@ -23,8 +23,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)
       '@types/node':
-        specifier: ^25.2.1
-        version: 25.2.1
+        specifier: ^25.2.2
+        version: 25.2.2
       ava:
         specifier: ^6.4.1
         version: 6.4.1(@ava/typescript@6.0.0)(rollup@4.53.3)
@@ -75,8 +75,8 @@ importers:
         specifier: ^10.0.10
         version: 10.0.10
       '@types/node':
-        specifier: ^25.2.1
-        version: 25.2.1
+        specifier: ^25.2.2
+        version: 25.2.2
       chai:
         specifier: ^6.2.2
         version: 6.2.2
@@ -106,7 +106,7 @@ importers:
         version: 2.1.3
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@25.2.1)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.2.2)(typescript@5.9.3)
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -640,15 +640,6 @@ packages:
     peerDependencies:
       typescript: '>=5.3.3'
 
-  '@solana/codecs-core@6.0.0':
-    resolution: {integrity: sha512-QAXMupK1nPaIeZgeLTwvC15zeMSbjgupHpcSRoAtcjEs1po4UVPSk7H+IAReRoK2ah2HXHARP3ktzY9x5LY2qQ==}
-    engines: {node: '>=20.18.0'}
-    peerDependencies:
-      typescript: ^5.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   '@solana/codecs-core@6.0.1':
     resolution: {integrity: sha512-OnUQk94qfvfE0nVveZ638aNUL3tyRJoorUFiAG0ICTGUo3c6fkYb8vH23o/5O2qmuSmYND1sn+UCaldNMVkFpg==}
     engines: {node: '>=20.18.0'}
@@ -672,15 +663,6 @@ packages:
     engines: {node: '>=20.18.0'}
     peerDependencies:
       typescript: '>=5.3.3'
-
-  '@solana/codecs-numbers@6.0.0':
-    resolution: {integrity: sha512-OpnK2c9NGLQG3P8hec+rwHzOwe/H74NKxsWSpc87qJE0HpTZ9sPNtsjyjy9Lwt8Jl2zSR/WpEw77eikbCuNMzA==}
-    engines: {node: '>=20.18.0'}
-    peerDependencies:
-      typescript: ^5.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
 
   '@solana/codecs-numbers@6.0.1':
     resolution: {integrity: sha512-ZrI1NjUsf4I+Klue/2rlQbZLcGRom/G2E4VB/8x4IEHGOeFLQhXcxmnib8kdgomQRYOzF1BjVDmCYxvZr+6AWA==}
@@ -718,16 +700,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.3.3'
-
-  '@solana/errors@6.0.0':
-    resolution: {integrity: sha512-U/9vwUpUKnRsHGgoNwcoh8d/B4Y9LKBBfraUQcCG97duK7SfAlP2QTZQbNqVS/tcuIRXBuKCS81WPmMQL5r4Nw==}
-    engines: {node: '>=20.18.0'}
-    hasBin: true
-    peerDependencies:
-      typescript: ^5.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
 
   '@solana/errors@6.0.1':
     resolution: {integrity: sha512-sMe5GCsXto8F1KDeq9GbZR0+m841SqEYep3NAcYlC0lqF2RG4giaaPQHgrWI5DJR/L7yc8FzUIQfTxnaN7bwOQ==}
@@ -1059,8 +1031,8 @@ packages:
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
-  '@types/node@25.2.1':
-    resolution: {integrity: sha512-CPrnr8voK8vC6eEtyRzvMpgp3VyVRhgclonE7qYi6P9sXwYb59ucfrnmFBTaP0yUi8Gk4yZg/LlTJULGxvTNsg==}
+  '@types/node@25.2.2':
+    resolution: {integrity: sha512-BkmoP5/FhRYek5izySdkOneRyXYN35I860MFAGupTdebyE66uZaR+bXLHq8k4DirE5DwQi3NuhvRU1jqTVwUrQ==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
@@ -2719,8 +2691,8 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
-  undici-types@7.20.0:
-    resolution: {integrity: sha512-PZDAAlMkNw5ZzN/ebfyrwzrMWfIf7Jbn9iM/I6SF456OKrb2wnfqVowaxEY/cMAM8MjFu1zhdpJyA0L+rTYwNw==}
+  undici-types@7.21.0:
+    resolution: {integrity: sha512-w9IMgQrz4O0YN1LtB7K5P63vhlIOvC7opSmouCJ+ZywlPAlO9gIkJ+otk6LvGpAs2wg4econaCz3TvQ9xPoyuQ==}
 
   unicorn-magic@0.3.0:
     resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
@@ -3295,12 +3267,6 @@ snapshots:
       '@solana/errors': 2.3.0(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@solana/codecs-core@6.0.0(typescript@5.9.3)':
-    dependencies:
-      '@solana/errors': 6.0.0(typescript@5.9.3)
-    optionalDependencies:
-      typescript: 5.9.3
-
   '@solana/codecs-core@6.0.1(typescript@5.9.3)':
     dependencies:
       '@solana/errors': 6.0.1(typescript@5.9.3)
@@ -3319,13 +3285,6 @@ snapshots:
     dependencies:
       '@solana/codecs-core': 2.3.0(typescript@5.9.3)
       '@solana/errors': 2.3.0(typescript@5.9.3)
-      typescript: 5.9.3
-
-  '@solana/codecs-numbers@6.0.0(typescript@5.9.3)':
-    dependencies:
-      '@solana/codecs-core': 6.0.0(typescript@5.9.3)
-      '@solana/errors': 6.0.0(typescript@5.9.3)
-    optionalDependencies:
       typescript: 5.9.3
 
   '@solana/codecs-numbers@6.0.1(typescript@5.9.3)':
@@ -3360,13 +3319,6 @@ snapshots:
     dependencies:
       chalk: 5.6.2
       commander: 14.0.3
-      typescript: 5.9.3
-
-  '@solana/errors@6.0.0(typescript@5.9.3)':
-    dependencies:
-      chalk: 5.6.2
-      commander: 14.0.3
-    optionalDependencies:
       typescript: 5.9.3
 
   '@solana/errors@6.0.1(typescript@5.9.3)':
@@ -3605,7 +3557,7 @@ snapshots:
       '@solana/errors': 6.0.1(typescript@5.9.3)
       '@solana/rpc-spec': 6.0.1(typescript@5.9.3)
       '@solana/rpc-spec-types': 6.0.1(typescript@5.9.3)
-      undici-types: 7.20.0
+      undici-types: 7.21.0
     optionalDependencies:
       typescript: 5.9.3
 
@@ -3769,7 +3721,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 25.2.1
+      '@types/node': 25.2.2
 
   '@types/deep-eql@4.0.2': {}
 
@@ -3785,7 +3737,7 @@ snapshots:
 
   '@types/node@12.20.55': {}
 
-  '@types/node@25.2.1':
+  '@types/node@25.2.2':
     dependencies:
       undici-types: 7.16.0
 
@@ -3795,11 +3747,11 @@ snapshots:
 
   '@types/ws@7.4.7':
     dependencies:
-      '@types/node': 25.2.1
+      '@types/node': 25.2.2
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 25.2.1
+      '@types/node': 25.2.2
 
   '@typescript-eslint/eslint-plugin@8.54.0(@typescript-eslint/parser@8.54.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)':
     dependencies:
@@ -5502,14 +5454,14 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-node@10.9.2(@types/node@25.2.1)(typescript@5.9.3):
+  ts-node@10.9.2(@types/node@25.2.2)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 25.2.1
+      '@types/node': 25.2.2
       acorn: 8.15.0
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -5596,7 +5548,7 @@ snapshots:
 
   undici-types@7.16.0: {}
 
-  undici-types@7.20.0: {}
+  undici-types@7.21.0: {}
 
   unicorn-magic@0.3.0: {}
 
