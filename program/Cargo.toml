@@ -15,7 +15,7 @@ bytemuck = { version = "1.25.0", features = ["derive"] }
 num-derive = "0.4"
 num-traits = "0.2"
 solana-account-info = "3.1.0"
-solana-address = { version = "2.1.0", features = ["bytemuck", "decode"] }
+solana-address = { version = "2.2.0", features = ["bytemuck", "decode"] }
 solana-instruction = { version = "3.1.0", features = ["std"] }
 solana-msg = "3.0.0"
 solana-program-entrypoint = "3.1.1"
@@ -28,7 +28,7 @@ thiserror = "2.0.18"
 [dev-dependencies]
 mollusk-svm = "0.10.3"
 solana-account = "3.4.0"
-solana-address = { version = "2.1.0", features = ["atomic"] }
+solana-address = { version = "2.2.0", features = ["atomic"] }
 solana-system-interface = { version = "3", features = ["bincode"] }
 
 [lib]
