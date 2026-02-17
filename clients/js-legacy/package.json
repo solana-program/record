@@ -41,7 +41,7 @@
         "@solana/web3.js": "^1.95.5"
     },
     "dependencies": {
-        "@solana/codecs-numbers": "^6.0.1"
+        "@solana/codecs-numbers": "^6.1.0"
     },
     "devDependencies": {
         "@solana/prettier-config-solana": "0.0.6",
