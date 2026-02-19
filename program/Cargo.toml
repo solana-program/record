@@ -21,7 +21,7 @@ solana-msg = "3.0.0"
 solana-program-entrypoint = "3.1.1"
 solana-program-error = "3.0.0"
 solana-program-pack = "3.0.0"
-solana-rent = "4.0.0"
+solana-rent = "4.1.0"
 solana-security-txt = "1.1.2"
 thiserror = "2.0.18"
 
