@@ -27,7 +27,7 @@ thiserror = "2.0.18"
 
 [dev-dependencies]
 mollusk-svm = "0.10.3"
-solana-account = "3.4.0"
+solana-account = "4.1.0"
 solana-address = { version = "2.2.0", features = ["atomic"] }
 solana-system-interface = { version = "3", features = ["bincode"] }
 
