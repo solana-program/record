@@ -48,7 +48,7 @@
         "@eslint/js": "^10.0.1",
         "@solana-program/system": "^0.12.0",
         "@solana/kit": "^6.2.0",
-        "@solana/sysvars": "^6.1.0",
+        "@solana/sysvars": "^6.2.0",
         "@types/node": "^25.4.0",
         "ava": "^7.0.0",
         "eslint": "^9.39.1",
