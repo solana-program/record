@@ -62,7 +62,7 @@ export async function createRecord({
     lamports,
     space,
     programAddress: programId,
-  });
+  }) as Instruction;
 
   const initializeIx = getInitializeInstruction(
     {

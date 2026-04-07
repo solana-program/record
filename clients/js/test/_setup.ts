@@ -1,11 +1,11 @@
 import {
-  BaseTransactionMessage,
   Commitment,
   Instruction,
   Rpc,
   RpcSubscriptions,
   SolanaRpcApi,
   SolanaRpcSubscriptionsApi,
+  TransactionMessage,
   TransactionMessageWithBlockhashLifetime,
   TransactionMessageWithFeePayer,
   TransactionSigner,
@@ -61,7 +61,7 @@ export const createDefaultTransaction = async (client: Client, feePayer: Transac
 
 export const signAndSendTransaction = async (
   client: Client,
-  transactionMessage: BaseTransactionMessage &
+  transactionMessage: TransactionMessage &
     TransactionMessageWithFeePayer &
     TransactionMessageWithBlockhashLifetime,
   commitment: Commitment = 'confirmed',
