@@ -102,8 +102,8 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0
       start-server-and-test:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.0.2
+        version: 3.0.2
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@25.6.0)(typescript@5.9.3)
@@ -1230,8 +1230,8 @@ packages:
       '@ava/typescript':
         optional: true
 
-  axios@1.13.6:
-    resolution: {integrity: sha512-ChTCHMouEe2kn713WHbQGcuYrr6fXTBiu460OTwWrWob16g1bXn4vtz07Ope7ewMozJAnEquLk5lWQWtBig9DQ==}
+  axios@1.15.0:
+    resolution: {integrity: sha512-wWyJDlAatxk30ZJer+GeCWS209sA42X+N5jU2jy6oHTp7ufw8uzUTVFBX9+wTfAlhiJXGS0Bq7X6efruWjuK9Q==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -1999,8 +1999,8 @@ packages:
     engines: {node: '>=8'}
     hasBin: true
 
-  joi@18.1.1:
-    resolution: {integrity: sha512-pJkBiPtNo+o0h19LfSvUN46Y5zY+ck99AtHwch9n2HqVLNRgP0ZMyIH8FRMoP+HV8hy/+AG99dXFfwpf83iZfQ==}
+  joi@18.1.2:
+    resolution: {integrity: sha512-rF5MAmps5esSlhCA+N1b6IYHDw9j/btzGaqfgie522jS02Ju/HXBxamlXVlKEHAxoMKQL77HWI8jlqWsFuekZA==}
     engines: {node: '>= 20'}
 
   joycon@3.1.1:
@@ -2069,6 +2069,9 @@ packages:
 
   lodash@4.17.23:
     resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
+
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -2369,8 +2372,9 @@ packages:
     resolution: {integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==}
     engines: {node: '>=18'}
 
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+  proxy-from-env@2.1.0:
+    resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
+    engines: {node: '>=10'}
 
   pump@3.0.3:
     resolution: {integrity: sha512-todwxLMY7/heScKmntwQG8CXVkWUOdYxIvY2s0VWAAMh/nd8SoYiRaKjlr7+iCs984f2P8zvrfWcDDYVb73NfA==}
@@ -2517,8 +2521,8 @@ packages:
     resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
     engines: {node: '>=10'}
 
-  start-server-and-test@3.0.0:
-    resolution: {integrity: sha512-R//IdnWC+H+raB6zJIqw5QbIsMAjjYFwJC/OIJO6kgZljguYe4n4LlA7vkPTO7zoctFlVPfymsNShjcPOIH8nw==}
+  start-server-and-test@3.0.2:
+    resolution: {integrity: sha512-g6v4zPr1RRL5XxXJ+Wnk1GFLb+DGZLjFqse+5lNZ0X7m4SRMC6eOA+AXYboQDfNCEjpnTu0AGrvJb/JTUOg8dQ==}
     engines: {node: ^22 || >=24}
     hasBin: true
 
@@ -2754,8 +2758,8 @@ packages:
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
-  wait-on@9.0.4:
-    resolution: {integrity: sha512-k8qrgfwrPVJXTeFY8tl6BxVHiclK11u72DVKhpybHfUL/K6KM4bdyK9EhIVYGytB5MJe/3lq4Tf0hrjM+pvJZQ==}
+  wait-on@9.0.5:
+    resolution: {integrity: sha512-qgnbHDfDTRIp73ANEJNRW/7kn8CrDUcvZz18xotJQku/P4saTGkbIzvnMZebPmVvVNUiRq1qWAPyqCH+W4H8KA==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
@@ -4118,11 +4122,11 @@ snapshots:
       - rollup
       - supports-color
 
-  axios@1.13.6(debug@4.4.3):
+  axios@1.15.0(debug@4.4.3):
     dependencies:
       follow-redirects: 1.15.11(debug@4.4.3)
       form-data: 4.0.5
-      proxy-from-env: 1.1.0
+      proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
 
@@ -4935,7 +4939,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  joi@18.1.1:
+  joi@18.1.2:
     dependencies:
       '@hapi/address': 5.1.1
       '@hapi/formula': 3.0.2
@@ -4996,6 +5000,8 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lodash@4.17.23: {}
+
+  lodash@4.18.1: {}
 
   log-symbols@4.1.0:
     dependencies:
@@ -5265,7 +5271,7 @@ snapshots:
     dependencies:
       parse-ms: 4.0.0
 
-  proxy-from-env@1.1.0: {}
+  proxy-from-env@2.1.0: {}
 
   pump@3.0.3:
     dependencies:
@@ -5421,7 +5427,7 @@ snapshots:
     dependencies:
       escape-string-regexp: 2.0.0
 
-  start-server-and-test@3.0.0:
+  start-server-and-test@3.0.2:
     dependencies:
       arg: 5.0.2
       bluebird: 3.7.2
@@ -5430,7 +5436,7 @@ snapshots:
       execa: 5.1.1
       lazy-ass: 1.6.0
       tree-kill: 1.2.2
-      wait-on: 9.0.4(debug@4.4.3)
+      wait-on: 9.0.5(debug@4.4.3)
     transitivePeerDependencies:
       - supports-color
 
@@ -5677,11 +5683,11 @@ snapshots:
 
   v8-compile-cache-lib@3.0.1: {}
 
-  wait-on@9.0.4(debug@4.4.3):
+  wait-on@9.0.5(debug@4.4.3):
     dependencies:
-      axios: 1.13.6(debug@4.4.3)
-      joi: 18.1.1
-      lodash: 4.17.23
+      axios: 1.15.0(debug@4.4.3)
+      joi: 18.1.2
+      lodash: 4.18.1
       minimist: 1.2.8
       rxjs: 7.8.2
     transitivePeerDependencies:
