@@ -27,7 +27,7 @@ importers:
         version: 25.6.0
       ava:
         specifier: ^8.0.0
-        version: 8.0.0(@ava/typescript@6.0.0)(rollup@4.53.3)
+        version: 8.0.0(@ava/typescript@7.0.0)(rollup@4.53.3)
       eslint:
         specifier: ^9.39.1
         version: 9.39.1
@@ -116,9 +116,9 @@ importers:
 
 packages:
 
-  '@ava/typescript@6.0.0':
-    resolution: {integrity: sha512-+8oDYc4J5cCaWZh1VUbyc+cegGplJO9FqHpqR4LVAVx8fRLVRaYlC4yyA6cqHJ1vWP23Ff/ECS5U68Zz6OLZlg==}
-    engines: {node: ^20.8 || ^22 || >=24}
+  '@ava/typescript@7.0.0':
+    resolution: {integrity: sha512-0ktzq4/9ya2QoAuVWzl3McpLV9W//Tj+oMonQ4ucgm5l6tQ46aaju/rJL9kzeY5MkG6wzXvFt/MmaLqf9uNC9w==}
+    engines: {node: ^22.20 || ^24.12 || >=25}
 
   '@babel/runtime@7.28.4':
     resolution: {integrity: sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==}
@@ -2880,7 +2880,7 @@ packages:
 
 snapshots:
 
-  '@ava/typescript@6.0.0':
+  '@ava/typescript@7.0.0':
     dependencies:
       escape-string-regexp: 5.0.0
       execa: 9.6.1
@@ -4065,7 +4065,7 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  ava@8.0.0(@ava/typescript@6.0.0)(rollup@4.53.3):
+  ava@8.0.0(@ava/typescript@7.0.0)(rollup@4.53.3):
     dependencies:
       '@vercel/nft': 1.5.0(rollup@4.53.3)
       acorn: 8.16.0
@@ -4108,7 +4108,7 @@ snapshots:
       write-file-atomic: 7.0.1
       yargs: 18.0.0
     optionalDependencies:
-      '@ava/typescript': 6.0.0
+      '@ava/typescript': 7.0.0
     transitivePeerDependencies:
       - encoding
       - rollup
