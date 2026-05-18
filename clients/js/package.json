@@ -51,7 +51,7 @@
         "@solana/kit": "^6.9.0",
         "@solana/sysvars": "^6.9.0",
         "@types/node": "^25.8.0",
-        "ava": "^8.0.0",
+        "ava": "^8.0.1",
         "eslint": "^9.39.1",
         "eslint-config-prettier": "^10.1.8",
         "prettier": "^3.8.3",
