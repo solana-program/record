@@ -46,6 +46,7 @@
         "@solana/kit": "^5.0"
     },
     "devDependencies": {
+        "@ava/typescript": "^7.0.0",
         "@eslint/js": "^10.0.1",
         "@solana-program/system": "^0.12.1",
         "@solana/kit": "^6.9.0",
