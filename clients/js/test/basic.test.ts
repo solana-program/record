@@ -1,4 +1,4 @@
-import test from 'ava';
+import { expect, it } from 'vitest';
 import { generateKeyPairSigner } from '@solana/kit';
 import {
   fetchRecordData,
@@ -13,7 +13,7 @@ import {
   sendAndConfirmInstructions,
 } from './_setup';
 
-test('basic instructions flow', async t => {
+it('runs the basic instructions flow', async () => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
 
@@ -35,8 +35,8 @@ test('basic instructions flow', async t => {
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount.address);
-  t.is(accountData.data.version, 1);
-  t.is(accountData.data.authority, recordAuthority.address);
+  expect(accountData.data.version).toBe(1);
+  expect(accountData.data.authority).toBe(recordAuthority.address);
 
   // --- 2. Reallocate ---
   const reallocIxs = await reallocateRecord({
@@ -60,7 +60,7 @@ test('basic instructions flow', async t => {
     ? Buffer.from(rawAccount.value.data[0], 'base64').subarray(offset)
     : new Uint8Array([]);
 
-  t.deepEqual(actualData, Buffer.from([0, 0, 0, 0, 0]));
+  expect(actualData).toEqual(Buffer.from([0, 0, 0, 0, 0]));
 
   // --- 3. Write ---
   const writeIx = createWriteInstruction({
@@ -79,7 +79,7 @@ test('basic instructions flow', async t => {
   actualData = rawAccount.value?.data?.[0]
     ? Buffer.from(rawAccount.value.data[0], 'base64').subarray(offset)
     : new Uint8Array([]);
-  t.deepEqual(actualData, Buffer.from([0, 1, 2, 3, 4]));
+  expect(actualData).toEqual(Buffer.from([0, 1, 2, 3, 4]));
 
   // // --- 4. Set Authority ---
   // const setAuthIx = createSetAuthorityInstruction({

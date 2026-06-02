@@ -1,4 +1,4 @@
-import test from 'ava';
+import { expect, it } from 'vitest';
 import { generateKeyPairSigner } from '@solana/kit';
 import {
   createRecord,
@@ -13,7 +13,7 @@ import {
   sendAndConfirmInstructions,
 } from './_setup';
 
-test('long record data flow', async t => {
+it('runs the long record data flow', async () => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
   const recordAuthority = await generateKeyPairSigner();
@@ -75,5 +75,5 @@ test('long record data flow', async t => {
     ? Buffer.from(rawAccount.value.data[0], 'base64').subarray(headerSize)
     : new Uint8Array([]);
 
-  t.deepEqual(actualData, Buffer.from(recordData));
+  expect(actualData).toEqual(Buffer.from(recordData));
 });

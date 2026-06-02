@@ -1,5 +1,5 @@
 import { createAddressWithSeed, generateKeyPairSigner } from '@solana/kit';
-import test from 'ava';
+import { expect, it } from 'vitest';
 import { createRecordWithSeed, fetchRecordData, SPL_RECORD_PROGRAM_ADDRESS } from '../src';
 import {
   createDefaultSolanaClient,
@@ -7,7 +7,7 @@ import {
   sendAndConfirmInstructions,
 } from './_setup';
 
-test('create record with string seed', async t => {
+it('creates a record with a string seed', async () => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
 
@@ -29,17 +29,17 @@ test('create record with string seed', async t => {
     seed,
   });
 
-  t.deepEqual(recordAccount, expectedRecordAccount);
+  expect(recordAccount).toEqual(expectedRecordAccount);
 
   await sendAndConfirmInstructions(client, payer, createIxs);
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount);
-  t.is(accountData.data.version, 1);
-  t.is(accountData.data.authority, payer.address);
+  expect(accountData.data.version).toBe(1);
+  expect(accountData.data.authority).toBe(payer.address);
 });
 
-test('create record with uint8array seed', async t => {
+it('creates a record with a uint8array seed', async () => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
 
@@ -61,17 +61,17 @@ test('create record with uint8array seed', async t => {
     seed,
   });
 
-  t.deepEqual(recordAccount, expectedRecordAccount);
+  expect(recordAccount).toEqual(expectedRecordAccount);
 
   await sendAndConfirmInstructions(client, payer, createIxs);
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount);
-  t.is(accountData.data.version, 1);
-  t.is(accountData.data.authority, payer.address);
+  expect(accountData.data.version).toBe(1);
+  expect(accountData.data.authority).toBe(payer.address);
 });
 
-test('create record with external base account', async t => {
+it('creates a record with an external base account', async () => {
   const client = createDefaultSolanaClient();
   const payer = await generateKeyPairSignerWithSol(client);
   const baseAccount = await generateKeyPairSigner();
@@ -95,12 +95,12 @@ test('create record with external base account', async t => {
     baseAccount: baseAccount,
   });
 
-  t.deepEqual(recordAccount, expectedRecordAccount);
+  expect(recordAccount).toEqual(expectedRecordAccount);
 
   await sendAndConfirmInstructions(client, payer, createIxs);
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount);
-  t.is(accountData.data.version, 1);
-  t.is(accountData.data.authority, payer.address);
+  expect(accountData.data.version).toBe(1);
+  expect(accountData.data.authority).toBe(payer.address);
 });
