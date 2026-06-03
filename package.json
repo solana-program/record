@@ -1,4 +1,16 @@
 {
   "private": true,
+  "scripts": {
+    "generate": "pnpm generate:clients",
+    "generate:clients": "codama run --all"
+  },
+  "devDependencies": {
+    "@codama/renderers-js": "^2.2.0",
+    "codama": "^1.6.0",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=v20.0.0"
+  },
   "packageManager": "pnpm@9.1.0"
 }

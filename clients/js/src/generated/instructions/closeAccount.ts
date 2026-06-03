@@ -7,171 +7,153 @@
  */
 
 import {
-  combineCodec,
-  getStructDecoder,
-  getStructEncoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+    combineCodec,
+    getStructDecoder,
+    getStructEncoder,
+    getU8Decoder,
+    getU8Encoder,
+    SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
+    SolanaError,
+    transformEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type ReadonlySignerAccount,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
 } from '@solana/kit';
+import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
 import { SPL_RECORD_PROGRAM_ADDRESS } from '../programs';
-import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 
 export const CLOSE_ACCOUNT_DISCRIMINATOR = 3;
 
-export function getCloseAccountDiscriminatorBytes() {
-  return getU8Encoder().encode(CLOSE_ACCOUNT_DISCRIMINATOR);
+export function getCloseAccountDiscriminatorBytes(): ReadonlyUint8Array {
+    return getU8Encoder().encode(CLOSE_ACCOUNT_DISCRIMINATOR);
 }
 
 export type CloseAccountInstruction<
-  TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
-  TAccountRecordAccount extends string | AccountMeta<string> = string,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TAccountReceiver extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountRecordAccount extends string | AccountMeta<string> = string,
+    TAccountAuthority extends string | AccountMeta<string> = string,
+    TAccountReceiver extends string | AccountMeta<string> = string,
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountRecordAccount extends string
-        ? WritableAccount<TAccountRecordAccount>
-        : TAccountRecordAccount,
-      TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountReceiver extends string ? WritableAccount<TAccountReceiver> : TAccountReceiver,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountRecordAccount extends string ? WritableAccount<TAccountRecordAccount> : TAccountRecordAccount,
+            TAccountAuthority extends string
+                ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
+                : TAccountAuthority,
+            TAccountReceiver extends string ? WritableAccount<TAccountReceiver> : TAccountReceiver,
+            ...TRemainingAccounts,
+        ]
+    >;
 
 export type CloseAccountInstructionData = { discriminator: number };
 
 export type CloseAccountInstructionDataArgs = {};
 
 export function getCloseAccountInstructionDataEncoder(): FixedSizeEncoder<CloseAccountInstructionDataArgs> {
-  return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
-    ...value,
-    discriminator: CLOSE_ACCOUNT_DISCRIMINATOR,
-  }));
+    return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
+        ...value,
+        discriminator: CLOSE_ACCOUNT_DISCRIMINATOR,
+    }));
 }
 
 export function getCloseAccountInstructionDataDecoder(): FixedSizeDecoder<CloseAccountInstructionData> {
-  return getStructDecoder([['discriminator', getU8Decoder()]]);
+    return getStructDecoder([['discriminator', getU8Decoder()]]);
 }
 
 export function getCloseAccountInstructionDataCodec(): FixedSizeCodec<
-  CloseAccountInstructionDataArgs,
-  CloseAccountInstructionData
+    CloseAccountInstructionDataArgs,
+    CloseAccountInstructionData
 > {
-  return combineCodec(
-    getCloseAccountInstructionDataEncoder(),
-    getCloseAccountInstructionDataDecoder(),
-  );
+    return combineCodec(getCloseAccountInstructionDataEncoder(), getCloseAccountInstructionDataDecoder());
 }
 
 export type CloseAccountInput<
-  TAccountRecordAccount extends string = string,
-  TAccountAuthority extends string = string,
-  TAccountReceiver extends string = string,
+    TAccountRecordAccount extends string = string,
+    TAccountAuthority extends string = string,
+    TAccountReceiver extends string = string,
 > = {
-  recordAccount: Address<TAccountRecordAccount>;
-  authority: TransactionSigner<TAccountAuthority>;
-  receiver: Address<TAccountReceiver>;
+    recordAccount: Address<TAccountRecordAccount>;
+    authority: TransactionSigner<TAccountAuthority>;
+    receiver: Address<TAccountReceiver>;
 };
 
 export function getCloseAccountInstruction<
-  TAccountRecordAccount extends string,
-  TAccountAuthority extends string,
-  TAccountReceiver extends string,
-  TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountRecordAccount extends string,
+    TAccountAuthority extends string,
+    TAccountReceiver extends string,
+    TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
-  input: CloseAccountInput<TAccountRecordAccount, TAccountAuthority, TAccountReceiver>,
-  config?: { programAddress?: TProgramAddress },
-): CloseAccountInstruction<
-  TProgramAddress,
-  TAccountRecordAccount,
-  TAccountAuthority,
-  TAccountReceiver
-> {
-  // Program address.
-  const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
+    input: CloseAccountInput<TAccountRecordAccount, TAccountAuthority, TAccountReceiver>,
+    config?: { programAddress?: TProgramAddress },
+): CloseAccountInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountReceiver> {
+    // Program address.
+    const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    recordAccount: { value: input.recordAccount ?? null, isWritable: true },
-    authority: { value: input.authority ?? null, isWritable: false },
-    receiver: { value: input.receiver ?? null, isWritable: true },
-  };
-  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
+    // Original accounts.
+    const originalAccounts = {
+        recordAccount: { value: input.recordAccount ?? null, isWritable: true },
+        authority: { value: input.authority ?? null, isWritable: false },
+        receiver: { value: input.receiver ?? null, isWritable: true },
+    };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.recordAccount),
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.receiver),
-    ],
-    data: getCloseAccountInstructionDataEncoder().encode({}),
-    programAddress,
-  } as CloseAccountInstruction<
-    TProgramAddress,
-    TAccountRecordAccount,
-    TAccountAuthority,
-    TAccountReceiver
-  >);
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+    return Object.freeze({
+        accounts: [
+            getAccountMeta('recordAccount', accounts.recordAccount),
+            getAccountMeta('authority', accounts.authority),
+            getAccountMeta('receiver', accounts.receiver),
+        ],
+        data: getCloseAccountInstructionDataEncoder().encode({}),
+        programAddress,
+    } as CloseAccountInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountReceiver>);
 }
 
 export type ParsedCloseAccountInstruction<
-  TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    recordAccount: TAccountMetas[0];
-    authority: TAccountMetas[1];
-    receiver: TAccountMetas[2];
-  };
-  data: CloseAccountInstructionData;
+    programAddress: Address<TProgram>;
+    accounts: {
+        recordAccount: TAccountMetas[0];
+        authority: TAccountMetas[1];
+        receiver: TAccountMetas[2];
+    };
+    data: CloseAccountInstructionData;
 };
 
-export function parseCloseAccountInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
->(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+export function parseCloseAccountInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
 ): ParsedCloseAccountInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 3) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      recordAccount: getNextAccount(),
-      authority: getNextAccount(),
-      receiver: getNextAccount(),
-    },
-    data: getCloseAccountInstructionDataDecoder().decode(instruction.data),
-  };
+    if (instruction.accounts.length < 3) {
+        throw new SolanaError(SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS, {
+            actualAccountMetas: instruction.accounts.length,
+            expectedAccountMetas: 3,
+        });
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: { recordAccount: getNextAccount(), authority: getNextAccount(), receiver: getNextAccount() },
+        data: getCloseAccountInstructionDataDecoder().decode(instruction.data),
+    };
 }

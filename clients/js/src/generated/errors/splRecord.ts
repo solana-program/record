@@ -7,48 +7,39 @@
  */
 
 import {
-  isProgramError,
-  type Address,
-  type SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM,
-  type SolanaError,
+    isProgramError,
+    type Address,
+    type SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM,
+    type SolanaError,
 } from '@solana/kit';
 import { SPL_RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const SPL_RECORD_ERROR__INCORRECT_AUTHORITY = 0x0; // 0
 export const SPL_RECORD_ERROR__OVERFLOW = 0x1; // 1
 
-export type SplRecordError =
-  | typeof SPL_RECORD_ERROR__INCORRECT_AUTHORITY
-  | typeof SPL_RECORD_ERROR__OVERFLOW;
+export type SplRecordError = typeof SPL_RECORD_ERROR__INCORRECT_AUTHORITY | typeof SPL_RECORD_ERROR__OVERFLOW;
 
 let splRecordErrorMessages: Record<SplRecordError, string> | undefined;
-if (process.env.NODE_ENV !== 'production') {
-  splRecordErrorMessages = {
-    [SPL_RECORD_ERROR__INCORRECT_AUTHORITY]: `Incorrect authority provided on update or delete`,
-    [SPL_RECORD_ERROR__OVERFLOW]: `Calculation overflow`,
-  };
+if (process.env['NODE_ENV'] !== 'production') {
+    splRecordErrorMessages = {
+        [SPL_RECORD_ERROR__INCORRECT_AUTHORITY]: `Incorrect authority provided on update or delete`,
+        [SPL_RECORD_ERROR__OVERFLOW]: `Calculation overflow`,
+    };
 }
 
 export function getSplRecordErrorMessage(code: SplRecordError): string {
-  if (process.env.NODE_ENV !== 'production') {
-    return (splRecordErrorMessages as Record<SplRecordError, string>)[code];
-  }
+    if (process.env['NODE_ENV'] !== 'production') {
+        return (splRecordErrorMessages as Record<SplRecordError, string>)[code];
+    }
 
-  return 'Error message not available in production bundles.';
+    return 'Error message not available in production bundles.';
 }
 
 export function isSplRecordError<TProgramErrorCode extends SplRecordError>(
-  error: unknown,
-  transactionMessage: {
-    instructions: Record<number, { programAddress: Address }>;
-  },
-  code?: TProgramErrorCode,
+    error: unknown,
+    transactionMessage: { instructions: Record<number, { programAddress: Address }> },
+    code?: TProgramErrorCode,
 ): error is SolanaError<typeof SOLANA_ERROR__INSTRUCTION_ERROR__CUSTOM> &
-  Readonly<{ context: Readonly<{ code: TProgramErrorCode }> }> {
-  return isProgramError<TProgramErrorCode>(
-    error,
-    transactionMessage,
-    SPL_RECORD_PROGRAM_ADDRESS,
-    code,
-  );
+    Readonly<{ context: Readonly<{ code: TProgramErrorCode }> }> {
+    return isProgramError<TProgramErrorCode>(error, transactionMessage, SPL_RECORD_PROGRAM_ADDRESS, code);
 }

@@ -7,174 +7,154 @@
  */
 
 import {
-  combineCodec,
-  getStructDecoder,
-  getStructEncoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlyAccount,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+    combineCodec,
+    getStructDecoder,
+    getStructEncoder,
+    getU8Decoder,
+    getU8Encoder,
+    SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
+    SolanaError,
+    transformEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type ReadonlyAccount,
+    type ReadonlySignerAccount,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
 } from '@solana/kit';
+import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
 import { SPL_RECORD_PROGRAM_ADDRESS } from '../programs';
-import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 
 export const SET_AUTHORITY_DISCRIMINATOR = 2;
 
-export function getSetAuthorityDiscriminatorBytes() {
-  return getU8Encoder().encode(SET_AUTHORITY_DISCRIMINATOR);
+export function getSetAuthorityDiscriminatorBytes(): ReadonlyUint8Array {
+    return getU8Encoder().encode(SET_AUTHORITY_DISCRIMINATOR);
 }
 
 export type SetAuthorityInstruction<
-  TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
-  TAccountRecordAccount extends string | AccountMeta<string> = string,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TAccountNewAuthority extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountRecordAccount extends string | AccountMeta<string> = string,
+    TAccountAuthority extends string | AccountMeta<string> = string,
+    TAccountNewAuthority extends string | AccountMeta<string> = string,
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountRecordAccount extends string
-        ? WritableAccount<TAccountRecordAccount>
-        : TAccountRecordAccount,
-      TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      TAccountNewAuthority extends string
-        ? ReadonlyAccount<TAccountNewAuthority>
-        : TAccountNewAuthority,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountRecordAccount extends string ? WritableAccount<TAccountRecordAccount> : TAccountRecordAccount,
+            TAccountAuthority extends string
+                ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
+                : TAccountAuthority,
+            TAccountNewAuthority extends string ? ReadonlyAccount<TAccountNewAuthority> : TAccountNewAuthority,
+            ...TRemainingAccounts,
+        ]
+    >;
 
 export type SetAuthorityInstructionData = { discriminator: number };
 
 export type SetAuthorityInstructionDataArgs = {};
 
 export function getSetAuthorityInstructionDataEncoder(): FixedSizeEncoder<SetAuthorityInstructionDataArgs> {
-  return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
-    ...value,
-    discriminator: SET_AUTHORITY_DISCRIMINATOR,
-  }));
+    return transformEncoder(getStructEncoder([['discriminator', getU8Encoder()]]), value => ({
+        ...value,
+        discriminator: SET_AUTHORITY_DISCRIMINATOR,
+    }));
 }
 
 export function getSetAuthorityInstructionDataDecoder(): FixedSizeDecoder<SetAuthorityInstructionData> {
-  return getStructDecoder([['discriminator', getU8Decoder()]]);
+    return getStructDecoder([['discriminator', getU8Decoder()]]);
 }
 
 export function getSetAuthorityInstructionDataCodec(): FixedSizeCodec<
-  SetAuthorityInstructionDataArgs,
-  SetAuthorityInstructionData
+    SetAuthorityInstructionDataArgs,
+    SetAuthorityInstructionData
 > {
-  return combineCodec(
-    getSetAuthorityInstructionDataEncoder(),
-    getSetAuthorityInstructionDataDecoder(),
-  );
+    return combineCodec(getSetAuthorityInstructionDataEncoder(), getSetAuthorityInstructionDataDecoder());
 }
 
 export type SetAuthorityInput<
-  TAccountRecordAccount extends string = string,
-  TAccountAuthority extends string = string,
-  TAccountNewAuthority extends string = string,
+    TAccountRecordAccount extends string = string,
+    TAccountAuthority extends string = string,
+    TAccountNewAuthority extends string = string,
 > = {
-  recordAccount: Address<TAccountRecordAccount>;
-  authority: TransactionSigner<TAccountAuthority>;
-  newAuthority: Address<TAccountNewAuthority>;
+    recordAccount: Address<TAccountRecordAccount>;
+    authority: TransactionSigner<TAccountAuthority>;
+    newAuthority: Address<TAccountNewAuthority>;
 };
 
 export function getSetAuthorityInstruction<
-  TAccountRecordAccount extends string,
-  TAccountAuthority extends string,
-  TAccountNewAuthority extends string,
-  TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountRecordAccount extends string,
+    TAccountAuthority extends string,
+    TAccountNewAuthority extends string,
+    TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
-  input: SetAuthorityInput<TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority>,
-  config?: { programAddress?: TProgramAddress },
-): SetAuthorityInstruction<
-  TProgramAddress,
-  TAccountRecordAccount,
-  TAccountAuthority,
-  TAccountNewAuthority
-> {
-  // Program address.
-  const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
+    input: SetAuthorityInput<TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority>,
+    config?: { programAddress?: TProgramAddress },
+): SetAuthorityInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority> {
+    // Program address.
+    const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    recordAccount: { value: input.recordAccount ?? null, isWritable: true },
-    authority: { value: input.authority ?? null, isWritable: false },
-    newAuthority: { value: input.newAuthority ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
+    // Original accounts.
+    const originalAccounts = {
+        recordAccount: { value: input.recordAccount ?? null, isWritable: true },
+        authority: { value: input.authority ?? null, isWritable: false },
+        newAuthority: { value: input.newAuthority ?? null, isWritable: false },
+    };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
-  return Object.freeze({
-    accounts: [
-      getAccountMeta(accounts.recordAccount),
-      getAccountMeta(accounts.authority),
-      getAccountMeta(accounts.newAuthority),
-    ],
-    data: getSetAuthorityInstructionDataEncoder().encode({}),
-    programAddress,
-  } as SetAuthorityInstruction<
-    TProgramAddress,
-    TAccountRecordAccount,
-    TAccountAuthority,
-    TAccountNewAuthority
-  >);
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+    return Object.freeze({
+        accounts: [
+            getAccountMeta('recordAccount', accounts.recordAccount),
+            getAccountMeta('authority', accounts.authority),
+            getAccountMeta('newAuthority', accounts.newAuthority),
+        ],
+        data: getSetAuthorityInstructionDataEncoder().encode({}),
+        programAddress,
+    } as SetAuthorityInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority>);
 }
 
 export type ParsedSetAuthorityInstruction<
-  TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    recordAccount: TAccountMetas[0];
-    authority: TAccountMetas[1];
-    newAuthority: TAccountMetas[2];
-  };
-  data: SetAuthorityInstructionData;
+    programAddress: Address<TProgram>;
+    accounts: {
+        recordAccount: TAccountMetas[0];
+        authority: TAccountMetas[1];
+        newAuthority: TAccountMetas[2];
+    };
+    data: SetAuthorityInstructionData;
 };
 
-export function parseSetAuthorityInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
->(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+export function parseSetAuthorityInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
 ): ParsedSetAuthorityInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 3) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: {
-      recordAccount: getNextAccount(),
-      authority: getNextAccount(),
-      newAuthority: getNextAccount(),
-    },
-    data: getSetAuthorityInstructionDataDecoder().decode(instruction.data),
-  };
+    if (instruction.accounts.length < 3) {
+        throw new SolanaError(SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS, {
+            actualAccountMetas: instruction.accounts.length,
+            expectedAccountMetas: 3,
+        });
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: { recordAccount: getNextAccount(), authority: getNextAccount(), newAuthority: getNextAccount() },
+        data: getSetAuthorityInstructionDataDecoder().decode(instruction.data),
+    };
 }

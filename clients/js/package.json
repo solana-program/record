@@ -44,7 +44,7 @@
     },
     "homepage": "https://github.com/solana-program/record#readme",
     "peerDependencies": {
-        "@solana/kit": "^5.0"
+        "@solana/kit": "^6.4.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
