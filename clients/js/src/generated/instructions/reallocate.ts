@@ -7,158 +7,157 @@
  */
 
 import {
-  combineCodec,
-  getStructDecoder,
-  getStructEncoder,
-  getU64Decoder,
-  getU64Encoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type AccountMeta,
-  type AccountSignerMeta,
-  type Address,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type Instruction,
-  type InstructionWithAccounts,
-  type InstructionWithData,
-  type ReadonlySignerAccount,
-  type ReadonlyUint8Array,
-  type TransactionSigner,
-  type WritableAccount,
+    combineCodec,
+    getStructDecoder,
+    getStructEncoder,
+    getU64Decoder,
+    getU64Encoder,
+    getU8Decoder,
+    getU8Encoder,
+    SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS,
+    SolanaError,
+    transformEncoder,
+    type AccountMeta,
+    type AccountSignerMeta,
+    type Address,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type Instruction,
+    type InstructionWithAccounts,
+    type InstructionWithData,
+    type ReadonlySignerAccount,
+    type ReadonlyUint8Array,
+    type TransactionSigner,
+    type WritableAccount,
 } from '@solana/kit';
+import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
 import { SPL_RECORD_PROGRAM_ADDRESS } from '../programs';
-import { getAccountMetaFactory, type ResolvedAccount } from '../shared';
 
 export const REALLOCATE_DISCRIMINATOR = 4;
 
-export function getReallocateDiscriminatorBytes() {
-  return getU8Encoder().encode(REALLOCATE_DISCRIMINATOR);
+export function getReallocateDiscriminatorBytes(): ReadonlyUint8Array {
+    return getU8Encoder().encode(REALLOCATE_DISCRIMINATOR);
 }
 
 export type ReallocateInstruction<
-  TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
-  TAccountRecordAccount extends string | AccountMeta<string> = string,
-  TAccountAuthority extends string | AccountMeta<string> = string,
-  TRemainingAccounts extends readonly AccountMeta<string>[] = [],
+    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountRecordAccount extends string | AccountMeta<string> = string,
+    TAccountAuthority extends string | AccountMeta<string> = string,
+    TRemainingAccounts extends readonly AccountMeta<string>[] = [],
 > = Instruction<TProgram> &
-  InstructionWithData<ReadonlyUint8Array> &
-  InstructionWithAccounts<
-    [
-      TAccountRecordAccount extends string
-        ? WritableAccount<TAccountRecordAccount>
-        : TAccountRecordAccount,
-      TAccountAuthority extends string
-        ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
-        : TAccountAuthority,
-      ...TRemainingAccounts,
-    ]
-  >;
+    InstructionWithData<ReadonlyUint8Array> &
+    InstructionWithAccounts<
+        [
+            TAccountRecordAccount extends string ? WritableAccount<TAccountRecordAccount> : TAccountRecordAccount,
+            TAccountAuthority extends string
+                ? ReadonlySignerAccount<TAccountAuthority> & AccountSignerMeta<TAccountAuthority>
+                : TAccountAuthority,
+            ...TRemainingAccounts,
+        ]
+    >;
 
-export type ReallocateInstructionData = {
-  discriminator: number;
-  dataLength: bigint;
-};
+export type ReallocateInstructionData = { discriminator: number; dataLength: bigint };
 
 export type ReallocateInstructionDataArgs = { dataLength: number | bigint };
 
 export function getReallocateInstructionDataEncoder(): FixedSizeEncoder<ReallocateInstructionDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ['discriminator', getU8Encoder()],
-      ['dataLength', getU64Encoder()],
-    ]),
-    value => ({ ...value, discriminator: REALLOCATE_DISCRIMINATOR }),
-  );
+    return transformEncoder(
+        getStructEncoder([
+            ['discriminator', getU8Encoder()],
+            ['dataLength', getU64Encoder()],
+        ]),
+        value => ({ ...value, discriminator: REALLOCATE_DISCRIMINATOR }),
+    );
 }
 
 export function getReallocateInstructionDataDecoder(): FixedSizeDecoder<ReallocateInstructionData> {
-  return getStructDecoder([
-    ['discriminator', getU8Decoder()],
-    ['dataLength', getU64Decoder()],
-  ]);
+    return getStructDecoder([
+        ['discriminator', getU8Decoder()],
+        ['dataLength', getU64Decoder()],
+    ]);
 }
 
 export function getReallocateInstructionDataCodec(): FixedSizeCodec<
-  ReallocateInstructionDataArgs,
-  ReallocateInstructionData
+    ReallocateInstructionDataArgs,
+    ReallocateInstructionData
 > {
-  return combineCodec(getReallocateInstructionDataEncoder(), getReallocateInstructionDataDecoder());
+    return combineCodec(getReallocateInstructionDataEncoder(), getReallocateInstructionDataDecoder());
 }
 
 export type ReallocateInput<
-  TAccountRecordAccount extends string = string,
-  TAccountAuthority extends string = string,
+    TAccountRecordAccount extends string = string,
+    TAccountAuthority extends string = string,
 > = {
-  recordAccount: Address<TAccountRecordAccount>;
-  authority: TransactionSigner<TAccountAuthority>;
-  dataLength: ReallocateInstructionDataArgs['dataLength'];
+    recordAccount: Address<TAccountRecordAccount>;
+    authority: TransactionSigner<TAccountAuthority>;
+    dataLength: ReallocateInstructionDataArgs['dataLength'];
 };
 
 export function getReallocateInstruction<
-  TAccountRecordAccount extends string,
-  TAccountAuthority extends string,
-  TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountRecordAccount extends string,
+    TAccountAuthority extends string,
+    TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
 >(
-  input: ReallocateInput<TAccountRecordAccount, TAccountAuthority>,
-  config?: { programAddress?: TProgramAddress },
+    input: ReallocateInput<TAccountRecordAccount, TAccountAuthority>,
+    config?: { programAddress?: TProgramAddress },
 ): ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority> {
-  // Program address.
-  const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
+    // Program address.
+    const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
 
-  // Original accounts.
-  const originalAccounts = {
-    recordAccount: { value: input.recordAccount ?? null, isWritable: true },
-    authority: { value: input.authority ?? null, isWritable: false },
-  };
-  const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedAccount>;
+    // Original accounts.
+    const originalAccounts = {
+        recordAccount: { value: input.recordAccount ?? null, isWritable: true },
+        authority: { value: input.authority ?? null, isWritable: false },
+    };
+    const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
-  // Original args.
-  const args = { ...input };
+    // Original args.
+    const args = { ...input };
 
-  const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
-  return Object.freeze({
-    accounts: [getAccountMeta(accounts.recordAccount), getAccountMeta(accounts.authority)],
-    data: getReallocateInstructionDataEncoder().encode(args as ReallocateInstructionDataArgs),
-    programAddress,
-  } as ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority>);
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+    return Object.freeze({
+        accounts: [
+            getAccountMeta('recordAccount', accounts.recordAccount),
+            getAccountMeta('authority', accounts.authority),
+        ],
+        data: getReallocateInstructionDataEncoder().encode(args as ReallocateInstructionDataArgs),
+        programAddress,
+    } as ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority>);
 }
 
 export type ParsedReallocateInstruction<
-  TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
-  TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
+    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
-  programAddress: Address<TProgram>;
-  accounts: {
-    recordAccount: TAccountMetas[0];
-    authority: TAccountMetas[1];
-  };
-  data: ReallocateInstructionData;
+    programAddress: Address<TProgram>;
+    accounts: {
+        recordAccount: TAccountMetas[0];
+        authority: TAccountMetas[1];
+    };
+    data: ReallocateInstructionData;
 };
 
-export function parseReallocateInstruction<
-  TProgram extends string,
-  TAccountMetas extends readonly AccountMeta[],
->(
-  instruction: Instruction<TProgram> &
-    InstructionWithAccounts<TAccountMetas> &
-    InstructionWithData<ReadonlyUint8Array>,
+export function parseReallocateInstruction<TProgram extends string, TAccountMetas extends readonly AccountMeta[]>(
+    instruction: Instruction<TProgram> &
+        InstructionWithAccounts<TAccountMetas> &
+        InstructionWithData<ReadonlyUint8Array>,
 ): ParsedReallocateInstruction<TProgram, TAccountMetas> {
-  if (instruction.accounts.length < 2) {
-    // TODO: Coded error.
-    throw new Error('Not enough accounts');
-  }
-  let accountIndex = 0;
-  const getNextAccount = () => {
-    const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
-    accountIndex += 1;
-    return accountMeta;
-  };
-  return {
-    programAddress: instruction.programAddress,
-    accounts: { recordAccount: getNextAccount(), authority: getNextAccount() },
-    data: getReallocateInstructionDataDecoder().decode(instruction.data),
-  };
+    if (instruction.accounts.length < 2) {
+        throw new SolanaError(SOLANA_ERROR__PROGRAM_CLIENTS__INSUFFICIENT_ACCOUNT_METAS, {
+            actualAccountMetas: instruction.accounts.length,
+            expectedAccountMetas: 2,
+        });
+    }
+    let accountIndex = 0;
+    const getNextAccount = () => {
+        const accountMeta = (instruction.accounts as TAccountMetas)[accountIndex]!;
+        accountIndex += 1;
+        return accountMeta;
+    };
+    return {
+        programAddress: instruction.programAddress,
+        accounts: { recordAccount: getNextAccount(), authority: getNextAccount() },
+        data: getReallocateInstructionDataDecoder().decode(instruction.data),
+    };
 }

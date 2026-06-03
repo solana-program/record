@@ -7,108 +7,112 @@
  */
 
 import {
-  assertAccountExists,
-  assertAccountsExist,
-  combineCodec,
-  decodeAccount,
-  fetchEncodedAccount,
-  fetchEncodedAccounts,
-  getAddressDecoder,
-  getAddressEncoder,
-  getStructDecoder,
-  getStructEncoder,
-  getU8Decoder,
-  getU8Encoder,
-  transformEncoder,
-  type Account,
-  type Address,
-  type EncodedAccount,
-  type FetchAccountConfig,
-  type FetchAccountsConfig,
-  type FixedSizeCodec,
-  type FixedSizeDecoder,
-  type FixedSizeEncoder,
-  type MaybeAccount,
-  type MaybeEncodedAccount,
+    assertAccountExists,
+    assertAccountsExist,
+    combineCodec,
+    decodeAccount,
+    fetchEncodedAccount,
+    fetchEncodedAccounts,
+    getAddressDecoder,
+    getAddressEncoder,
+    getStructDecoder,
+    getStructEncoder,
+    getU8Decoder,
+    getU8Encoder,
+    transformEncoder,
+    type Account,
+    type Address,
+    type EncodedAccount,
+    type FetchAccountConfig,
+    type FetchAccountsConfig,
+    type FixedSizeCodec,
+    type FixedSizeDecoder,
+    type FixedSizeEncoder,
+    type MaybeAccount,
+    type MaybeEncodedAccount,
+    type ReadonlyUint8Array,
 } from '@solana/kit';
 
 export const RECORD_DATA_VERSION = 1;
 
-export function getRecordDataVersionBytes() {
-  return getU8Encoder().encode(RECORD_DATA_VERSION);
+export function getRecordDataVersionBytes(): ReadonlyUint8Array {
+    return getU8Encoder().encode(RECORD_DATA_VERSION);
 }
 
 export type RecordData = { version: number; authority: Address };
 
 export type RecordDataArgs = { version?: number; authority: Address };
 
+/** Gets the encoder for {@link RecordDataArgs} account data. */
 export function getRecordDataEncoder(): FixedSizeEncoder<RecordDataArgs> {
-  return transformEncoder(
-    getStructEncoder([
-      ['version', getU8Encoder()],
-      ['authority', getAddressEncoder()],
-    ]),
-    value => ({ ...value, version: value.version ?? RECORD_DATA_VERSION }),
-  );
+    return transformEncoder(
+        getStructEncoder([
+            ['version', getU8Encoder()],
+            ['authority', getAddressEncoder()],
+        ]),
+        value => ({ ...value, version: value.version ?? RECORD_DATA_VERSION }),
+    );
 }
 
+/** Gets the decoder for {@link RecordData} account data. */
 export function getRecordDataDecoder(): FixedSizeDecoder<RecordData> {
-  return getStructDecoder([
-    ['version', getU8Decoder()],
-    ['authority', getAddressDecoder()],
-  ]);
+    return getStructDecoder([
+        ['version', getU8Decoder()],
+        ['authority', getAddressDecoder()],
+    ]);
 }
 
+/** Gets the codec for {@link RecordData} account data. */
 export function getRecordDataCodec(): FixedSizeCodec<RecordDataArgs, RecordData> {
-  return combineCodec(getRecordDataEncoder(), getRecordDataDecoder());
+    return combineCodec(getRecordDataEncoder(), getRecordDataDecoder());
 }
 
 export function decodeRecordData<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress>,
+    encodedAccount: EncodedAccount<TAddress>,
 ): Account<RecordData, TAddress>;
 export function decodeRecordData<TAddress extends string = string>(
-  encodedAccount: MaybeEncodedAccount<TAddress>,
+    encodedAccount: MaybeEncodedAccount<TAddress>,
 ): MaybeAccount<RecordData, TAddress>;
 export function decodeRecordData<TAddress extends string = string>(
-  encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
+    encodedAccount: EncodedAccount<TAddress> | MaybeEncodedAccount<TAddress>,
 ): Account<RecordData, TAddress> | MaybeAccount<RecordData, TAddress> {
-  return decodeAccount(encodedAccount as MaybeEncodedAccount<TAddress>, getRecordDataDecoder());
+    return decodeAccount(encodedAccount as MaybeEncodedAccount<TAddress>, getRecordDataDecoder());
 }
 
 export async function fetchRecordData<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<Account<RecordData, TAddress>> {
-  const maybeAccount = await fetchMaybeRecordData(rpc, address, config);
-  assertAccountExists(maybeAccount);
-  return maybeAccount;
+    const maybeAccount = await fetchMaybeRecordData(rpc, address, config);
+    assertAccountExists(maybeAccount);
+    return maybeAccount;
 }
 
 export async function fetchMaybeRecordData<TAddress extends string = string>(
-  rpc: Parameters<typeof fetchEncodedAccount>[0],
-  address: Address<TAddress>,
-  config?: FetchAccountConfig,
+    rpc: Parameters<typeof fetchEncodedAccount>[0],
+    address: Address<TAddress>,
+    config?: FetchAccountConfig,
 ): Promise<MaybeAccount<RecordData, TAddress>> {
-  const maybeAccount = await fetchEncodedAccount(rpc, address, config);
-  return decodeRecordData(maybeAccount);
+    const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+    return decodeRecordData(maybeAccount);
 }
 
 export async function fetchAllRecordData(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<Account<RecordData>[]> {
-  const maybeAccounts = await fetchAllMaybeRecordData(rpc, addresses, config);
-  assertAccountsExist(maybeAccounts);
-  return maybeAccounts;
+    const maybeAccounts = await fetchAllMaybeRecordData(rpc, addresses, config);
+    assertAccountsExist(maybeAccounts);
+    return maybeAccounts;
 }
 
 export async function fetchAllMaybeRecordData(
-  rpc: Parameters<typeof fetchEncodedAccounts>[0],
-  addresses: Array<Address>,
-  config?: FetchAccountsConfig,
+    rpc: Parameters<typeof fetchEncodedAccounts>[0],
+    addresses: Array<Address>,
+    config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<RecordData>[]> {
-  const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
-  return maybeAccounts.map(maybeAccount => decodeRecordData(maybeAccount));
+    const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+    return maybeAccounts.map(maybeAccount => decodeRecordData(maybeAccount));
 }
