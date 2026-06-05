@@ -76,11 +76,24 @@ build-doc-%:
 test-doc-%:
 	cargo $(nightly) test --doc --all-features --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
 
+# The legacy JS client tests run against a local validator (unlike the modern
+# `clients/js` client, which uses LiteSVM in-process).
+test-js-clients-js-legacy:
+	make restart-test-validator
+	cd clients/js-legacy && pnpm install && pnpm build && pnpm test $(ARGS)
+	make stop-test-validator
+
 test-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm build && pnpm test $(ARGS)
 
 test-%:
 	SBF_OUT_DIR=$(PWD)/target/deploy cargo $(nightly) test --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
+
+restart-test-validator:
+	./scripts/restart-test-validator.sh
+
+stop-test-validator:
+	pkill -f solana-test-validator
 
 lint-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm lint $(ARGS)
