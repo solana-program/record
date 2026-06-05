@@ -7,14 +7,10 @@ import {
   reallocateRecord,
   RECORD_META_DATA_SIZE,
 } from '../src';
-import {
-  createDefaultSolanaClient,
-  generateKeyPairSignerWithSol,
-  sendAndConfirmInstructions,
-} from './_setup';
+import { createTestClient, generateKeyPairSignerWithSol } from './_setup';
 
 it('runs the basic instructions flow', async () => {
-  const client = createDefaultSolanaClient();
+  const client = await createTestClient();
   const payer = await generateKeyPairSignerWithSol(client);
 
   const recordAuthority = await generateKeyPairSigner();
@@ -31,7 +27,7 @@ it('runs the basic instructions flow', async () => {
     dataLength: initialRecordSize,
   });
 
-  await sendAndConfirmInstructions(client, payer, createIxs);
+  await client.sendTransactions(createIxs);
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount.address);
@@ -47,7 +43,7 @@ it('runs the basic instructions flow', async () => {
     newDataLength: newRecordSize,
   });
 
-  await sendAndConfirmInstructions(client, payer, reallocIxs);
+  await client.sendTransactions(reallocIxs);
 
   // Verify Reallocate
   let rawAccount = await client.rpc
@@ -70,7 +66,7 @@ it('runs the basic instructions flow', async () => {
     data: recordData,
   });
 
-  await sendAndConfirmInstructions(client, payer, [writeIx]);
+  await client.sendTransactions([writeIx]);
 
   // Verify Write
   rawAccount = await client.rpc
@@ -88,7 +84,7 @@ it('runs the basic instructions flow', async () => {
   //   newAuthority: newRecordAuthority.address,
   // });
   //
-  // await sendAndConfirmInstructions(client, payer, [setAuthIx]);
+  // await client.sendTransactions([setAuthIx]);
   //
   // // Verify Set Authority
   // accountData = await fetchRecordData(client.rpc, recordAccount.address);
@@ -103,7 +99,7 @@ it('runs the basic instructions flow', async () => {
   //   receiver: destination.address,
   // });
   //
-  // await sendAndConfirmInstructions(client, payer, [closeIx]);
+  // await client.sendTransactions([closeIx]);
   //
   // // Verify Close
   // const closedAccount = await client.rpc
