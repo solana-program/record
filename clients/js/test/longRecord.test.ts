@@ -7,14 +7,10 @@ import {
   RECORD_CHUNK_SIZE_PRE_INITIALIZE,
   RECORD_CHUNK_SIZE_POST_INITIALIZE,
 } from '../src';
-import {
-  createDefaultSolanaClient,
-  generateKeyPairSignerWithSol,
-  sendAndConfirmInstructions,
-} from './_setup';
+import { createTestClient, generateKeyPairSignerWithSol } from './_setup';
 
 it('runs the long record data flow', async () => {
-  const client = createDefaultSolanaClient();
+  const client = await createTestClient();
   const payer = await generateKeyPairSignerWithSol(client);
   const recordAuthority = await generateKeyPairSigner();
 
@@ -44,7 +40,7 @@ it('runs the long record data flow', async () => {
     data: firstChunk,
   });
 
-  await sendAndConfirmInstructions(client, payer, [...initIxs, firstWriteIx]);
+  await client.sendTransactions([...initIxs, firstWriteIx]);
 
   // 2. Subsequent Writes (Loop)
   const postInitChunkSize = RECORD_CHUNK_SIZE_POST_INITIALIZE || 919;
@@ -60,7 +56,7 @@ it('runs the long record data flow', async () => {
       data: chunk,
     });
 
-    await sendAndConfirmInstructions(client, payer, [writeIx]);
+    await client.sendTransactions([writeIx]);
 
     offset += postInitChunkSize;
   }

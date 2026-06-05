@@ -1,14 +1,10 @@
 import { createAddressWithSeed, generateKeyPairSigner } from '@solana/kit';
 import { expect, it } from 'vitest';
 import { createRecordWithSeed, fetchRecordData, SPL_RECORD_PROGRAM_ADDRESS } from '../src';
-import {
-  createDefaultSolanaClient,
-  generateKeyPairSignerWithSol,
-  sendAndConfirmInstructions,
-} from './_setup';
+import { createTestClient, generateKeyPairSignerWithSol } from './_setup';
 
 it('creates a record with a string seed', async () => {
-  const client = createDefaultSolanaClient();
+  const client = await createTestClient();
   const payer = await generateKeyPairSignerWithSol(client);
 
   const initialRecordSize = 0n;
@@ -31,7 +27,7 @@ it('creates a record with a string seed', async () => {
 
   expect(recordAccount).toEqual(expectedRecordAccount);
 
-  await sendAndConfirmInstructions(client, payer, createIxs);
+  await client.sendTransactions(createIxs);
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount);
@@ -40,7 +36,7 @@ it('creates a record with a string seed', async () => {
 });
 
 it('creates a record with a uint8array seed', async () => {
-  const client = createDefaultSolanaClient();
+  const client = await createTestClient();
   const payer = await generateKeyPairSignerWithSol(client);
 
   const initialRecordSize = 0n;
@@ -63,7 +59,7 @@ it('creates a record with a uint8array seed', async () => {
 
   expect(recordAccount).toEqual(expectedRecordAccount);
 
-  await sendAndConfirmInstructions(client, payer, createIxs);
+  await client.sendTransactions(createIxs);
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount);
@@ -72,7 +68,7 @@ it('creates a record with a uint8array seed', async () => {
 });
 
 it('creates a record with an external base account', async () => {
-  const client = createDefaultSolanaClient();
+  const client = await createTestClient();
   const payer = await generateKeyPairSignerWithSol(client);
   const baseAccount = await generateKeyPairSigner();
 
@@ -97,7 +93,7 @@ it('creates a record with an external base account', async () => {
 
   expect(recordAccount).toEqual(expectedRecordAccount);
 
-  await sendAndConfirmInstructions(client, payer, createIxs);
+  await client.sendTransactions(createIxs);
 
   // Verify Initialize
   let accountData = await fetchRecordData(client.rpc, recordAccount);

@@ -50,6 +50,8 @@
         "@eslint/js": "^10.0.1",
         "@solana-program/system": "^0.12.1",
         "@solana/kit": "^6.9.0",
+        "@solana/kit-plugin-litesvm": "^0.10.0",
+        "@solana/kit-plugin-signer": "^0.10.0",
         "@solana/sysvars": "^6.9.0",
         "@types/node": "^25.9.1",
         "eslint": "^9.39.1",

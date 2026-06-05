@@ -77,9 +77,7 @@ test-doc-%:
 	cargo $(nightly) test --doc --all-features --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
 
 test-js-%:
-	make restart-test-validator
 	cd $(call make-path,$*) && pnpm install && pnpm build && pnpm test $(ARGS)
-	make stop-test-validator
 
 test-%:
 	SBF_OUT_DIR=$(PWD)/target/deploy cargo $(nightly) test --manifest-path $(call make-path,$*)/Cargo.toml $(ARGS)
@@ -89,12 +87,6 @@ lint-js-%:
 
 build-js-%:
 	cd $(call make-path,$*) && pnpm install && pnpm build
-
-restart-test-validator:
-	./scripts/restart-test-validator.sh
-
-stop-test-validator:
-	pkill -f solana-test-validator
 
 generate-clients:
 	pnpm codama run --all $(ARGS)
