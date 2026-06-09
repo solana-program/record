@@ -33,6 +33,13 @@
               "type": {
                 "kind": "publicKeyTypeNode"
               }
+            },
+            {
+              "kind": "structFieldTypeNode",
+              "name": "payload",
+              "type": {
+                "kind": "bytesTypeNode"
+              }
             }
           ]
         },

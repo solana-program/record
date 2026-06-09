@@ -1,6 +1,7 @@
 import path from 'node:path';
 
-import { KeyPairSigner, createClient, generateKeyPairSigner, lamports } from '@solana/kit';
+import { systemProgram } from '@solana-program/system';
+import { createClient, lamports } from '@solana/kit';
 import { litesvm } from '@solana/kit-plugin-litesvm';
 import { airdropSigner, generatedSigner } from '@solana/kit-plugin-signer';
 
@@ -28,16 +29,8 @@ export const createTestClient = () => {
       client.svm.addProgramFromFile(SPL_RECORD_PROGRAM_ADDRESS, SPL_RECORD_BINARY_PATH);
       return client;
     })
+    .use(systemProgram())
     .use(splRecordProgram());
 };
 
 export type TestClient = Awaited<ReturnType<typeof createTestClient>>;
-
-export const generateKeyPairSignerWithSol = async (
-  client: TestClient,
-  putativeLamports: bigint = 1_000_000_000n,
-): Promise<KeyPairSigner> => {
-  const signer = await generateKeyPairSigner();
-  await client.airdrop(signer.address, lamports(putativeLamports));
-  return signer;
-};

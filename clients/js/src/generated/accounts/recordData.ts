@@ -15,6 +15,8 @@ import {
     fetchEncodedAccounts,
     getAddressDecoder,
     getAddressEncoder,
+    getBytesDecoder,
+    getBytesEncoder,
     getStructDecoder,
     getStructEncoder,
     getU8Decoder,
@@ -22,12 +24,12 @@ import {
     transformEncoder,
     type Account,
     type Address,
+    type Codec,
+    type Decoder,
     type EncodedAccount,
+    type Encoder,
     type FetchAccountConfig,
     type FetchAccountsConfig,
-    type FixedSizeCodec,
-    type FixedSizeDecoder,
-    type FixedSizeEncoder,
     type MaybeAccount,
     type MaybeEncodedAccount,
     type ReadonlyUint8Array,
@@ -39,31 +41,33 @@ export function getRecordDataVersionBytes(): ReadonlyUint8Array {
     return getU8Encoder().encode(RECORD_DATA_VERSION);
 }
 
-export type RecordData = { version: number; authority: Address };
+export type RecordData = { version: number; authority: Address; payload: ReadonlyUint8Array };
 
-export type RecordDataArgs = { version?: number; authority: Address };
+export type RecordDataArgs = { version?: number; authority: Address; payload: ReadonlyUint8Array };
 
 /** Gets the encoder for {@link RecordDataArgs} account data. */
-export function getRecordDataEncoder(): FixedSizeEncoder<RecordDataArgs> {
+export function getRecordDataEncoder(): Encoder<RecordDataArgs> {
     return transformEncoder(
         getStructEncoder([
             ['version', getU8Encoder()],
             ['authority', getAddressEncoder()],
+            ['payload', getBytesEncoder()],
         ]),
         value => ({ ...value, version: value.version ?? RECORD_DATA_VERSION }),
     );
 }
 
 /** Gets the decoder for {@link RecordData} account data. */
-export function getRecordDataDecoder(): FixedSizeDecoder<RecordData> {
+export function getRecordDataDecoder(): Decoder<RecordData> {
     return getStructDecoder([
         ['version', getU8Decoder()],
         ['authority', getAddressDecoder()],
+        ['payload', getBytesDecoder()],
     ]);
 }
 
 /** Gets the codec for {@link RecordData} account data. */
-export function getRecordDataCodec(): FixedSizeCodec<RecordDataArgs, RecordData> {
+export function getRecordDataCodec(): Codec<RecordDataArgs, RecordData> {
     return combineCodec(getRecordDataEncoder(), getRecordDataDecoder());
 }
 
