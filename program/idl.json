@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "program": {
     "kind": "programNode",
-    "name": "splRecord",
+    "name": "record",
     "publicKey": "recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5",
     "version": "0.4.0",
     "accounts": [

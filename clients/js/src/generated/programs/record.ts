@@ -55,25 +55,25 @@ import {
     type WriteInput,
 } from '../instructions';
 
-export const SPL_RECORD_PROGRAM_ADDRESS =
+export const RECORD_PROGRAM_ADDRESS =
     'recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5' as Address<'recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5'>;
 
-export enum SplRecordAccount {
+export enum RecordAccount {
     RecordData,
 }
 
-export function identifySplRecordAccount(account: { data: ReadonlyUint8Array } | ReadonlyUint8Array): SplRecordAccount {
+export function identifyRecordAccount(account: { data: ReadonlyUint8Array } | ReadonlyUint8Array): RecordAccount {
     const data = 'data' in account ? account.data : account;
     if (containsBytes(data, getU8Encoder().encode(1), 0)) {
-        return SplRecordAccount.RecordData;
+        return RecordAccount.RecordData;
     }
     throw new SolanaError(SOLANA_ERROR__PROGRAM_CLIENTS__FAILED_TO_IDENTIFY_ACCOUNT, {
         accountData: data,
-        programName: 'splRecord',
+        programName: 'record',
     });
 }
 
-export enum SplRecordInstruction {
+export enum RecordInstruction {
     Initialize,
     Write,
     SetAuthority,
@@ -81,78 +81,78 @@ export enum SplRecordInstruction {
     Reallocate,
 }
 
-export function identifySplRecordInstruction(
+export function identifyRecordInstruction(
     instruction: { data: ReadonlyUint8Array } | ReadonlyUint8Array,
-): SplRecordInstruction {
+): RecordInstruction {
     const data = 'data' in instruction ? instruction.data : instruction;
     if (containsBytes(data, getU8Encoder().encode(0), 0)) {
-        return SplRecordInstruction.Initialize;
+        return RecordInstruction.Initialize;
     }
     if (containsBytes(data, getU8Encoder().encode(1), 0)) {
-        return SplRecordInstruction.Write;
+        return RecordInstruction.Write;
     }
     if (containsBytes(data, getU8Encoder().encode(2), 0)) {
-        return SplRecordInstruction.SetAuthority;
+        return RecordInstruction.SetAuthority;
     }
     if (containsBytes(data, getU8Encoder().encode(3), 0)) {
-        return SplRecordInstruction.CloseAccount;
+        return RecordInstruction.CloseAccount;
     }
     if (containsBytes(data, getU8Encoder().encode(4), 0)) {
-        return SplRecordInstruction.Reallocate;
+        return RecordInstruction.Reallocate;
     }
     throw new SolanaError(SOLANA_ERROR__PROGRAM_CLIENTS__FAILED_TO_IDENTIFY_INSTRUCTION, {
         instructionData: data,
-        programName: 'splRecord',
+        programName: 'record',
     });
 }
 
-export type ParsedSplRecordInstruction<TProgram extends string = 'recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5'> =
-    | ({ instructionType: SplRecordInstruction.Initialize } & ParsedInitializeInstruction<TProgram>)
-    | ({ instructionType: SplRecordInstruction.Write } & ParsedWriteInstruction<TProgram>)
-    | ({ instructionType: SplRecordInstruction.SetAuthority } & ParsedSetAuthorityInstruction<TProgram>)
-    | ({ instructionType: SplRecordInstruction.CloseAccount } & ParsedCloseAccountInstruction<TProgram>)
-    | ({ instructionType: SplRecordInstruction.Reallocate } & ParsedReallocateInstruction<TProgram>);
+export type ParsedRecordInstruction<TProgram extends string = 'recr1L3PCGKLbckBqMNcJhuuyU1zgo8nBhfLVsJNwr5'> =
+    | ({ instructionType: RecordInstruction.Initialize } & ParsedInitializeInstruction<TProgram>)
+    | ({ instructionType: RecordInstruction.Write } & ParsedWriteInstruction<TProgram>)
+    | ({ instructionType: RecordInstruction.SetAuthority } & ParsedSetAuthorityInstruction<TProgram>)
+    | ({ instructionType: RecordInstruction.CloseAccount } & ParsedCloseAccountInstruction<TProgram>)
+    | ({ instructionType: RecordInstruction.Reallocate } & ParsedReallocateInstruction<TProgram>);
 
-export function parseSplRecordInstruction<TProgram extends string>(
+export function parseRecordInstruction<TProgram extends string>(
     instruction: Instruction<TProgram> & InstructionWithData<ReadonlyUint8Array>,
-): ParsedSplRecordInstruction<TProgram> {
-    const instructionType = identifySplRecordInstruction(instruction);
+): ParsedRecordInstruction<TProgram> {
+    const instructionType = identifyRecordInstruction(instruction);
     switch (instructionType) {
-        case SplRecordInstruction.Initialize: {
+        case RecordInstruction.Initialize: {
             assertIsInstructionWithAccounts(instruction);
-            return { instructionType: SplRecordInstruction.Initialize, ...parseInitializeInstruction(instruction) };
+            return { instructionType: RecordInstruction.Initialize, ...parseInitializeInstruction(instruction) };
         }
-        case SplRecordInstruction.Write: {
+        case RecordInstruction.Write: {
             assertIsInstructionWithAccounts(instruction);
-            return { instructionType: SplRecordInstruction.Write, ...parseWriteInstruction(instruction) };
+            return { instructionType: RecordInstruction.Write, ...parseWriteInstruction(instruction) };
         }
-        case SplRecordInstruction.SetAuthority: {
+        case RecordInstruction.SetAuthority: {
             assertIsInstructionWithAccounts(instruction);
-            return { instructionType: SplRecordInstruction.SetAuthority, ...parseSetAuthorityInstruction(instruction) };
+            return { instructionType: RecordInstruction.SetAuthority, ...parseSetAuthorityInstruction(instruction) };
         }
-        case SplRecordInstruction.CloseAccount: {
+        case RecordInstruction.CloseAccount: {
             assertIsInstructionWithAccounts(instruction);
-            return { instructionType: SplRecordInstruction.CloseAccount, ...parseCloseAccountInstruction(instruction) };
+            return { instructionType: RecordInstruction.CloseAccount, ...parseCloseAccountInstruction(instruction) };
         }
-        case SplRecordInstruction.Reallocate: {
+        case RecordInstruction.Reallocate: {
             assertIsInstructionWithAccounts(instruction);
-            return { instructionType: SplRecordInstruction.Reallocate, ...parseReallocateInstruction(instruction) };
+            return { instructionType: RecordInstruction.Reallocate, ...parseReallocateInstruction(instruction) };
         }
         default:
             throw new SolanaError(SOLANA_ERROR__PROGRAM_CLIENTS__UNRECOGNIZED_INSTRUCTION_TYPE, {
                 instructionType: instructionType as string,
-                programName: 'splRecord',
+                programName: 'record',
             });
     }
 }
 
-export type SplRecordPlugin = { accounts: SplRecordPluginAccounts; instructions: SplRecordPluginInstructions };
+export type RecordPlugin = { accounts: RecordPluginAccounts; instructions: RecordPluginInstructions };
 
-export type SplRecordPluginAccounts = {
+export type RecordPluginAccounts = {
     recordData: ReturnType<typeof getRecordDataCodec> & SelfFetchFunctions<RecordDataArgs, RecordData>;
 };
 
-export type SplRecordPluginInstructions = {
+export type RecordPluginInstructions = {
     initialize: (input: InitializeInput) => ReturnType<typeof getInitializeInstruction> & SelfPlanAndSendFunctions;
     write: (input: WriteInput) => ReturnType<typeof getWriteInstruction> & SelfPlanAndSendFunctions;
     setAuthority: (
@@ -164,16 +164,14 @@ export type SplRecordPluginInstructions = {
     reallocate: (input: ReallocateInput) => ReturnType<typeof getReallocateInstruction> & SelfPlanAndSendFunctions;
 };
 
-export type SplRecordPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
+export type RecordPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
     ClientWithTransactionPlanning &
     ClientWithTransactionSending;
 
-export function splRecordProgram() {
-    return <T extends SplRecordPluginRequirements>(
-        client: T,
-    ): Omit<T, 'splRecord'> & { splRecord: SplRecordPlugin } => {
+export function recordProgram() {
+    return <T extends RecordPluginRequirements>(client: T): Omit<T, 'record'> & { record: RecordPlugin } => {
         return extendClient(client, {
-            splRecord: <SplRecordPlugin>{
+            record: <RecordPlugin>{
                 accounts: { recordData: addSelfFetchFunctions(client, getRecordDataCodec()) },
                 instructions: {
                     initialize: input => addSelfPlanAndSendFunctions(client, getInitializeInstruction(input)),

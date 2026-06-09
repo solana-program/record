@@ -15,10 +15,10 @@ import {
   getCreateRecordWithSeedInstructionPlan,
 } from './createRecord';
 import {
-  splRecordProgram as generatedSplRecordProgram,
-  SplRecordPlugin as GeneratedSplRecordPlugin,
-  SplRecordPluginInstructions as GeneratedSplRecordPluginInstructions,
-  SplRecordPluginRequirements as GeneratedSplRecordPluginRequirements,
+  recordProgram as generatedRecordProgram,
+  RecordPlugin as GeneratedRecordPlugin,
+  RecordPluginInstructions as GeneratedRecordPluginInstructions,
+  RecordPluginRequirements as GeneratedRecordPluginRequirements,
 } from './generated';
 import { getReallocateRecordInstructionPlan } from './reallocateRecord';
 
@@ -33,16 +33,16 @@ type PluginInstructionConfig<TFn extends (client: never, input: never, config?: 
 type PluginInstructionReturn<TFn extends (client: never, input: never, config?: never) => unknown> =
   ReturnType<TFn> & SelfPlanAndSendFunctions;
 
-export type SplRecordPluginRequirements = GeneratedSplRecordPluginRequirements &
+export type RecordPluginRequirements = GeneratedRecordPluginRequirements &
   ClientWithGetMinimumBalance &
   ClientWithPayer &
   ClientWithRpc<GetBalanceApi>;
 
-export type SplRecordPlugin = Omit<GeneratedSplRecordPlugin, 'instructions'> & {
-  instructions: SplRecordPluginInstructions;
+export type RecordPlugin = Omit<GeneratedRecordPlugin, 'instructions'> & {
+  instructions: RecordPluginInstructions;
 };
 
-export type SplRecordPluginInstructions = GeneratedSplRecordPluginInstructions & {
+export type RecordPluginInstructions = GeneratedRecordPluginInstructions & {
   /** Create and initialize a brand new record account owned by a fresh keypair. */
   createRecord: (
     input: PluginInstructionInput<typeof getCreateRecordInstructionPlan>,
@@ -60,18 +60,18 @@ export type SplRecordPluginInstructions = GeneratedSplRecordPluginInstructions &
   ) => PluginInstructionReturn<typeof getReallocateRecordInstructionPlan>;
 };
 
-export function splRecordProgram() {
-  return <T extends SplRecordPluginRequirements>(client: T) => {
-    const withPayer = <TInput extends { payer?: SplRecordPluginRequirements['payer'] }>(
+export function recordProgram() {
+  return <T extends RecordPluginRequirements>(client: T) => {
+    const withPayer = <TInput extends { payer?: RecordPluginRequirements['payer'] }>(
       input: TInput,
     ) =>
       ({ ...input, payer: input.payer ?? client.payer }) as TInput & {
-        payer: SplRecordPluginRequirements['payer'];
+        payer: RecordPluginRequirements['payer'];
       };
 
-    return pipe(client, generatedSplRecordProgram(), c => {
-      const instructions: SplRecordPluginInstructions = {
-        ...c.splRecord.instructions,
+    return pipe(client, generatedRecordProgram(), c => {
+      const instructions: RecordPluginInstructions = {
+        ...c.record.instructions,
         createRecord: (input, config) =>
           addSelfPlanAndSendFunctions(
             client,
@@ -89,7 +89,7 @@ export function splRecordProgram() {
           ),
       };
 
-      return { ...c, splRecord: { ...c.splRecord, instructions } };
+      return { ...c, record: { ...c.record, instructions } };
     });
   };
 }

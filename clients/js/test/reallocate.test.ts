@@ -11,7 +11,7 @@ it('grows a record account when rent is topped up in the same transaction', asyn
     generateKeyPairSigner(),
   ]);
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecord({ newRecord, authority: authority.address, dataLength: 0n })
     .sendTransaction();
 
@@ -28,7 +28,7 @@ it('grows a record account when rent is topped up in the same transaction', asyn
       destination: newRecord.address,
       amount: lamports(requiredRent - currentBalance),
     }),
-    client.splRecord.instructions.reallocate({
+    client.record.instructions.reallocate({
       recordAccount: newRecord.address,
       authority,
       dataLength: newDataLength,

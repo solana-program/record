@@ -10,7 +10,7 @@ import {
 } from '@solana/kit';
 
 import { getRecordSize } from './constants';
-import { getReallocateInstruction, SPL_RECORD_PROGRAM_ADDRESS } from './generated';
+import { getReallocateInstruction, RECORD_PROGRAM_ADDRESS } from './generated';
 
 export interface ReallocateRecordInstructionPlanInput {
   /** Funding account that tops up the record account's rent when growing it. */
@@ -41,7 +41,7 @@ export async function getReallocateRecordInstructionPlan(
   input: ReallocateRecordInstructionPlanInput,
   config?: ReallocateRecordInstructionPlanConfig,
 ): Promise<InstructionPlan> {
-  const recordProgram = config?.recordProgram ?? SPL_RECORD_PROGRAM_ADDRESS;
+  const recordProgram = config?.recordProgram ?? RECORD_PROGRAM_ADDRESS;
   const newSpace = getRecordSize(input.newDataLength);
 
   const requiredRent = await client.getMinimumBalance(Number(newSpace));

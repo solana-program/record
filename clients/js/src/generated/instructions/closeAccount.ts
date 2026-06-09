@@ -30,7 +30,7 @@ import {
     type WritableAccount,
 } from '@solana/kit';
 import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
-import { SPL_RECORD_PROGRAM_ADDRESS } from '../programs';
+import { RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const CLOSE_ACCOUNT_DISCRIMINATOR = 3;
 
@@ -39,7 +39,7 @@ export function getCloseAccountDiscriminatorBytes(): ReadonlyUint8Array {
 }
 
 export type CloseAccountInstruction<
-    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgram extends string = typeof RECORD_PROGRAM_ADDRESS,
     TAccountRecordAccount extends string | AccountMeta<string> = string,
     TAccountAuthority extends string | AccountMeta<string> = string,
     TAccountReceiver extends string | AccountMeta<string> = string,
@@ -93,13 +93,13 @@ export function getCloseAccountInstruction<
     TAccountRecordAccount extends string,
     TAccountAuthority extends string,
     TAccountReceiver extends string,
-    TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: CloseAccountInput<TAccountRecordAccount, TAccountAuthority, TAccountReceiver>,
     config?: { programAddress?: TProgramAddress },
 ): CloseAccountInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountReceiver> {
     // Program address.
-    const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
+    const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
 
     // Original accounts.
     const originalAccounts = {
@@ -122,7 +122,7 @@ export function getCloseAccountInstruction<
 }
 
 export type ParsedCloseAccountInstruction<
-    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgram extends string = typeof RECORD_PROGRAM_ADDRESS,
     TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
     programAddress: Address<TProgram>;

@@ -11,7 +11,7 @@ it('creates and initializes a record account', async () => {
     generateKeyPairSigner(),
   ]);
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecord({ newRecord, authority: authority.address, dataLength: 0n })
     .sendTransaction();
 

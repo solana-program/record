@@ -31,7 +31,7 @@ import {
     type WritableAccount,
 } from '@solana/kit';
 import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
-import { SPL_RECORD_PROGRAM_ADDRESS } from '../programs';
+import { RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const SET_AUTHORITY_DISCRIMINATOR = 2;
 
@@ -40,7 +40,7 @@ export function getSetAuthorityDiscriminatorBytes(): ReadonlyUint8Array {
 }
 
 export type SetAuthorityInstruction<
-    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgram extends string = typeof RECORD_PROGRAM_ADDRESS,
     TAccountRecordAccount extends string | AccountMeta<string> = string,
     TAccountAuthority extends string | AccountMeta<string> = string,
     TAccountNewAuthority extends string | AccountMeta<string> = string,
@@ -94,13 +94,13 @@ export function getSetAuthorityInstruction<
     TAccountRecordAccount extends string,
     TAccountAuthority extends string,
     TAccountNewAuthority extends string,
-    TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: SetAuthorityInput<TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority>,
     config?: { programAddress?: TProgramAddress },
 ): SetAuthorityInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority> {
     // Program address.
-    const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
+    const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
 
     // Original accounts.
     const originalAccounts = {
@@ -123,7 +123,7 @@ export function getSetAuthorityInstruction<
 }
 
 export type ParsedSetAuthorityInstruction<
-    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgram extends string = typeof RECORD_PROGRAM_ADDRESS,
     TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
     programAddress: Address<TProgram>;

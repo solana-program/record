@@ -11,11 +11,11 @@ it('closes a record account and refunds the receiver', async () => {
     generateKeyPairSigner(),
   ]);
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecord({ newRecord, authority: authority.address, dataLength: 0n })
     .sendTransaction();
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .closeAccount({ recordAccount: newRecord.address, authority, receiver: receiver.address })
     .sendTransaction();
 
