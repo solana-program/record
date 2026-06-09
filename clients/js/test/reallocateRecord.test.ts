@@ -11,11 +11,11 @@ it('grows a record account and tops up its rent', async () => {
     generateKeyPairSigner(),
   ]);
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecord({ newRecord, authority: authority.address, dataLength: 0n })
     .sendTransaction();
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .reallocateRecord({ recordAccount: newRecord.address, authority, newDataLength: 5n })
     .sendTransaction();
 

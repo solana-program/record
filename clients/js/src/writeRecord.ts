@@ -6,7 +6,7 @@ import {
   TransactionSigner,
 } from '@solana/kit';
 
-import { getWriteInstruction, SPL_RECORD_PROGRAM_ADDRESS } from './generated';
+import { getWriteInstruction, RECORD_PROGRAM_ADDRESS } from './generated';
 
 export interface WriteInstructionPlanInput {
   /** The record account to write to. */
@@ -37,7 +37,7 @@ export function getWriteInstructionPlan(
   input: WriteInstructionPlanInput,
 ): MessagePackerInstructionPlan {
   const baseOffset = input.offset ?? 0;
-  const recordProgram = input.recordProgram ?? SPL_RECORD_PROGRAM_ADDRESS;
+  const recordProgram = input.recordProgram ?? RECORD_PROGRAM_ADDRESS;
 
   return getLinearMessagePackerInstructionPlan({
     totalLength: input.data.length,

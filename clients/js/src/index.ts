@@ -3,10 +3,10 @@ export * from './generated';
 
 // Generated overrides (must be re-exported explicitly).
 export {
-  splRecordProgram,
-  type SplRecordPlugin,
-  type SplRecordPluginInstructions,
-  type SplRecordPluginRequirements,
+  recordProgram,
+  type RecordPlugin,
+  type RecordPluginInstructions,
+  type RecordPluginRequirements,
 } from './plugin';
 
 export * from './createRecord';

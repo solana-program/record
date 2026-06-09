@@ -32,7 +32,7 @@ import {
     type WritableAccount,
 } from '@solana/kit';
 import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
-import { SPL_RECORD_PROGRAM_ADDRESS } from '../programs';
+import { RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const REALLOCATE_DISCRIMINATOR = 4;
 
@@ -41,7 +41,7 @@ export function getReallocateDiscriminatorBytes(): ReadonlyUint8Array {
 }
 
 export type ReallocateInstruction<
-    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgram extends string = typeof RECORD_PROGRAM_ADDRESS,
     TAccountRecordAccount extends string | AccountMeta<string> = string,
     TAccountAuthority extends string | AccountMeta<string> = string,
     TRemainingAccounts extends readonly AccountMeta<string>[] = [],
@@ -97,13 +97,13 @@ export type ReallocateInput<
 export function getReallocateInstruction<
     TAccountRecordAccount extends string,
     TAccountAuthority extends string,
-    TProgramAddress extends Address = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: ReallocateInput<TAccountRecordAccount, TAccountAuthority>,
     config?: { programAddress?: TProgramAddress },
 ): ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority> {
     // Program address.
-    const programAddress = config?.programAddress ?? SPL_RECORD_PROGRAM_ADDRESS;
+    const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
 
     // Original accounts.
     const originalAccounts = {
@@ -127,7 +127,7 @@ export function getReallocateInstruction<
 }
 
 export type ParsedReallocateInstruction<
-    TProgram extends string = typeof SPL_RECORD_PROGRAM_ADDRESS,
+    TProgram extends string = typeof RECORD_PROGRAM_ADDRESS,
     TAccountMetas extends readonly AccountMeta[] = readonly AccountMeta[],
 > = {
     programAddress: Address<TProgram>;

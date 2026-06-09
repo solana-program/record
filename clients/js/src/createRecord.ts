@@ -15,7 +15,7 @@ import {
 } from '@solana/kit';
 
 import { getRecordSize } from './constants';
-import { getInitializeInstruction, SPL_RECORD_PROGRAM_ADDRESS } from './generated';
+import { getInitializeInstruction, RECORD_PROGRAM_ADDRESS } from './generated';
 
 export interface CreateRecordInstructionPlanInput {
   /** Funding account that pays for the new record account's rent. */
@@ -54,7 +54,7 @@ export async function getCreateRecordInstructionPlan(
   input: CreateRecordInstructionPlanInput,
   config?: CreateRecordInstructionPlanConfig,
 ): Promise<InstructionPlan> {
-  const recordProgram = config?.recordProgram ?? SPL_RECORD_PROGRAM_ADDRESS;
+  const recordProgram = config?.recordProgram ?? RECORD_PROGRAM_ADDRESS;
   const space = getRecordSize(input.dataLength);
   const lamports = input.recordAccountLamports ?? (await client.getMinimumBalance(Number(space)));
 
@@ -111,7 +111,7 @@ export async function getCreateRecordWithSeedInstructionPlan(
   input: CreateRecordWithSeedInstructionPlanInput,
   config?: CreateRecordInstructionPlanConfig,
 ): Promise<InstructionPlan> {
-  const recordProgram = config?.recordProgram ?? SPL_RECORD_PROGRAM_ADDRESS;
+  const recordProgram = config?.recordProgram ?? RECORD_PROGRAM_ADDRESS;
   const baseAccount = input.baseAccount ?? input.payer;
   // Normalize the seed to a string once so that the off-chain address derivation
   // and the on-chain `CreateAccountWithSeed` derivation agree on the exact seed.
@@ -159,7 +159,7 @@ export async function getRecordAddressWithSeed(input: {
   return createAddressWithSeed({
     baseAddress: input.baseAddress,
     seed: normalizeSeed(input.seed),
-    programAddress: input.recordProgram ?? SPL_RECORD_PROGRAM_ADDRESS,
+    programAddress: input.recordProgram ?? RECORD_PROGRAM_ADDRESS,
   });
 }
 

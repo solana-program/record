@@ -10,7 +10,7 @@ it('creates a record with a string seed', async () => {
 
   const recordAccount = await getRecordAddressWithSeed({ baseAddress: client.payer.address, seed });
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecordWithSeed({ authority: client.payer.address, dataLength: 0n, seed })
     .sendTransaction();
 
@@ -28,7 +28,7 @@ it('creates a record with a uint8array seed', async () => {
 
   const recordAccount = await getRecordAddressWithSeed({ baseAddress: client.payer.address, seed });
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecordWithSeed({ authority: client.payer.address, dataLength: 0n, seed })
     .sendTransaction();
 
@@ -47,7 +47,7 @@ it('creates a record with an external base account', async () => {
 
   const recordAccount = await getRecordAddressWithSeed({ baseAddress: baseAccount.address, seed });
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecordWithSeed({ authority: client.payer.address, dataLength: 0n, seed, baseAccount })
     .sendTransaction();
 

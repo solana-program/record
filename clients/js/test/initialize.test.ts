@@ -1,7 +1,7 @@
 import { generateKeyPairSigner } from '@solana/kit';
 import { expect, it } from 'vitest';
 
-import { fetchRecordData, getRecordSize, SPL_RECORD_PROGRAM_ADDRESS } from '../src';
+import { fetchRecordData, getRecordSize, RECORD_PROGRAM_ADDRESS } from '../src';
 import { createTestClient } from './_setup';
 
 it('initializes a record account', async () => {
@@ -18,11 +18,11 @@ it('initializes a record account', async () => {
       newAccount: newRecord,
       lamports: await client.getMinimumBalance(Number(space)),
       space,
-      programAddress: SPL_RECORD_PROGRAM_ADDRESS,
+      programAddress: RECORD_PROGRAM_ADDRESS,
     })
     .sendTransaction();
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .initialize({ recordAccount: newRecord.address, authority: authority.address })
     .sendTransaction();
 

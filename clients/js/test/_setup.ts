@@ -5,9 +5,9 @@ import { createClient, lamports } from '@solana/kit';
 import { litesvm } from '@solana/kit-plugin-litesvm';
 import { airdropSigner, generatedSigner } from '@solana/kit-plugin-signer';
 
-import { SPL_RECORD_PROGRAM_ADDRESS, splRecordProgram } from '../src';
+import { RECORD_PROGRAM_ADDRESS, recordProgram } from '../src';
 
-const SPL_RECORD_BINARY_PATH = path.resolve(
+const RECORD_BINARY_PATH = path.resolve(
   __dirname,
   '..',
   '..',
@@ -26,11 +26,11 @@ export const createTestClient = () => {
       // Load the record program into the LiteSVM instance from its compiled
       // `.so` file. This must run after the `litesvm()` plugin so that
       // `client.svm` is available.
-      client.svm.addProgramFromFile(SPL_RECORD_PROGRAM_ADDRESS, SPL_RECORD_BINARY_PATH);
+      client.svm.addProgramFromFile(RECORD_PROGRAM_ADDRESS, RECORD_BINARY_PATH);
       return client;
     })
     .use(systemProgram())
-    .use(splRecordProgram());
+    .use(recordProgram());
 };
 
 export type TestClient = Awaited<ReturnType<typeof createTestClient>>;

@@ -15,7 +15,7 @@ it('writes a record larger than a single transaction in chunks', async () => {
   // across as many transactions as needed.
   const data = new Uint8Array(5000).fill(127);
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecord({ newRecord, authority: authority.address, dataLength: data.length })
     .sendTransaction();
 

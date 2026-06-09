@@ -12,11 +12,11 @@ it('writes data to a record account', async () => {
   ]);
   const data = new Uint8Array([0, 1, 2, 3, 4]);
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .createRecord({ newRecord, authority: authority.address, dataLength: BigInt(data.length) })
     .sendTransaction();
 
-  await client.splRecord.instructions
+  await client.record.instructions
     .write({ recordAccount: newRecord.address, authority, offset: 0n, data })
     .sendTransaction();
 
