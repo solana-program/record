@@ -1,5 +1,5 @@
 export default {
-    idl: 'program/idl.json',
+    idl: 'idl.json',
     before: [],
     scripts: {
         js: {
