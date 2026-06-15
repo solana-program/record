@@ -7,30 +7,22 @@ import { airdropSigner, generatedSigner } from '@solana/kit-plugin-signer';
 
 import { RECORD_PROGRAM_ADDRESS, recordProgram } from '../src';
 
-const RECORD_BINARY_PATH = path.resolve(
-  __dirname,
-  '..',
-  '..',
-  '..',
-  'target',
-  'deploy',
-  'spl_record.so',
-);
+const RECORD_BINARY_PATH = path.resolve(__dirname, '..', '..', '..', 'target', 'deploy', 'spl_record.so');
 
 export const createTestClient = () => {
-  return createClient()
-    .use(generatedSigner())
-    .use(litesvm())
-    .use(airdropSigner(lamports(1_000_000_000n)))
-    .use(client => {
-      // Load the record program into the LiteSVM instance from its compiled
-      // `.so` file. This must run after the `litesvm()` plugin so that
-      // `client.svm` is available.
-      client.svm.addProgramFromFile(RECORD_PROGRAM_ADDRESS, RECORD_BINARY_PATH);
-      return client;
-    })
-    .use(systemProgram())
-    .use(recordProgram());
+    return createClient()
+        .use(generatedSigner())
+        .use(litesvm())
+        .use(airdropSigner(lamports(1_000_000_000n)))
+        .use(client => {
+            // Load the record program into the LiteSVM instance from its compiled
+            // `.so` file. This must run after the `litesvm()` plugin so that
+            // `client.svm` is available.
+            client.svm.addProgramFromFile(RECORD_PROGRAM_ADDRESS, RECORD_BINARY_PATH);
+            return client;
+        })
+        .use(systemProgram())
+        .use(recordProgram());
 };
 
 export type TestClient = Awaited<ReturnType<typeof createTestClient>>;
