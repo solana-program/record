@@ -1,4 +1,5 @@
 import { env } from 'node:process';
+
 import { defineConfig, Options } from 'tsup';
 
 const SHARED_OPTIONS: Options = {
@@ -15,4 +16,3 @@ export default defineConfig(() => [
     { ...SHARED_OPTIONS, format: 'cjs' },
     { ...SHARED_OPTIONS, format: 'esm' },
 ]);
-

@@ -5,20 +5,17 @@ import { fetchRecordData } from '../src';
 import { createTestClient } from './_setup';
 
 it('creates and initializes a record account', async () => {
-  const client = await createTestClient();
-  const [newRecord, authority] = await Promise.all([
-    generateKeyPairSigner(),
-    generateKeyPairSigner(),
-  ]);
+    const client = await createTestClient();
+    const [newRecord, authority] = await Promise.all([generateKeyPairSigner(), generateKeyPairSigner()]);
 
-  await client.record.instructions
-    .createRecord({ newRecord, authority: authority.address, dataLength: 0n })
-    .sendTransaction();
+    await client.record.instructions
+        .createRecord({ newRecord, authority: authority.address, dataLength: 0n })
+        .sendTransaction();
 
-  const account = await fetchRecordData(client.rpc, newRecord.address);
-  expect(account.data).toStrictEqual({
-    version: 1,
-    authority: authority.address,
-    payload: new Uint8Array([]),
-  });
+    const account = await fetchRecordData(client.rpc, newRecord.address);
+    expect(account.data).toStrictEqual({
+        version: 1,
+        authority: authority.address,
+        payload: new Uint8Array([]),
+    });
 });

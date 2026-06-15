@@ -6,7 +6,7 @@ export const RECORD_META_DATA_SIZE = 33n;
  * given payload length in bytes.
  */
 export function getRecordSize(dataLength: number | bigint): bigint {
-  return RECORD_META_DATA_SIZE + BigInt(dataLength);
+    return RECORD_META_DATA_SIZE + BigInt(dataLength);
 }
 
 /** Maximum record chunk that can fit inside a transaction when initializing a record account */
