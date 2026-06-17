@@ -19,6 +19,7 @@ import {
     type ClientWithRpc,
     type ClientWithTransactionPlanning,
     type ClientWithTransactionSending,
+    type ExtendedClient,
     type GetAccountInfoApi,
     type GetMultipleAccountsApi,
     type Instruction,
@@ -146,7 +147,13 @@ export function parseRecordInstruction<TProgram extends string>(
     }
 }
 
-export type RecordPlugin = { accounts: RecordPluginAccounts; instructions: RecordPluginInstructions };
+export type RecordPlugin = {
+    accounts: RecordPluginAccounts;
+    instructions: RecordPluginInstructions;
+    identifyAccount: typeof identifyRecordAccount;
+    identifyInstruction: typeof identifyRecordInstruction;
+    parseInstruction: typeof parseRecordInstruction;
+};
 
 export type RecordPluginAccounts = {
     recordData: ReturnType<typeof getRecordDataCodec> & SelfFetchFunctions<RecordDataArgs, RecordData>;
@@ -169,7 +176,7 @@ export type RecordPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMult
     ClientWithTransactionSending;
 
 export function recordProgram() {
-    return <T extends RecordPluginRequirements>(client: T): Omit<T, 'record'> & { record: RecordPlugin } => {
+    return <T extends RecordPluginRequirements>(client: T): ExtendedClient<T, { record: RecordPlugin }> => {
         return extendClient(client, {
             record: <RecordPlugin>{
                 accounts: { recordData: addSelfFetchFunctions(client, getRecordDataCodec()) },
@@ -180,6 +187,9 @@ export function recordProgram() {
                     closeAccount: input => addSelfPlanAndSendFunctions(client, getCloseAccountInstruction(input)),
                     reallocate: input => addSelfPlanAndSendFunctions(client, getReallocateInstruction(input)),
                 },
+                identifyAccount: identifyRecordAccount,
+                identifyInstruction: identifyRecordInstruction,
+                parseInstruction: parseRecordInstruction,
             },
         });
     };
