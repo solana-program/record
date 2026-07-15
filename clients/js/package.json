@@ -45,11 +45,11 @@
     },
     "devDependencies": {
         "@solana-config/oxc": "^0.1.1",
-        "@solana-program/system": "^0.12.1",
-        "@solana/kit": "^6.10.0",
-        "@solana/kit-plugin-litesvm": "^0.10.0",
-        "@solana/kit-plugin-signer": "^0.10.0",
-        "@solana/sysvars": "^6.9.0",
+        "@solana-program/system": "^0.13.0",
+        "@solana/kit": "^7.0.0",
+        "@solana/kit-plugin-litesvm": "^0.13.0",
+        "@solana/kit-plugin-signer": "^0.13.0",
+        "@solana/sysvars": "^7.0.0",
         "@types/node": "^25.9.1",
         "oxfmt": "^0.55.0",
         "oxlint": "^1.70.0",
@@ -61,7 +61,7 @@
         "vitest": "^4.0.15"
     },
     "peerDependencies": {
-        "@solana/kit": "^6.10.0"
+        "@solana/kit": "^7.0.0"
     },
     "engines": {
         "node": ">=24.0.0"
