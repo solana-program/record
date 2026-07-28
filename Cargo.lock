@@ -2339,9 +2339,9 @@ dependencies = [
 
 [[package]]
 name = "solana-rent"
-version = "4.3.0"
+version = "4.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39f0d780bf8e8a1fe8b5b5fce1acad6b209485b86dec246e7523d5e4a8b7c7fc"
+checksum = "dc016b348926395ba01f8288cdf5da25fc30f5a0806028b32d5e5b3147b10bf9"
 dependencies = [
  "solana-sdk-macro",
 ]
@@ -2730,7 +2730,7 @@ dependencies = [
  "solana-program-entrypoint",
  "solana-program-error",
  "solana-program-pack",
- "solana-rent 4.3.0",
+ "solana-rent 4.4.0",
  "solana-security-txt",
  "solana-system-interface 3.2.0",
  "thiserror 2.0.19",
