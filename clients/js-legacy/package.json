@@ -30,10 +30,10 @@
         "prepublishOnly": "pnpm build",
         "build": "tsc --build --verbose tsconfig.all.json",
         "postbuild": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
-        "lint": "eslint --max-warnings 0 .",
-        "lint:fix": "eslint --fix .",
-        "format": "prettier --check src test",
-        "format:fix": "prettier --write src test",
+        "lint": "oxlint --max-warnings 0",
+        "lint:fix": "oxlint --fix",
+        "format": "oxfmt --check src test",
+        "format:fix": "oxfmt --write src test",
         "test": "mocha test/* && pnpm test:exports",
         "test:exports": "node ./test/exports/module.mjs && node ./test/exports/commonjs.cjs"
     },
@@ -44,23 +44,16 @@
         "@solana/codecs-numbers": "^6.9.0"
     },
     "devDependencies": {
-        "@solana/prettier-config-solana": "0.0.6",
-        "@eslint/js": "^10.0.1",
         "@types/chai": "^5.0.1",
         "@types/node": "^25.9.1",
         "@types/mocha": "^10.0.10",
         "chai": "^6.2.2",
-        "eslint": "^8.57.1",
-        "eslint-config-prettier": "^10.0.1",
-        "eslint-plugin-prettier": "^5.5.6",
-        "eslint-plugin-require-extensions": "^0.1.1",
         "mocha": "^11.7.6",
-        "prettier": "^3.8.3",
+        "oxfmt": "^0.60.0",
+        "oxlint": "^1.75.0",
         "shx": "^0.4.0",
         "typescript": "^6.0.3",
         "start-server-and-test": "^3.0.5",
-        "ts-node": "^10.9.2",
-        "typescript-eslint": "^8.60.0"
-    },
-    "prettier": "@solana/prettier-config-solana"
+        "ts-node": "^10.9.2"
+    }
 }
