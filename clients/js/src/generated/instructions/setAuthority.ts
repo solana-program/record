@@ -27,10 +27,16 @@ import {
     type ReadonlyAccount,
     type ReadonlySignerAccount,
     type ReadonlyUint8Array,
-    type TransactionSigner,
     type WritableAccount,
 } from '@solana/kit';
-import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
+import {
+    getAccountMetaFactory,
+    type InstructionAccountInput,
+    type InstructionAccountInputAddress,
+    type InstructionSignerInput,
+    type ResolvedInstructionAccount,
+    type ResolvedInstructionAccountMeta,
+} from '@solana/kit/program-client-core';
 import { RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const SET_AUTHORITY_DISCRIMINATOR = 2;
@@ -81,36 +87,43 @@ export function getSetAuthorityInstructionDataCodec(): FixedSizeCodec<
 }
 
 export type SetAuthorityInput<
-    TAccountRecordAccount extends string = string,
-    TAccountAuthority extends string = string,
-    TAccountNewAuthority extends string = string,
+    TAccountRecordAccount extends InstructionAccountInput = InstructionAccountInput,
+    TAccountAuthority extends InstructionSignerInput = InstructionSignerInput,
+    TAccountNewAuthority extends InstructionAccountInput = InstructionAccountInput,
 > = {
-    recordAccount: Address<TAccountRecordAccount>;
-    authority: TransactionSigner<TAccountAuthority>;
-    newAuthority: Address<TAccountNewAuthority>;
+    recordAccount: TAccountRecordAccount;
+    authority: TAccountAuthority;
+    newAuthority: TAccountNewAuthority;
 };
 
 export function getSetAuthorityInstruction<
-    TAccountRecordAccount extends string,
-    TAccountAuthority extends string,
-    TAccountNewAuthority extends string,
+    TAccountRecordAccount extends InstructionAccountInput,
+    TAccountAuthority extends InstructionSignerInput,
+    TAccountNewAuthority extends InstructionAccountInput,
     TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: SetAuthorityInput<TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority>,
     config?: { programAddress?: TProgramAddress },
-): SetAuthorityInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority> {
+): SetAuthorityInstruction<
+    TProgramAddress,
+    ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+    ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>,
+    ResolvedInstructionAccountMeta<TAccountNewAuthority, InstructionAccountInputAddress<TAccountNewAuthority>>
+> {
     // Program address.
     const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
 
+    // Account meta helper.
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+
     // Original accounts.
     const originalAccounts = {
-        recordAccount: { value: input.recordAccount ?? null, isWritable: true },
-        authority: { value: input.authority ?? null, isWritable: false },
-        newAuthority: { value: input.newAuthority ?? null, isWritable: false },
+        recordAccount: { value: input.recordAccount ?? null, isSigner: false, isWritable: true },
+        authority: { value: input.authority ?? null, isSigner: true, isWritable: false },
+        newAuthority: { value: input.newAuthority ?? null, isSigner: false, isWritable: false },
     };
     const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
-    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
     return Object.freeze({
         accounts: [
             getAccountMeta('recordAccount', accounts.recordAccount),
@@ -119,7 +132,12 @@ export function getSetAuthorityInstruction<
         ],
         data: getSetAuthorityInstructionDataEncoder().encode({}),
         programAddress,
-    } as SetAuthorityInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountNewAuthority>);
+    } as SetAuthorityInstruction<
+        TProgramAddress,
+        ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+        ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>,
+        ResolvedInstructionAccountMeta<TAccountNewAuthority, InstructionAccountInputAddress<TAccountNewAuthority>>
+    >);
 }
 
 export type ParsedSetAuthorityInstruction<
