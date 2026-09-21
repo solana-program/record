@@ -26,10 +26,16 @@ import {
     type InstructionWithData,
     type ReadonlySignerAccount,
     type ReadonlyUint8Array,
-    type TransactionSigner,
     type WritableAccount,
 } from '@solana/kit';
-import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
+import {
+    getAccountMetaFactory,
+    type InstructionAccountInput,
+    type InstructionAccountInputAddress,
+    type InstructionSignerInput,
+    type ResolvedInstructionAccount,
+    type ResolvedInstructionAccountMeta,
+} from '@solana/kit/program-client-core';
 import { RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const CLOSE_ACCOUNT_DISCRIMINATOR = 3;
@@ -80,36 +86,43 @@ export function getCloseAccountInstructionDataCodec(): FixedSizeCodec<
 }
 
 export type CloseAccountInput<
-    TAccountRecordAccount extends string = string,
-    TAccountAuthority extends string = string,
-    TAccountReceiver extends string = string,
+    TAccountRecordAccount extends InstructionAccountInput = InstructionAccountInput,
+    TAccountAuthority extends InstructionSignerInput = InstructionSignerInput,
+    TAccountReceiver extends InstructionAccountInput = InstructionAccountInput,
 > = {
-    recordAccount: Address<TAccountRecordAccount>;
-    authority: TransactionSigner<TAccountAuthority>;
-    receiver: Address<TAccountReceiver>;
+    recordAccount: TAccountRecordAccount;
+    authority: TAccountAuthority;
+    receiver: TAccountReceiver;
 };
 
 export function getCloseAccountInstruction<
-    TAccountRecordAccount extends string,
-    TAccountAuthority extends string,
-    TAccountReceiver extends string,
+    TAccountRecordAccount extends InstructionAccountInput,
+    TAccountAuthority extends InstructionSignerInput,
+    TAccountReceiver extends InstructionAccountInput,
     TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: CloseAccountInput<TAccountRecordAccount, TAccountAuthority, TAccountReceiver>,
     config?: { programAddress?: TProgramAddress },
-): CloseAccountInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountReceiver> {
+): CloseAccountInstruction<
+    TProgramAddress,
+    ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+    ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>,
+    ResolvedInstructionAccountMeta<TAccountReceiver, InstructionAccountInputAddress<TAccountReceiver>>
+> {
     // Program address.
     const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
 
+    // Account meta helper.
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+
     // Original accounts.
     const originalAccounts = {
-        recordAccount: { value: input.recordAccount ?? null, isWritable: true },
-        authority: { value: input.authority ?? null, isWritable: false },
-        receiver: { value: input.receiver ?? null, isWritable: true },
+        recordAccount: { value: input.recordAccount ?? null, isSigner: false, isWritable: true },
+        authority: { value: input.authority ?? null, isSigner: true, isWritable: false },
+        receiver: { value: input.receiver ?? null, isSigner: false, isWritable: true },
     };
     const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
-    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
     return Object.freeze({
         accounts: [
             getAccountMeta('recordAccount', accounts.recordAccount),
@@ -118,7 +131,12 @@ export function getCloseAccountInstruction<
         ],
         data: getCloseAccountInstructionDataEncoder().encode({}),
         programAddress,
-    } as CloseAccountInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority, TAccountReceiver>);
+    } as CloseAccountInstruction<
+        TProgramAddress,
+        ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+        ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>,
+        ResolvedInstructionAccountMeta<TAccountReceiver, InstructionAccountInputAddress<TAccountReceiver>>
+    >);
 }
 
 export type ParsedCloseAccountInstruction<

@@ -28,10 +28,16 @@ import {
     type InstructionWithData,
     type ReadonlySignerAccount,
     type ReadonlyUint8Array,
-    type TransactionSigner,
     type WritableAccount,
 } from '@solana/kit';
-import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
+import {
+    getAccountMetaFactory,
+    type InstructionAccountInput,
+    type InstructionAccountInputAddress,
+    type InstructionSignerInput,
+    type ResolvedInstructionAccount,
+    type ResolvedInstructionAccountMeta,
+} from '@solana/kit/program-client-core';
 import { RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const REALLOCATE_DISCRIMINATOR = 4;
@@ -86,36 +92,42 @@ export function getReallocateInstructionDataCodec(): FixedSizeCodec<
 }
 
 export type ReallocateInput<
-    TAccountRecordAccount extends string = string,
-    TAccountAuthority extends string = string,
+    TAccountRecordAccount extends InstructionAccountInput = InstructionAccountInput,
+    TAccountAuthority extends InstructionSignerInput = InstructionSignerInput,
 > = {
-    recordAccount: Address<TAccountRecordAccount>;
-    authority: TransactionSigner<TAccountAuthority>;
+    recordAccount: TAccountRecordAccount;
+    authority: TAccountAuthority;
     dataLength: ReallocateInstructionDataArgs['dataLength'];
 };
 
 export function getReallocateInstruction<
-    TAccountRecordAccount extends string,
-    TAccountAuthority extends string,
+    TAccountRecordAccount extends InstructionAccountInput,
+    TAccountAuthority extends InstructionSignerInput,
     TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: ReallocateInput<TAccountRecordAccount, TAccountAuthority>,
     config?: { programAddress?: TProgramAddress },
-): ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority> {
+): ReallocateInstruction<
+    TProgramAddress,
+    ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+    ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>
+> {
     // Program address.
     const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
 
+    // Account meta helper.
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+
     // Original accounts.
     const originalAccounts = {
-        recordAccount: { value: input.recordAccount ?? null, isWritable: true },
-        authority: { value: input.authority ?? null, isWritable: false },
+        recordAccount: { value: input.recordAccount ?? null, isSigner: false, isWritable: true },
+        authority: { value: input.authority ?? null, isSigner: true, isWritable: false },
     };
     const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
     // Original args.
     const args = { ...input };
 
-    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
     return Object.freeze({
         accounts: [
             getAccountMeta('recordAccount', accounts.recordAccount),
@@ -123,7 +135,11 @@ export function getReallocateInstruction<
         ],
         data: getReallocateInstructionDataEncoder().encode(args as ReallocateInstructionDataArgs),
         programAddress,
-    } as ReallocateInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority>);
+    } as ReallocateInstruction<
+        TProgramAddress,
+        ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+        ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>
+    >);
 }
 
 export type ParsedReallocateInstruction<

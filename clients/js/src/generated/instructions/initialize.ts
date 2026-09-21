@@ -27,7 +27,13 @@ import {
     type ReadonlyUint8Array,
     type WritableAccount,
 } from '@solana/kit';
-import { getAccountMetaFactory, type ResolvedInstructionAccount } from '@solana/kit/program-client-core';
+import {
+    getAccountMetaFactory,
+    type InstructionAccountInput,
+    type InstructionAccountInputAddress,
+    type ResolvedInstructionAccount,
+    type ResolvedInstructionAccountMeta,
+} from '@solana/kit/program-client-core';
 import { RECORD_PROGRAM_ADDRESS } from '../programs';
 
 export const INITIALIZE_DISCRIMINATOR = 0;
@@ -74,32 +80,38 @@ export function getInitializeInstructionDataCodec(): FixedSizeCodec<
 }
 
 export type InitializeInput<
-    TAccountRecordAccount extends string = string,
-    TAccountAuthority extends string = string,
+    TAccountRecordAccount extends InstructionAccountInput = InstructionAccountInput,
+    TAccountAuthority extends InstructionAccountInput = InstructionAccountInput,
 > = {
-    recordAccount: Address<TAccountRecordAccount>;
-    authority: Address<TAccountAuthority>;
+    recordAccount: TAccountRecordAccount;
+    authority: TAccountAuthority;
 };
 
 export function getInitializeInstruction<
-    TAccountRecordAccount extends string,
-    TAccountAuthority extends string,
+    TAccountRecordAccount extends InstructionAccountInput,
+    TAccountAuthority extends InstructionAccountInput,
     TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: InitializeInput<TAccountRecordAccount, TAccountAuthority>,
     config?: { programAddress?: TProgramAddress },
-): InitializeInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority> {
+): InitializeInstruction<
+    TProgramAddress,
+    ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+    ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>
+> {
     // Program address.
     const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
 
+    // Account meta helper.
+    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
+
     // Original accounts.
     const originalAccounts = {
-        recordAccount: { value: input.recordAccount ?? null, isWritable: true },
-        authority: { value: input.authority ?? null, isWritable: false },
+        recordAccount: { value: input.recordAccount ?? null, isSigner: false, isWritable: true },
+        authority: { value: input.authority ?? null, isSigner: false, isWritable: false },
     };
     const accounts = originalAccounts as Record<keyof typeof originalAccounts, ResolvedInstructionAccount>;
 
-    const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');
     return Object.freeze({
         accounts: [
             getAccountMeta('recordAccount', accounts.recordAccount),
@@ -107,7 +119,11 @@ export function getInitializeInstruction<
         ],
         data: getInitializeInstructionDataEncoder().encode({}),
         programAddress,
-    } as InitializeInstruction<TProgramAddress, TAccountRecordAccount, TAccountAuthority>);
+    } as InitializeInstruction<
+        TProgramAddress,
+        ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
+        ResolvedInstructionAccountMeta<TAccountAuthority, InstructionAccountInputAddress<TAccountAuthority>>
+    >);
 }
 
 export type ParsedInitializeInstruction<
