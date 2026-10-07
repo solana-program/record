@@ -84,7 +84,9 @@ impl<'a> RecordInstruction<'a> {
                     .and_then(|slice| slice.try_into().ok())
                     .map(u64::from_le_bytes)
                     .ok_or(ProgramError::InvalidInstructionData)?;
-                let (length, data) = rest[U64_BYTES..].split_at(U32_BYTES);
+                let (length, data) = rest[U64_BYTES..]
+                    .split_at_checked(U32_BYTES)
+                    .ok_or(ProgramError::InvalidInstructionData)?;
                 let length = u32::from_le_bytes(
                     length
                         .try_into()
@@ -93,7 +95,9 @@ impl<'a> RecordInstruction<'a> {
 
                 Self::Write {
                     offset,
-                    data: &data[..length],
+                    data: data
+                        .get(..length)
+                        .ok_or(ProgramError::InvalidInstructionData)?,
                 }
             }
             2 => Self::SetAuthority,
@@ -259,6 +263,25 @@ mod tests {
         let mut expected = vec![12];
         expected.extend_from_slice(&TEST_BYTES);
         let err: ProgramError = RecordInstruction::unpack(&expected).unwrap_err();
+        assert_eq!(err, ProgramError::InvalidInstructionData);
+    }
+
+    #[test]
+    fn deserialize_write_missing_length() {
+        let mut input = vec![1];
+        input.extend_from_slice(&0u64.to_le_bytes());
+        let err: ProgramError = RecordInstruction::unpack(&input).unwrap_err();
+        assert_eq!(err, ProgramError::InvalidInstructionData);
+    }
+
+    #[test]
+    fn deserialize_write_data_shorter_than_length() {
+        let data = &TEST_BYTES;
+        let mut input = vec![1];
+        input.extend_from_slice(&0u64.to_le_bytes());
+        input.extend_from_slice(&((data.len() + 1) as u32).to_le_bytes());
+        input.extend_from_slice(data);
+        let err: ProgramError = RecordInstruction::unpack(&input).unwrap_err();
         assert_eq!(err, ProgramError::InvalidInstructionData);
     }
 }
