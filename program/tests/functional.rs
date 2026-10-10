@@ -730,3 +730,38 @@ fn reallocate_fail_unsigned() {
         ],
     );
 }
+
+#[test]
+fn reallocate_fail_data_length_overflow() {
+    let mollusk = Mollusk::new(&id(), "spl_record");
+    let payer = Address::new_unique();
+    let authority = Address::new_unique();
+    let account = Address::new_unique();
+    let data = &[111u8; 8];
+    let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
+    ixs.push(instruction::reallocate(&account, &authority, u64::MAX));
+    let checks = [
+        [Check::success()],
+        [Check::success()],
+        [Check::success()],
+        [Check::err(ProgramError::InvalidArgument)],
+    ];
+    mollusk.process_and_validate_instruction_chain(
+        ixs.iter()
+            .zip(checks.iter().map(|c| c.as_ref()))
+            .collect::<Vec<_>>()
+            .as_slice(),
+        &[
+            (
+                payer,
+                Account {
+                    lamports: 1_000_000_000,
+                    ..Default::default()
+                },
+            ),
+            (authority, Account::default()),
+            (account, Account::default()),
+            mollusk_svm::program::keyed_account_for_system_program(),
+        ],
+    );
+}
