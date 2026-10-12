@@ -161,7 +161,7 @@ pub fn process_instruction(
                 .checked_add(
                     usize::try_from(data_length).map_err(|_| ProgramError::InvalidArgument)?,
                 )
-                .unwrap();
+                .ok_or(ProgramError::InvalidArgument)?;
 
             // reallocate
             if data_info.data_len() >= needed_account_length {
