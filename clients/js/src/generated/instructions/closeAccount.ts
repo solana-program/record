@@ -102,7 +102,7 @@ export function getCloseAccountInstruction<
     TProgramAddress extends Address = typeof RECORD_PROGRAM_ADDRESS,
 >(
     input: CloseAccountInput<TAccountRecordAccount, TAccountAuthority, TAccountReceiver>,
-    config?: { programAddress?: TProgramAddress },
+    config?: { programAddress?: TProgramAddress | { readonly address: TProgramAddress } },
 ): CloseAccountInstruction<
     TProgramAddress,
     ResolvedInstructionAccountMeta<TAccountRecordAccount, InstructionAccountInputAddress<TAccountRecordAccount>>,
@@ -110,7 +110,8 @@ export function getCloseAccountInstruction<
     ResolvedInstructionAccountMeta<TAccountReceiver, InstructionAccountInputAddress<TAccountReceiver>>
 > {
     // Program address.
-    const programAddress = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
+    const programAddressInput = config?.programAddress ?? RECORD_PROGRAM_ADDRESS;
+    const programAddress = typeof programAddressInput === 'string' ? programAddressInput : programAddressInput.address;
 
     // Account meta helper.
     const getAccountMeta = getAccountMetaFactory(programAddress, 'programId');

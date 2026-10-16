@@ -1,6 +1,7 @@
 import {
     Address,
     getLinearMessagePackerInstructionPlan,
+    HasAddress,
     MessagePackerInstructionPlan,
     ReadonlyUint8Array,
     TransactionSigner,
@@ -10,7 +11,7 @@ import { getWriteInstruction, RECORD_PROGRAM_ADDRESS } from './generated';
 
 export interface WriteInstructionPlanInput {
     /** The record account to write to. */
-    recordAccount: Address;
+    recordAccount: Address | HasAddress;
     /** The record account's authority. */
     authority: TransactionSigner;
     /** The data to write into the record account. */
@@ -21,7 +22,7 @@ export interface WriteInstructionPlanInput {
      */
     offset?: number;
     /** Override the Record program address. */
-    recordProgram?: Address;
+    recordProgram?: Address | HasAddress;
 }
 
 /**

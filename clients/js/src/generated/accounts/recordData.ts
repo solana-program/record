@@ -30,6 +30,7 @@ import {
     type Encoder,
     type FetchAccountConfig,
     type FetchAccountsConfig,
+    type HasAddress,
     type MaybeAccount,
     type MaybeEncodedAccount,
     type ReadonlyUint8Array,
@@ -43,7 +44,7 @@ export function getRecordDataVersionBytes(): ReadonlyUint8Array {
 
 export type RecordData = { version: number; authority: Address; payload: ReadonlyUint8Array };
 
-export type RecordDataArgs = { version?: number; authority: Address; payload: ReadonlyUint8Array };
+export type RecordDataArgs = { version?: number; authority: Address | HasAddress; payload: ReadonlyUint8Array };
 
 /** Gets the encoder for {@link RecordDataArgs} account data. */
 export function getRecordDataEncoder(): Encoder<RecordDataArgs> {
@@ -85,7 +86,7 @@ export function decodeRecordData<TAddress extends string = string>(
 
 export async function fetchRecordData<TAddress extends string = string>(
     rpc: Parameters<typeof fetchEncodedAccount>[0],
-    address: Address<TAddress>,
+    address: Address<TAddress> | HasAddress<TAddress>,
     config?: FetchAccountConfig,
 ): Promise<Account<RecordData, TAddress>> {
     const maybeAccount = await fetchMaybeRecordData(rpc, address, config);
@@ -95,16 +96,20 @@ export async function fetchRecordData<TAddress extends string = string>(
 
 export async function fetchMaybeRecordData<TAddress extends string = string>(
     rpc: Parameters<typeof fetchEncodedAccount>[0],
-    address: Address<TAddress>,
+    address: Address<TAddress> | HasAddress<TAddress>,
     config?: FetchAccountConfig,
 ): Promise<MaybeAccount<RecordData, TAddress>> {
-    const maybeAccount = await fetchEncodedAccount(rpc, address, config);
+    const maybeAccount = await fetchEncodedAccount(
+        rpc,
+        typeof address === 'string' ? address : address.address,
+        config,
+    );
     return decodeRecordData(maybeAccount);
 }
 
 export async function fetchAllRecordData(
     rpc: Parameters<typeof fetchEncodedAccounts>[0],
-    addresses: Array<Address>,
+    addresses: Array<Address | HasAddress>,
     config?: FetchAccountsConfig,
 ): Promise<Account<RecordData>[]> {
     const maybeAccounts = await fetchAllMaybeRecordData(rpc, addresses, config);
@@ -114,9 +119,13 @@ export async function fetchAllRecordData(
 
 export async function fetchAllMaybeRecordData(
     rpc: Parameters<typeof fetchEncodedAccounts>[0],
-    addresses: Array<Address>,
+    addresses: Array<Address | HasAddress>,
     config?: FetchAccountsConfig,
 ): Promise<MaybeAccount<RecordData>[]> {
-    const maybeAccounts = await fetchEncodedAccounts(rpc, addresses, config);
+    const maybeAccounts = await fetchEncodedAccounts(
+        rpc,
+        addresses.map(a => (typeof a === 'string' ? a : a.address)),
+        config,
+    );
     return maybeAccounts.map(maybeAccount => decodeRecordData(maybeAccount));
 }

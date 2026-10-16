@@ -1,7 +1,7 @@
 import { generateKeyPairSigner } from '@solana/kit';
 import { expect, it } from 'vitest';
 
-import { fetchRecordData, getRecordAddressWithSeed } from '../src';
+import { fetchRecordData, getRecordAddressWithSeed, RECORD_PROGRAM_ADDRESS } from '../src';
 import { createTestClient } from './_setup';
 
 it('creates a record with a string seed', async () => {
@@ -55,6 +55,31 @@ it('creates a record with an external base account', async () => {
     expect(account.data).toStrictEqual({
         version: 1,
         authority: client.payer.address,
+        payload: new Uint8Array([]),
+    });
+});
+
+it('accepts HasAddress wrappers for the authority, base address and program override', async () => {
+    const client = await createTestClient();
+    const authority = await generateKeyPairSigner();
+    const seed = 'test-seed';
+    const recordProgram = { address: RECORD_PROGRAM_ADDRESS };
+
+    const recordAccount = await getRecordAddressWithSeed({
+        baseAddress: { address: client.payer.address },
+        seed,
+        recordProgram,
+    });
+    expect(recordAccount).toBe(await getRecordAddressWithSeed({ baseAddress: client.payer.address, seed }));
+
+    await client.record.instructions
+        .createRecordWithSeed({ authority: { address: authority.address }, dataLength: 0n, seed }, { recordProgram })
+        .sendTransaction();
+
+    const account = await fetchRecordData(client.rpc, recordAccount);
+    expect(account.data).toStrictEqual({
+        version: 1,
+        authority: authority.address,
         payload: new Uint8Array([]),
     });
 });
