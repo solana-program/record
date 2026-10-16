@@ -22,6 +22,7 @@ import {
     type ExtendedClient,
     type GetAccountInfoApi,
     type GetMultipleAccountsApi,
+    type HasAddress,
     type Instruction,
     type InstructionWithData,
     type ReadonlyUint8Array,
@@ -160,32 +161,73 @@ export type RecordPluginAccounts = {
 };
 
 export type RecordPluginInstructions = {
-    initialize: (input: InitializeInput) => ReturnType<typeof getInitializeInstruction> & SelfPlanAndSendFunctions;
-    write: (input: WriteInput) => ReturnType<typeof getWriteInstruction> & SelfPlanAndSendFunctions;
+    initialize: (
+        input: InitializeInput,
+        config?: { programAddress?: Address | HasAddress },
+    ) => ReturnType<typeof getInitializeInstruction> & SelfPlanAndSendFunctions;
+    write: (
+        input: WriteInput,
+        config?: { programAddress?: Address | HasAddress },
+    ) => ReturnType<typeof getWriteInstruction> & SelfPlanAndSendFunctions;
     setAuthority: (
         input: SetAuthorityInput,
+        config?: { programAddress?: Address | HasAddress },
     ) => ReturnType<typeof getSetAuthorityInstruction> & SelfPlanAndSendFunctions;
     closeAccount: (
         input: CloseAccountInput,
+        config?: { programAddress?: Address | HasAddress },
     ) => ReturnType<typeof getCloseAccountInstruction> & SelfPlanAndSendFunctions;
-    reallocate: (input: ReallocateInput) => ReturnType<typeof getReallocateInstruction> & SelfPlanAndSendFunctions;
+    reallocate: (
+        input: ReallocateInput,
+        config?: { programAddress?: Address | HasAddress },
+    ) => ReturnType<typeof getReallocateInstruction> & SelfPlanAndSendFunctions;
 };
 
 export type RecordPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
     ClientWithTransactionPlanning &
     ClientWithTransactionSending;
 
-export function recordProgram() {
+export function recordProgram(config: { programAddress?: Address | HasAddress } = {}) {
     return <T extends RecordPluginRequirements>(client: T): ExtendedClient<T, { record: RecordPlugin }> => {
         return extendClient(client, {
             record: <RecordPlugin>{
                 accounts: { recordData: addSelfFetchFunctions(client, getRecordDataCodec()) },
                 instructions: {
-                    initialize: input => addSelfPlanAndSendFunctions(client, getInitializeInstruction(input)),
-                    write: input => addSelfPlanAndSendFunctions(client, getWriteInstruction(input)),
-                    setAuthority: input => addSelfPlanAndSendFunctions(client, getSetAuthorityInstruction(input)),
-                    closeAccount: input => addSelfPlanAndSendFunctions(client, getCloseAccountInstruction(input)),
-                    reallocate: input => addSelfPlanAndSendFunctions(client, getReallocateInstruction(input)),
+                    initialize: (input, instructionConfig) =>
+                        addSelfPlanAndSendFunctions(
+                            client,
+                            getInitializeInstruction(input, {
+                                programAddress: instructionConfig?.programAddress ?? config.programAddress,
+                            }),
+                        ),
+                    write: (input, instructionConfig) =>
+                        addSelfPlanAndSendFunctions(
+                            client,
+                            getWriteInstruction(input, {
+                                programAddress: instructionConfig?.programAddress ?? config.programAddress,
+                            }),
+                        ),
+                    setAuthority: (input, instructionConfig) =>
+                        addSelfPlanAndSendFunctions(
+                            client,
+                            getSetAuthorityInstruction(input, {
+                                programAddress: instructionConfig?.programAddress ?? config.programAddress,
+                            }),
+                        ),
+                    closeAccount: (input, instructionConfig) =>
+                        addSelfPlanAndSendFunctions(
+                            client,
+                            getCloseAccountInstruction(input, {
+                                programAddress: instructionConfig?.programAddress ?? config.programAddress,
+                            }),
+                        ),
+                    reallocate: (input, instructionConfig) =>
+                        addSelfPlanAndSendFunctions(
+                            client,
+                            getReallocateInstruction(input, {
+                                programAddress: instructionConfig?.programAddress ?? config.programAddress,
+                            }),
+                        ),
                 },
                 identifyAccount: identifyRecordAccount,
                 identifyInstruction: identifyRecordInstruction,

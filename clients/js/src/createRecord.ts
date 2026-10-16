@@ -4,6 +4,7 @@ import {
     ClientWithGetMinimumBalance,
     createAddressWithSeed,
     getUtf8Decoder,
+    HasAddress,
     InstructionPlan,
     Lamports,
     ReadonlyUint8Array,
@@ -20,7 +21,7 @@ export interface CreateRecordInstructionPlanInput {
     /** New record account to create. Must be a fresh, unused keypair. */
     newRecord: TransactionSigner;
     /** The authority that will own the created record account. */
-    authority: Address;
+    authority: Address | HasAddress;
     /** The number of bytes of record payload to allocate (excluding the header). */
     dataLength: number | bigint;
     /**
@@ -32,9 +33,9 @@ export interface CreateRecordInstructionPlanInput {
 
 export interface CreateRecordInstructionPlanConfig {
     /** Override the System program address. */
-    systemProgram?: Address;
+    systemProgram?: Address | HasAddress;
     /** Override the Record program address. */
-    recordProgram?: Address;
+    recordProgram?: Address | HasAddress;
 }
 
 /**
@@ -77,7 +78,7 @@ export interface CreateRecordWithSeedInstructionPlanInput {
     /** Funding account that pays for the new record account's rent. */
     payer: TransactionSigner;
     /** The authority that will own the created record account. */
-    authority: Address;
+    authority: Address | HasAddress;
     /** The number of bytes of record payload to allocate (excluding the header). */
     dataLength: number | bigint;
     /** The seed used to derive the record account address. */
@@ -146,14 +147,16 @@ export async function getCreateRecordWithSeedInstructionPlan(
  * the on-chain program derives from the seed string.
  */
 export async function getRecordAddressWithSeed(input: {
-    baseAddress: Address;
+    baseAddress: Address | HasAddress;
     seed: ReadonlyUint8Array | string;
-    recordProgram?: Address;
+    recordProgram?: Address | HasAddress;
 }): Promise<Address> {
+    const baseAddress = typeof input.baseAddress === 'string' ? input.baseAddress : input.baseAddress.address;
+    const recordProgram = input.recordProgram ?? RECORD_PROGRAM_ADDRESS;
     return await createAddressWithSeed({
-        baseAddress: input.baseAddress,
+        baseAddress,
         seed: normalizeSeed(input.seed),
-        programAddress: input.recordProgram ?? RECORD_PROGRAM_ADDRESS,
+        programAddress: typeof recordProgram === 'string' ? recordProgram : recordProgram.address,
     });
 }
 

@@ -4,6 +4,7 @@ import {
     ClientWithGetMinimumBalance,
     ClientWithRpc,
     GetBalanceApi,
+    HasAddress,
     InstructionPlan,
     sequentialInstructionPlan,
     TransactionSigner,
@@ -16,7 +17,7 @@ export interface ReallocateRecordInstructionPlanInput {
     /** Funding account that tops up the record account's rent when growing it. */
     payer: TransactionSigner;
     /** The record account to reallocate. */
-    recordAccount: Address;
+    recordAccount: Address | HasAddress;
     /** The record account's current authority. */
     authority: TransactionSigner;
     /** The new record payload length in bytes (excluding the header). */
@@ -25,9 +26,9 @@ export interface ReallocateRecordInstructionPlanInput {
 
 export interface ReallocateRecordInstructionPlanConfig {
     /** Override the System program address. */
-    systemProgram?: Address;
+    systemProgram?: Address | HasAddress;
     /** Override the Record program address. */
-    recordProgram?: Address;
+    recordProgram?: Address | HasAddress;
 }
 
 /**
@@ -42,10 +43,11 @@ export async function getReallocateRecordInstructionPlan(
     config?: ReallocateRecordInstructionPlanConfig,
 ): Promise<InstructionPlan> {
     const recordProgram = config?.recordProgram ?? RECORD_PROGRAM_ADDRESS;
+    const recordAccount = typeof input.recordAccount === 'string' ? input.recordAccount : input.recordAccount.address;
     const newSpace = getRecordSize(input.newDataLength);
 
     const requiredRent = await client.getMinimumBalance(Number(newSpace));
-    const currentBalance = (await client.rpc.getBalance(input.recordAccount).send()).value;
+    const currentBalance = (await client.rpc.getBalance(recordAccount).send()).value;
 
     return sequentialInstructionPlan([
         ...(requiredRent > currentBalance
@@ -53,7 +55,7 @@ export async function getReallocateRecordInstructionPlan(
                   getTransferSolInstruction(
                       {
                           source: input.payer,
-                          destination: input.recordAccount,
+                          destination: recordAccount,
                           amount: requiredRent - currentBalance,
                       },
                       { programAddress: config?.systemProgram },
@@ -62,7 +64,7 @@ export async function getReallocateRecordInstructionPlan(
             : []),
         getReallocateInstruction(
             {
-                recordAccount: input.recordAccount,
+                recordAccount,
                 authority: input.authority,
                 dataLength: BigInt(input.newDataLength),
             },
