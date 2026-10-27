@@ -22,7 +22,7 @@ fn initialize_instructions(
         system_instruction::create_account(
             payer,
             account,
-            1.max(Rent::default().minimum_balance(account_length)),
+            Rent::default().minimum_balance(account_length),
             account_length as u64,
             &id(),
         ),
@@ -556,26 +556,28 @@ fn set_authority_fail_unsigned() {
 
 #[test]
 fn reallocate_success() {
-    let mollusk = Mollusk::new(&id(), "spl_record");
+    let mut mollusk = Mollusk::new(&id(), "spl_record");
+    let rent = Rent::default();
+    mollusk.sysvars.rent = rent.clone();
     let payer = Address::new_unique();
     let authority = Address::new_unique();
     let account = Address::new_unique();
     let data = &[111u8; 8];
     let new_data_length = 16u64;
+    let additional_lamports_needed =
+        rent.minimum_balance(new_data_length as usize) - rent.minimum_balance(data.len());
 
     let delta_account_data_length = new_data_length.saturating_sub(data.len() as u64);
-    let additional_lamports_needed =
-        Rent::default().minimum_balance(delta_account_data_length as usize);
     let mut ixs = initialize_instructions(&payer, &authority, &account, data).to_vec();
-    ixs.push(instruction::reallocate(
-        &account,
-        &authority,
-        new_data_length,
-    ));
     ixs.push(system_instruction::transfer(
         &payer,
         &account,
         additional_lamports_needed,
+    ));
+    ixs.push(instruction::reallocate(
+        &account,
+        &authority,
+        new_data_length,
     ));
     let old_data_length = 8u64;
     ixs.push(instruction::reallocate(
@@ -599,8 +601,8 @@ fn reallocate_success() {
         [Check::success()],
         [Check::success()],
         [Check::success()],
-        [Check::account(&account).data(&expanded_data).build()],
         [Check::success()],
+        [Check::account(&account).data(&expanded_data).build()],
         [Check::account(&account).data(&shrunk_data).build()],
     ];
     mollusk.process_and_validate_instruction_chain(
