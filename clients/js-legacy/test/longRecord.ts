@@ -29,4 +29,23 @@ describe('long record data', () => {
             expect(recordAccountData.recordData).to.eql(recordData);
         }
     });
+
+    it('initialize and write at an offset', async () => {
+        const offsetRecordAccount = Keypair.generate();
+        const offset = 10;
+        await createInitializeWriteRecord(
+            connection,
+            payer,
+            offsetRecordAccount,
+            recordAuthority,
+            BigInt(offset),
+            recordData,
+        );
+
+        const recordAccountData = await getRecordAccount(connection, offsetRecordAccount.publicKey);
+        expect(recordAccountData).to.not.equal(null);
+        if (recordAccountData !== null) {
+            expect(recordAccountData.recordData).to.eql(Buffer.concat([Buffer.alloc(offset), recordData]));
+        }
+    });
 });

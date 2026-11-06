@@ -115,7 +115,7 @@ export async function createInitializeWriteRecord(
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
 ) {
-    const recordSize = buffer.length;
+    const recordSize = Number(offset) + buffer.length;
     const recordAccountSize = RECORD_META_DATA_SIZE + recordSize;
     const lamports = await connection.getMinimumBalanceForRentExemption(recordAccountSize);
     const firstChunkBuffer = buffer.subarray(0, RECORD_CHUNK_SIZE_PRE_INITIALIZE);
