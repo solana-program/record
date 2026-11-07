@@ -48,7 +48,7 @@ pub enum RecordInstruction<'a> {
     ///
     /// 0. `[writable]` Record account, must be previously initialized
     /// 1. `[signer]` Record authority
-    /// 2. `[]` Receiver of account lamports
+    /// 2. `[writable]` Receiver of account lamports
     CloseAccount,
 
     /// Reallocate additional space in a record account
@@ -59,7 +59,7 @@ pub enum RecordInstruction<'a> {
     /// Accounts expected by this instruction:
     ///
     /// 0. `[writable]` The record account to reallocate
-    /// 1. `[signer]` The account's owner
+    /// 1. `[signer]` Record authority
     Reallocate {
         /// The length of the data to hold in the record account excluding meta
         /// data
