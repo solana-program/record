@@ -57,7 +57,7 @@ export async function createRecord(
  * @param payer           Payer of the transaction fees
  * @param record          Record account address
  * @param authority       Record account authority keypair
- * @param recordSize      Offset to store the record bytes
+ * @param offset          Offset to store the record bytes
  * @param buffer          Record bytes
  * @param confirmOptions  Options for confirming the transaction
  *
@@ -99,7 +99,7 @@ export async function writeRecord(
  * @param payer           Payer of the transaction fees
  * @param record          Record account signer
  * @param authority       Record account authority keypair
- * @param recordSize      Offset to store the record bytes
+ * @param offset          Offset to store the record bytes; the record is sized to `offset + buffer.length`
  * @param buffer          Record bytes
  * @param confirmOptions  Options for confirming the transaction
  *
@@ -115,7 +115,7 @@ export async function createInitializeWriteRecord(
     confirmOptions?: ConfirmOptions,
     programId = RECORD_PROGRAM_ID,
 ) {
-    const recordSize = buffer.length;
+    const recordSize = Number(offset) + buffer.length;
     const recordAccountSize = RECORD_META_DATA_SIZE + recordSize;
     const lamports = await connection.getMinimumBalanceForRentExemption(recordAccountSize);
     const firstChunkBuffer = buffer.subarray(0, RECORD_CHUNK_SIZE_PRE_INITIALIZE);
