@@ -25,7 +25,7 @@ solana-security-txt = "1.1.3"
 thiserror = "2.0.18"
 
 [dev-dependencies]
-mollusk-svm = "0.16.0"
+mollusk-svm = "0.17.1"
 solana-account = "4.0.0"
 solana-address = { version = "2.6.1", features = ["atomic"] }
 solana-rent = "4.5.0"
